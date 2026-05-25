@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Scroll reveal
-  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item')
+  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card')
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
@@ -339,10 +339,29 @@ async function loadAdminData() {
 }
 
 // ==============================
-//  FOOD MENU — loads from Admin
+//  FOOD MENU WITH PICTURES
 // ==============================
 let menuItems = [];
 let activeMenuCat = 'Breakfast';
+
+// Food category colors for fallback images
+const categoryEmojis = {
+  'Breakfast': '🌅',
+  'Lunch': '☀️',
+  'Dinner': '🌙',
+  'Drinks': '🍹',
+  'Desserts': '🍰',
+  'Snacks': '🥨'
+};
+
+// Generate food images based on item name
+function generateFoodImage(itemName, category) {
+  // Using placeholder images with item names
+  const encodedName = encodeURIComponent(itemName.substring(0, 20));
+  const emoji = categoryEmojis[category] || '🍽️';
+  
+  return `https://ui-avatars.com/api/?name=${encodedName}&background=8B7355&color=fff&size=300&font-size=0.4`;
+}
 
 function renderMenuGrid() {
   const grid = document.getElementById('menu-grid');
@@ -355,16 +374,121 @@ function renderMenuGrid() {
     return;
   }
 
-  grid.innerHTML = filtered.map(item => `
-    <div class="menu-card ${item.is_featured ? 'featured' : ''}">
-      ${item.is_featured ? '<span class="featured-badge">⭐ Featured</span>' : ''}
-      <div class="menu-card-top">
-        <span class="menu-card-name">${item.name}</span>
-        <span class="menu-card-price">UGX ${Number(item.price).toLocaleString()}</span>
+  grid.innerHTML = filtered.map(item => {
+    // Try to use item image if available, otherwise generate one
+    const imageUrl = item.image || item.img || generateFoodImage(item.name, item.category);
+    
+    return `
+      <div class="menu-card ${item.is_featured ? 'featured' : ''}">
+        <div class="menu-card-image">
+          <img src="${imageUrl}" alt="${item.name}" 
+               onerror="this.src='${generateFoodImage(item.name, item.category)}'"
+               style="width:100%;height:200px;object-fit:cover;border-radius:8px 8px 0 0;"/>
+          ${item.is_featured ? '<span class="featured-badge">⭐ Featured</span>' : ''}
+        </div>
+        <div class="menu-card-body">
+          <div class="menu-card-top">
+            <span class="menu-card-name">${item.name}</span>
+            <span class="menu-card-price">UGX ${Number(item.price).toLocaleString()}</span>
+          </div>
+          ${item.description ? `<p class="menu-card-desc">${item.description}</p>` : ''}
+          ${item.is_available ? '<span class="menu-card-status">✓ Available</span>' : '<span class="menu-card-status unavailable">Out of Stock</span>'}
+        </div>
       </div>
-      ${item.description ? `<p class="menu-card-desc">${item.description}</p>` : ''}
-    </div>
-  `).join('');
+    `;
+  }).join('');
+
+  // Add CSS styles for menu cards if not already added
+  if (!document.getElementById('menu-card-styles')) {
+    const style = document.createElement('style');
+    style.id = 'menu-card-styles';
+    style.textContent = `
+      .menu-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .menu-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      }
+      .menu-card.featured {
+        border: 2px solid #f57f17;
+      }
+      .menu-card-image {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+      }
+      .menu-card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .featured-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #f57f17;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .menu-card-body {
+        padding: 16px;
+      }
+      .menu-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .menu-card-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #1a1a1a;
+        flex: 1;
+      }
+      .menu-card-price {
+        font-weight: 700;
+        color: #2e7d32;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        margin-left: 8px;
+      }
+      .menu-card-desc {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin: 8px 0;
+        line-height: 1.4;
+      }
+      .menu-card-status {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #2e7d32;
+        background: #e8f5e9;
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
+      .menu-card-status.unavailable {
+        color: #d32f2f;
+        background: #ffebee;
+      }
+      @media (max-width: 768px) {
+        .menu-card-image {
+          height: 160px;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
 }
 
 // Wire up menu tabs
