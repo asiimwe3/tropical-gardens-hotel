@@ -214,3 +214,76 @@ function showToast(msg) {
   toast.classList.add('show')
   setTimeout(() => toast.classList.remove('show'), 4200)
 }
+
+// ==============================
+//  BOOKING MODAL
+// ==============================
+const bookModal   = document.getElementById('book-modal')
+const bookOverlay = document.getElementById('book-overlay')
+const bookClose   = document.getElementById('book-modal-close')
+const bookRoomEl  = document.getElementById('book-modal-room')
+const bookWaBtn   = document.getElementById('book-whatsapp-btn')
+const bookFormBtn = document.getElementById('book-form-btn')
+
+const WA_NUMBER = '256782460683'
+
+function openBookModal(roomName) {
+  const label = roomName && roomName !== 'Room' ? roomName : 'Your Room'
+  bookRoomEl.textContent = label
+
+  // Build WhatsApp message
+  const msg = encodeURIComponent(
+    `Hello Tropical Gardens Hotel! 👋\nI'd like to book a *${label}*.\nPlease let me know availability and pricing. Thank you!`
+  )
+  bookWaBtn.href = `https://wa.me/${WA_NUMBER}?text=${msg}`
+
+  bookModal.style.display = 'block'
+  bookOverlay.classList.add('show')
+  // Trigger animation on next tick
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => bookModal.classList.add('show'))
+  })
+  document.body.style.overflow = 'hidden'
+}
+
+function closeBookModal() {
+  bookModal.classList.remove('show')
+  bookOverlay.classList.remove('show')
+  setTimeout(() => { bookModal.style.display = 'none' }, 250)
+  document.body.style.overflow = ''
+}
+
+// Wire all .book-trigger buttons
+document.querySelectorAll('.book-trigger').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault()
+    openBookModal(btn.dataset.room || 'Room')
+  })
+})
+
+// Close on X button
+if (bookClose) bookClose.addEventListener('click', closeBookModal)
+
+// Close on overlay click
+if (bookOverlay) bookOverlay.addEventListener('click', closeBookModal)
+
+// Close on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeBookModal()
+})
+
+// Form option — close modal first, then scroll to form
+if (bookFormBtn) {
+  bookFormBtn.addEventListener('click', (e) => {
+    e.preventDefault()
+    closeBookModal()
+    setTimeout(() => {
+      const target = document.getElementById('reservation')
+      if (target) {
+        const offset = 80
+        const top = target.getBoundingClientRect().top + window.scrollY - offset
+        window.scrollTo({ top, behavior: 'smooth' })
+      }
+    }, 260)
+  })
+}
