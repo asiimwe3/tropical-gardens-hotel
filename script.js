@@ -287,3 +287,64 @@ if (bookFormBtn) {
     }, 260)
   })
 }
+
+// ==============================
+//  FOOD MENU — loads from API
+// ==============================
+const MENU_API = 'https://6a06dff0946d9cf169ac63e2.base44.app/functions/getMenuItems';
+let menuItems = [];
+let activeMenuCat = 'Breakfast';
+
+async function loadMenu() {
+  const grid = document.getElementById('menu-grid');
+  if (!grid) return;
+
+  try {
+    const res = await fetch(MENU_API);
+    const data = await res.json();
+    menuItems = data.items || [];
+    renderMenuGrid();
+  } catch (e) {
+    const grid = document.getElementById('menu-grid');
+    if (grid) grid.innerHTML = '<div class="menu-empty">⚠️ Could not load menu. Please try refreshing.</div>';
+  }
+}
+
+function renderMenuGrid() {
+  const grid = document.getElementById('menu-grid');
+  if (!grid) return;
+
+  const filtered = menuItems.filter(i => i.category === activeMenuCat);
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="menu-empty">No items available in this category right now.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(item => `
+    <div class="menu-card ${item.is_featured ? 'featured' : ''}">
+      ${item.is_featured ? '<span class="featured-badge">⭐ Featured</span>' : ''}
+      <div class="menu-card-top">
+        <span class="menu-card-name">${item.name}</span>
+        <span class="menu-card-price">UGX ${Number(item.price).toLocaleString()}</span>
+      </div>
+      ${item.description ? `<p class="menu-card-desc">${item.description}</p>` : ''}
+    </div>
+  `).join('');
+}
+
+// Wire up menu tabs
+document.querySelectorAll('.menu-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeMenuCat = tab.dataset.cat;
+    renderMenuGrid();
+  });
+});
+
+// Also add "menu" to the bottom nav section tracker
+const bottomNavSections = ['home', 'rooms', 'reservation', 'menu', 'contact'];
+
+// Load menu on page load
+loadMenu();
