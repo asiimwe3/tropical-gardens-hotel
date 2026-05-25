@@ -120,8 +120,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const cin = document.getElementById('checkin')
   const cout = document.getElementById('checkout')
+  const quickCin = document.getElementById('quick-checkin')
+  const quickCout = document.getElementById('quick-checkout')
   if (cin) { cin.value = fmt(tomorrow); cin.min = fmt(today) }
   if (cout) { cout.value = fmt(dayAfter); cout.min = fmt(tomorrow) }
+  if (quickCin) { quickCin.value = fmt(tomorrow); quickCin.min = fmt(today) }
+  if (quickCout) { quickCout.value = fmt(dayAfter); quickCout.min = fmt(tomorrow) }
   if (cin && cout) {
     cin.addEventListener('change', () => {
       const next = new Date(cin.value); next.setDate(next.getDate() + 1)
@@ -129,9 +133,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cout.value <= cin.value) cout.value = fmt(next)
     })
   }
+  if (quickCin && quickCout) {
+    quickCin.addEventListener('change', () => {
+      const next = new Date(quickCin.value); next.setDate(next.getDate() + 1)
+      quickCout.min = fmt(next)
+      if (quickCout.value <= quickCin.value) quickCout.value = fmt(next)
+    })
+  }
 
   // Scroll reveal
-  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card')
+  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card, .event-card, .review-card, .tourism-cards div, .experience-list div')
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
@@ -154,6 +165,37 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial active state
   updateBottomNav()
 })
+
+function handleQuickBooking(e) {
+  e.preventDefault()
+  const room = document.getElementById('quick-room')?.value || 'Room'
+  const checkin = document.getElementById('quick-checkin')?.value
+  const checkout = document.getElementById('quick-checkout')?.value
+  const guests = document.getElementById('quick-guests')?.value
+  const reservation = document.getElementById('reservation')
+
+  const roomSelect = document.querySelector('.res-form select')
+  if (roomSelect) {
+    const match = Array.from(roomSelect.options).find(option => room.includes(option.value) || option.value.includes(room))
+    if (match) roomSelect.value = match.value
+  }
+
+  if (checkin) document.getElementById('checkin').value = checkin
+  if (checkout) document.getElementById('checkout').value = checkout
+  if (guests) {
+    const guestSelects = document.querySelectorAll('.res-form select')
+    const guestSelect = guestSelects[1]
+    if (guestSelect) {
+      const match = Array.from(guestSelect.options).find(option => option.textContent === guests)
+      if (match) guestSelect.value = match.value
+    }
+  }
+
+  if (reservation) {
+    reservation.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    showToast('Availability request ready. Complete your reservation details.')
+  }
+}
 
 // ---- SCROLL EVENTS ----
 window.addEventListener('scroll', () => {
