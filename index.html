@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tropical Gardens Hotel Kyenjojo — Where Afodability Meets A Class</title>
+  <meta name="description" content="Tropical Gardens Hotel — the best hotel in Kyenjojo, Uganda. Experience tranquility, luxury accommodation, conference facilities, restaurant, gardens & bar." />
+  <link rel="icon" href="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/cropped-WhatsApp-Image-2023-06-12-at-09.09.16-e1686554190814-32x32.jpeg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <span>📍 Address: Kyenjojo, Uganda</span>
+      <span>📞 Call Us: <a href="tel:0782460683">0782460683</a></span>
+      <span>✉️ <a href="mailto:tropicalgardenshotel@gmail.com">tropicalgardenshotel@gmail.com</a></span>
+      <div class="topbar-social">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Twitter">t</a>
+        <a href="#" aria-label="Instagram">ig</a>
+        <a href="#" aria-label="YouTube">yt</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="#home" class="logo">
+        <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Tropical Gardens Hotel Logo" class="logo-img" />
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#services">Our Services</a></li>
+        <li><a href="#rooms">Rooms</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#reservation" class="nav-cta">Make Reservation</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO SLIDER -->
+  <section id="home" class="hero">
+    <div class="hero-slides">
+      <div class="hero-slide active" style="background-image: url('https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg')">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="hero-tag">Welcome to Tropical Gardens Hotel</p>
+          <h1>Experience Tranquility<br /><span>and Luxury in Kyenjojo</span></h1>
+          <p class="hero-sub">The best hotel in Kyenjojo where guests can escape the hustle and bustle of daily life and immerse themselves in tranquility, comfort, and warm Ugandan hospitality.</p>
+          <div class="hero-btns">
+            <a href="#reservation" class="btn btn-primary">Make Reservation</a>
+            <a href="#about" class="btn btn-outline">Discover More</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-slide" style="background-image: url('https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg')">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="hero-tag">Private Dining Options</p>
+          <h1>Intimate Dining<br /><span>for Every Occasion</span></h1>
+          <p class="hero-sub">Enjoy a delicious breakfast, a leisurely lunch, or a romantic dinner in a warm and inviting ambiance.</p>
+          <div class="hero-btns">
+            <a href="#services" class="btn btn-primary">Our Restaurant</a>
+            <a href="#gallery" class="btn btn-outline">View Gallery</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-slide" style="background-image: url('https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg')">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="hero-tag">Explore Our Serene Gardens</p>
+          <h1>Escape to Nature's<br /><span>Paradise</span></h1>
+          <p class="hero-sub">Immerse yourself in the natural beauty of our gardens, where vibrant flowers, native flora, and tranquil pathways await.</p>
+          <div class="hero-btns">
+            <a href="#reservation" class="btn btn-primary">Book Your Stay</a>
+            <a href="#services" class="btn btn-outline">Our Services</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Slider controls -->
+    <button class="slide-prev" onclick="changeSlide(-1)">&#8249;</button>
+    <button class="slide-next" onclick="changeSlide(1)">&#8250;</button>
+    <div class="slide-dots" id="slide-dots"></div>
+  </section>
+
+  <!-- QUICK STATS -->
+  <section class="stats-bar">
+    <div class="stats-container">
+      <div class="stat-item">
+        <strong>🏨</strong>
+        <span>Comfortable Rooms</span>
+      </div>
+      <div class="stat-item">
+        <strong>🍽️</strong>
+        <span>Restaurant & Bar</span>
+      </div>
+      <div class="stat-item">
+        <strong>🤝</strong>
+        <span>Conference Hall</span>
+      </div>
+      <div class="stat-item">
+        <strong>🌿</strong>
+        <span>Serene Gardens</span>
+      </div>
+      <div class="stat-item">
+        <strong>📍</strong>
+        <span>Hoima Road, Kyenjojo</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="about section">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-imgs">
+          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/1-1.jpg" alt="Tropical Gardens Hotel exterior" class="about-img-main" />
+          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-1.jpg" alt="Hotel entrance" class="about-img-secondary" />
+          <div class="about-badge">
+            <span class="badge-icon">🌿</span>
+            <span class="badge-label">Where Afodability<br/>Meets A Class</span>
+          </div>
+        </div>
+        <div class="about-text">
+          <p class="section-tag">About Us</p>
+          <h2 class="section-title">A Serene Oasis in the Heart of Kyenjojo</h2>
+          <p>Welcome to Tropical Gardens Hotel, an exquisite destination nestled in the heart of Kyenjojo, Uganda. We are delighted to provide a serene oasis where guests can escape the hustle and bustle of daily life and immerse themselves in tranquility, comfort, and warm Ugandan hospitality.</p>
+          <p>Tropical Gardens Hotel has a rich history that dates back several decades. Our journey began with a vision to create a haven of relaxation and rejuvenation amidst the natural beauty of Kyenjojo. Over the years, we have cultivated a deep understanding of our guests' desires and aspirations, allowing us to continuously refine our offerings and exceed expectations.</p>
+
+          <div class="why-grid">
+            <div class="why-item">
+              <div class="why-icon">⭐</div>
+              <div>
+                <strong>Memorable Experiences</strong>
+                <p>Create lasting memories with our personalized service, warm hospitality, and unique offerings.</p>
+              </div>
+            </div>
+            <div class="why-item">
+              <div class="why-icon">🏛️</div>
+              <div>
+                <strong>Versatile Event Spaces</strong>
+                <p>Host conferences, weddings, or social gatherings in our flexible spaces with professional support.</p>
+              </div>
+            </div>
+            <div class="why-item">
+              <div class="why-icon">🤝</div>
+              <div>
+                <strong>Genuine Hospitality</strong>
+                <p>Our dedicated team ensures every guest feels welcomed, valued, and cared for throughout their stay.</p>
+              </div>
+            </div>
+          </div>
+          <a href="#reservation" class="btn btn-primary">Book Your Stay</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="services section bg-cream">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Our Facilities</p>
+        <h2 class="section-title">OUR HOTEL FACILITIES</h2>
+        <p class="section-sub">Everything you need for a perfect stay — all in one place in Kyenjojo.</p>
+      </div>
+      <div class="services-grid">
+
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery1.jpg" alt="Conference Hall" />
+          </div>
+          <div class="service-body">
+            <div class="service-icon">🤝</div>
+            <h3>Conference Hall</h3>
+            <p>Host your next business event or social gathering in our state-of-the-art conference hall with ample space and modern amenities. Perfect for corporate events, seminars, and workshops.</p>
+            <a href="#reservation" class="btn btn-outline-dark">Enquire Now</a>
+          </div>
+        </div>
+
+        <div class="service-card featured">
+          <div class="service-featured-tag">Most Booked</div>
+          <div class="service-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-min.jpg" alt="Accommodation" />
+          </div>
+          <div class="service-body">
+            <div class="service-icon">🏨</div>
+            <h3>Accommodation</h3>
+            <p>Relax and unwind in our comfortable and well-appointed guest rooms. Each room is designed with your comfort in mind — from Standard Rooms to Deluxe Rooms and Family Suites.</p>
+            <a href="#rooms" class="btn btn-primary">View Rooms</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/13.jpg" alt="Restaurant" />
+          </div>
+          <div class="service-body">
+            <div class="service-icon">🍽️</div>
+            <h3>Restaurant</h3>
+            <p>Enjoy a delicious breakfast, a leisurely lunch, or a romantic dinner in a warm and inviting ambiance. Our kitchen celebrates the rich flavours of Uganda alongside international cuisine.</p>
+            <a href="#contact" class="btn btn-outline-dark">Reserve a Table</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-1.jpg" alt="Gardens & Play" />
+          </div>
+          <div class="service-body">
+            <div class="service-icon">🌿</div>
+            <h3>Gardens &amp; Play</h3>
+            <p>Immerse yourself in the natural beauty of our gardens, where vibrant flowers, native flora, and tranquil pathways await. Perfect for relaxation and leisure activities.</p>
+            <a href="#gallery" class="btn btn-outline-dark">See Gallery</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/12.jpg" alt="Bar" />
+          </div>
+          <div class="service-body">
+            <div class="service-icon">🍹</div>
+            <h3>Bar</h3>
+            <p>Unwind and socialize in our vibrant bar, offering an extensive selection of beverages to suit every taste. From local beers to cocktails and imported wines.</p>
+            <a href="#reservation" class="btn btn-outline-dark">Book a Visit</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-1.jpg" alt="Events & Weddings" />
+          </div>
+          <div class="service-body">
+            <div class="service-icon">💍</div>
+            <h3>Events &amp; Weddings</h3>
+            <p>Our versatile event spaces and professional events team will ensure every detail of your wedding, party, or celebration is perfectly taken care of.</p>
+            <a href="#contact" class="btn btn-outline-dark">Enquire Now</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOMS -->
+  <section id="rooms" class="rooms section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Accommodation</p>
+        <h2 class="section-title">Our Rooms &amp; Suites</h2>
+        <p class="section-sub">At Tropical Gardens Hotel, we offer a range of comfortable and well-appointed accommodations designed to provide a relaxing and enjoyable stay.</p>
+      </div>
+      <div class="rooms-grid">
+
+        <div class="room-card">
+          <div class="room-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/4-min.jpg" alt="Standard Room" />
+            <div class="room-badge">Standard Room</div>
+          </div>
+          <div class="room-body">
+            <h3>Standard Room</h3>
+            <p>A clean, comfortable and well-appointed room ideal for solo travellers or couples. Designed with your comfort in mind for a peaceful stay in Kyenjojo.</p>
+            <ul class="room-features">
+              <li>🛏 Comfortable Bed</li>
+              <li>📺 TV</li>
+              <li>❄️ Air Conditioning</li>
+              <li>🚿 En-suite Bathroom</li>
+            </ul>
+            <a href="#reservation" class="btn btn-outline-dark">Book Now</a>
+          </div>
+        </div>
+
+        <div class="room-card featured">
+          <div class="room-featured-tag">Popular Choice</div>
+          <div class="room-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3.jpg" alt="Deluxe Room" />
+            <div class="room-badge">Deluxe Room</div>
+          </div>
+          <div class="room-body">
+            <h3>Deluxe Room</h3>
+            <p>A spacious, elegantly furnished room with premium amenities and beautiful views of our tropical gardens. Perfect for a relaxing and indulgent stay.</p>
+            <ul class="room-features">
+              <li>🛏 King-size Bed</li>
+              <li>🌿 Garden View</li>
+              <li>📶 Wi-Fi Access</li>
+              <li>🛁 Private Bathroom</li>
+            </ul>
+            <a href="#reservation" class="btn btn-primary">Book Now</a>
+          </div>
+        </div>
+
+        <div class="room-card">
+          <div class="room-img">
+            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/11.jpg" alt="Family Suite" />
+            <div class="room-badge">Family Suite</div>
+          </div>
+          <div class="room-body">
+            <h3>Family Suite</h3>
+            <p>Spacious suite designed for families, with multiple beds, a sitting area, and all the comforts you need for a memorable family stay in Kyenjojo.</p>
+            <ul class="room-features">
+              <li>🛏 Multiple Beds</li>
+              <li>🛋️ Sitting Area</li>
+              <li>👨‍👩‍👧 Family Friendly</li>
+              <li>🚿 Large Bathroom</li>
+            </ul>
+            <a href="#reservation" class="btn btn-outline-dark">Book Now</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- AERIAL VIEW BANNER -->
+  <section class="banner-aerial">
+    <div class="banner-bg" style="background-image: url('https://tropicalgardenshotel.com/wp-content/uploads/2023/06/9.jpg')"></div>
+    <div class="banner-overlay"></div>
+    <div class="banner-content">
+      <h2>A Stunning Venue for Every Occasion</h2>
+      <p>From intimate gatherings to grand wedding receptions — our grounds can accommodate up to 500 guests. Breathtaking aerial views of our event spaces and lush gardens.</p>
+      <a href="#contact" class="btn btn-gold">Request a Quote</a>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery" class="gallery section bg-cream">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Gallery</p>
+        <h2 class="section-title">Check Out Our Gallery</h2>
+        <p class="section-sub">A glimpse of life at Tropical Gardens Hotel — rooms, gardens, events, and more.</p>
+      </div>
+      <div class="gallery-filter">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="rooms">Rooms</button>
+        <button class="filter-btn" data-filter="gardens">Gardens</button>
+        <button class="filter-btn" data-filter="events">Events</button>
+        <button class="filter-btn" data-filter="exterior">Exterior</button>
+      </div>
+      <div class="gallery-grid" id="gallery-grid">
+        <div class="gallery-item" data-category="exterior"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/1-1.jpg" alt="Hotel Exterior" /></div>
+        <div class="gallery-item" data-category="rooms"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/4-min.jpg" alt="Room" /></div>
+        <div class="gallery-item" data-category="rooms"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3.jpg" alt="Deluxe Room" /></div>
+        <div class="gallery-item" data-category="events"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/9.jpg" alt="Events" /></div>
+        <div class="gallery-item" data-category="exterior"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-1.jpg" alt="Hotel Buildings" /></div>
+        <div class="gallery-item" data-category="gardens"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-1.jpg" alt="Hotel Gardens" /></div>
+        <div class="gallery-item" data-category="rooms"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/11.jpg" alt="Family Suite" /></div>
+        <div class="gallery-item" data-category="rooms"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg" alt="Room Interior" /></div>
+        <div class="gallery-item" data-category="exterior"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-2.jpg" alt="Hotel Entrance" /></div>
+        <div class="gallery-item" data-category="exterior"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/6-2.jpg" alt="Hotel Grounds" /></div>
+        <div class="gallery-item" data-category="rooms"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-min.jpg" alt="Room" /></div>
+        <div class="gallery-item" data-category="gardens"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg" alt="Garden" /></div>
+        <div class="gallery-item" data-category="exterior"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/4-2.jpg" alt="Hotel Gate" /></div>
+        <div class="gallery-item" data-category="rooms"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/6-min.jpg" alt="Bathroom" /></div>
+        <div class="gallery-item" data-category="events"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery2.jpg" alt="Event" /></div>
+        <div class="gallery-item" data-category="exterior"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/1-min.jpg" alt="Hotel View" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESERVATION -->
+  <section id="reservation" class="reservation section">
+    <div class="container">
+      <div class="res-grid">
+        <div class="res-info">
+          <p class="section-tag">Make a Reservation</p>
+          <h2 class="section-title">Book Your Stay at Tropical Gardens Hotel</h2>
+          <p>Whether you're visiting Kyenjojo for business, a family trip, or a romantic getaway — we have the perfect room for you. Fill in the form and we'll confirm your reservation promptly.</p>
+          <div class="res-contact-list">
+            <div class="res-contact-item">
+              <span>📞</span>
+              <div>
+                <strong>Call / WhatsApp</strong>
+                <p><a href="tel:0782460683">0782460683</a> &nbsp;|&nbsp; <a href="tel:0701437896">0701437896</a></p>
+              </div>
+            </div>
+            <div class="res-contact-item">
+              <span>📞</span>
+              <div>
+                <strong>Also Available</strong>
+                <p><a href="tel:0789531470">0789 531470</a></p>
+              </div>
+            </div>
+            <div class="res-contact-item">
+              <span>✉️</span>
+              <div>
+                <strong>Email</strong>
+                <p><a href="mailto:tropicalgardenshotel@gmail.com">tropicalgardenshotel@gmail.com</a><br/><a href="mailto:info@tropicalgardenshotel.com">info@tropicalgardenshotel.com</a></p>
+              </div>
+            </div>
+            <div class="res-contact-item">
+              <span>📍</span>
+              <div>
+                <strong>Location</strong>
+                <p>JJ9V+2V6, Hoima Road, Kyenjojo, Uganda</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="res-form-wrap">
+          <form class="res-form" onsubmit="handleReservation(event)">
+            <h3>Reservation Details</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" placeholder="First name" required />
+              </div>
+              <div class="form-group">
+                <label>Last Name *</label>
+                <input type="text" placeholder="Last name" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" placeholder="your@email.com" required />
+              </div>
+              <div class="form-group">
+                <label>Phone *</label>
+                <input type="tel" placeholder="+256 7XX XXX XXX" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Check-in Date *</label>
+                <input type="date" id="checkin" required />
+              </div>
+              <div class="form-group">
+                <label>Check-out Date *</label>
+                <input type="date" id="checkout" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Room Type</label>
+                <select>
+                  <option>Standard Room</option>
+                  <option>Deluxe Room</option>
+                  <option>Family Suite</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Number of Guests</label>
+                <select>
+                  <option>1 Guest</option>
+                  <option selected>2 Guests</option>
+                  <option>3 Guests</option>
+                  <option>4+ Guests</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Special Requests</label>
+              <textarea placeholder="Any special requests or requirements..." rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary full-btn">Submit Reservation</button>
+            <p class="form-note">🔒 Your information is safe. We'll confirm within 24 hours.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact section bg-cream">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Get in Touch</p>
+        <h2 class="section-title">Contact Us</h2>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <span class="c-icon">📍</span>
+          <h4>Our Address</h4>
+          <p>JJ9V+2V6, Hoima Road<br/>Kyenjojo, Uganda</p>
+          <a href="https://maps.google.com/?q=Tropical+Gardens+Hotel+Kyenjojo" target="_blank" class="c-link">View on Map →</a>
+        </div>
+        <div class="contact-card">
+          <span class="c-icon">📞</span>
+          <h4>Phone Numbers</h4>
+          <p><a href="tel:+2560782460683">+256 0782 460683</a></p>
+          <p><a href="tel:+2560701437896">+256 0701 437896</a></p>
+          <p><a href="tel:+256789531470">+256 789 531470</a></p>
+        </div>
+        <div class="contact-card">
+          <span class="c-icon">✉️</span>
+          <h4>Email Us</h4>
+          <p><a href="mailto:tropicalgardenshotel@gmail.com">tropicalgardenshotel@gmail.com</a></p>
+          <p><a href="mailto:info@tropicalgardenshotel.com">info@tropicalgardenshotel.com</a></p>
+        </div>
+        <div class="contact-card">
+          <span class="c-icon">🕐</span>
+          <h4>We're Always Open</h4>
+          <p>Reception: 24 hours a day</p>
+          <p>Restaurant: 7:00 AM – 10:00 PM</p>
+          <p>Bar: 10:00 AM – 11:00 PM</p>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form-outer">
+        <form class="contact-form-center" onsubmit="handleContact(event)">
+          <h3>Send Us a Message</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" placeholder="First name" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" placeholder="Last name" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" placeholder="your@email.com" required />
+          </div>
+          <div class="form-group">
+            <label>Message *</label>
+            <textarea placeholder="How can we help you?" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary full-btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Tropical Gardens Hotel" class="footer-logo-img" />
+          <p>At Tropical Gardens Hotel, we pride ourselves on being a serene oasis nestled in the heart of Kyenjojo. With our commitment to warm hospitality and exceptional service, we strive to be your preferred destination.</p>
+          <div class="footer-social">
+            <a href="#">f</a><a href="#">t</a><a href="#">ig</a><a href="#">yt</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#services">Our Services</a></li>
+            <li><a href="#rooms">Rooms</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="#rooms">Accommodation</a></li>
+            <li><a href="#services">Conference Hall</a></li>
+            <li><a href="#services">Restaurant</a></li>
+            <li><a href="#services">Gardens &amp; Play</a></li>
+            <li><a href="#services">Bar</a></li>
+            <li><a href="#services">Events &amp; Weddings</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact Info</h4>
+          <p>📍 JJ9V+2V6, Hoima Road, Kyenjojo</p>
+          <p>📞 <a href="tel:0782460683">0782460683</a></p>
+          <p>📞 <a href="tel:0701437896">0701437896</a></p>
+          <p>✉️ <a href="mailto:tropicalgardenshotel@gmail.com">tropicalgardenshotel@gmail.com</a></p>
+          <p>✉️ <a href="mailto:info@tropicalgardenshotel.com">info@tropicalgardenshotel.com</a></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 Tropical Gardens Hotel Kyenjojo. All Rights Reserved.</p>
+        <p>Powered by <strong>Webstar Uganda</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WHATSAPP FLOAT -->
+  <a href="https://wa.me/256782460683" class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="white" width="28" height="28"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
