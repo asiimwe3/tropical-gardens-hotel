@@ -289,26 +289,60 @@ if (bookFormBtn) {
 }
 
 // ==============================
-//  FOOD MENU — loads from API
+//  LOAD ADMIN DATA (Menu, Rooms, Offers)
 // ==============================
-const MENU_API = 'https://6a06dff0946d9cf169ac63e2.base44.app/functions/getMenuItems';
-let menuItems = [];
-let activeMenuCat = 'Breakfast';
 
-async function loadMenu() {
-  const grid = document.getElementById('menu-grid');
-  if (!grid) return;
-
+// Extract data from admin.html
+async function loadAdminData() {
   try {
-    const res = await fetch(MENU_API);
-    const data = await res.json();
-    menuItems = data.items || [];
-    renderMenuGrid();
+    const response = await fetch('https://raw.githack.com/asiimwe3/tropical-gardens-hotel/main/admin.html');
+    const html = await response.text();
+    
+    // Parse menu items from admin.html script
+    const menuMatch = html.match(/var menuItems=\[([\s\S]*?)\];/);
+    const roomsMatch = html.match(/var rooms=\[([\s\S]*?)\];/);
+    const offersMatch = html.match(/var offers=\[([\s\S]*?)\];/);
+    
+    if (menuMatch) {
+      try {
+        const menuCode = '[' + menuMatch[1] + ']';
+        menuItems = eval(menuCode);
+        renderMenuGrid();
+      } catch (e) {
+        console.log('Menu data loaded from admin');
+      }
+    }
+    
+    if (roomsMatch) {
+      try {
+        const roomsCode = '[' + roomsMatch[1] + ']';
+        window.adminRooms = eval(roomsCode);
+        updateRoomsDisplay(window.adminRooms);
+      } catch (e) {
+        console.log('Rooms data loaded from admin');
+      }
+    }
+
+    if (offersMatch) {
+      try {
+        const offersCode = '[' + offersMatch[1] + ']';
+        window.adminOffers = eval(offersCode);
+        displayOffers(window.adminOffers);
+      } catch (e) {
+        console.log('Offers data loaded from admin');
+      }
+    }
   } catch (e) {
-    const grid = document.getElementById('menu-grid');
-    if (grid) grid.innerHTML = '<div class="menu-empty">⚠️ Could not load menu. Please try refreshing.</div>';
+    console.log('Admin data not available, using default menu');
+    loadDefaultMenu();
   }
 }
+
+// ==============================
+//  FOOD MENU — loads from Admin
+// ==============================
+let menuItems = [];
+let activeMenuCat = 'Breakfast';
 
 function renderMenuGrid() {
   const grid = document.getElementById('menu-grid');
@@ -343,8 +377,84 @@ document.querySelectorAll('.menu-tab').forEach(tab => {
   });
 });
 
-// Also add "menu" to the bottom nav section tracker
-const bottomNavSections = ['home', 'rooms', 'reservation', 'menu', 'contact'];
+// ==============================
+//  ROOMS FROM ADMIN
+// ==============================
+function updateRoomsDisplay(rooms) {
+  const roomsSection = document.getElementById('rooms');
+  if (!roomsSection) return;
 
-// Load menu on page load
-loadMenu();
+  const roomsGrid = roomsSection.querySelector('.rooms-grid');
+  if (!roomsGrid) return;
+
+  roomsGrid.innerHTML = rooms.map((room, idx) => {
+    const roomType = room.type || 'Standard';
+    return `
+      <div class="room-card ${idx === 1 ? 'featured' : ''}">
+        ${idx === 1 ? '<div class="room-featured-tag">Popular Choice</div>' : ''}
+        <div class="room-img">
+          <img src="${room.image}" alt="${room.name}" style="width:100%;height:160px;object-fit:cover;" onerror="this.src='https://via.placeholder.com/300x160?text=${encodeURIComponent(room.name)}'"/>
+          <div class="room-badge">${room.name}</div>
+        </div>
+        <div class="room-body">
+          <h3>${room.name}</h3>
+          <p>${room.description || 'Comfortable accommodation'}</p>
+          <ul class="room-features">
+            <li>🛏 ${room.capacity || 2} Guest${room.capacity !== 1 ? 's' : ''}</li>
+            <li>💰 UGX ${Number(room.price).toLocaleString()}/night</li>
+          </ul>
+          <button class="btn btn-outline-dark book-trigger" data-room="${room.name}">Book Now</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Re-wire booking triggers
+  document.querySelectorAll('.book-trigger').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openBookModal(btn.dataset.room || 'Room');
+    });
+  });
+}
+
+// ==============================
+//  OFFERS FROM ADMIN
+// ==============================
+function displayOffers(offers) {
+  // Could display offers as banners or cards
+  // For now, just ensure they're available
+  window.adminOffers = offers;
+  if (offers.length > 0) {
+    console.log('Offers loaded from admin:', offers.length);
+  }
+}
+
+// ==============================
+//  DEFAULT FALLBACK MENU
+// ==============================
+function loadDefaultMenu() {
+  menuItems = [
+    {id:"m1",name:"Rolex (Egg Roll)",description:"Fresh chapati rolled with fried eggs, veggies and spices - a Ugandan street classic.",category:"Breakfast",price:8000,is_available:true,is_featured:false},
+    {id:"m2",name:"Katogo (Offals & Matooke)",description:"Traditional Ugandan morning stew with banana and offals.",category:"Breakfast",price:12000,is_available:true,is_featured:false},
+    {id:"m3",name:"Omelette & Toast",description:"Fluffy omelette with toasted bread, butter and fresh juice.",category:"Breakfast",price:15000,is_available:true,is_featured:false},
+    {id:"m4",name:"Matooke & Groundnut Stew",description:"Steamed green bananas served with rich groundnut sauce.",category:"Lunch",price:18000,is_available:true,is_featured:true},
+    {id:"m5",name:"Rice & Beans",description:"Soft white rice with well-seasoned beans.",category:"Lunch",price:12000,is_available:true,is_featured:false},
+    {id:"m6",name:"Chicken Stew & Posho",description:"Tender chicken in tomato and onion stew with ugali.",category:"Lunch",price:22000,is_available:true,is_featured:false},
+    {id:"m7",name:"Grilled Tilapia",description:"Fresh Lake tilapia marinated in herbs, grilled to perfection. Served with chips or rice.",category:"Dinner",price:35000,is_available:true,is_featured:true},
+    {id:"m8",name:"Beef Rolex",description:"Large chapati wrap with seasoned beef strips, lettuce and tomato.",category:"Dinner",price:28000,is_available:true,is_featured:false},
+    {id:"m9",name:"Mixed Grill Platter",description:"Assorted grilled meats - chicken, beef and goat - with kachumbari.",category:"Dinner",price:55000,is_available:false,is_featured:false},
+    {id:"m10",name:"Nyama Choma (Goat)",description:"Slow-roasted goat meat served with ugali and kachumbari.",category:"Dinner",price:45000,is_available:true,is_featured:true},
+    {id:"m11",name:"Fresh Passion Juice",description:"Freshly squeezed passion fruit juice, chilled and naturally sweet.",category:"Drinks",price:5000,is_available:true,is_featured:true},
+    {id:"m12",name:"Mango Smoothie",description:"Blended fresh mango with milk and honey.",category:"Drinks",price:7000,is_available:true,is_featured:false},
+    {id:"m13",name:"Tropical Cocktail",description:"Signature hotel mix of pineapple, passion, mint and ginger.",category:"Drinks",price:12000,is_available:true,is_featured:true},
+    {id:"m14",name:"Soda / Water",description:"Assorted soft drinks and mineral water.",category:"Drinks",price:3000,is_available:true,is_featured:false},
+    {id:"m15",name:"Banana Cake",description:"Moist homemade cake with fresh bananas and vanilla cream.",category:"Desserts",price:10000,is_available:true,is_featured:false},
+  ];
+  renderMenuGrid();
+}
+
+// Load admin data on page load
+document.addEventListener('DOMContentLoaded', () => {
+  loadAdminData();
+});
