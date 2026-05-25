@@ -35,6 +35,7 @@ body {
   background: var(--white);
   line-height: 1.65;
   overflow-x: hidden;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 img { display: block; width: 100%; object-fit: cover; }
 a { text-decoration: none; color: inherit; }
@@ -43,6 +44,185 @@ ul { list-style: none; }
 .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 .section { padding: 90px 0; }
 .bg-cream { background: var(--cream); }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1.5px solid rgba(46,125,50,0.22);
+  border-radius: 999px;
+  background: var(--green-pale);
+  color: var(--green-dark);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  border-color: var(--gold);
+  background: var(--gold-light);
+  color: var(--charcoal);
+}
+.theme-toggle [data-theme-icon] {
+  font-size: 1rem;
+  line-height: 1;
+}
+.mobile-actions { display: flex; align-items: center; gap: 8px; }
+.theme-toggle-mobile {
+  width: 40px;
+  min-height: 40px;
+  padding: 0;
+}
+
+html[data-theme="dark"] {
+  --green: #d4a23a;
+  --green-dark: #9f741f;
+  --green-light: #f0bf55;
+  --green-pale: rgba(212,162,58,0.13);
+  --gold: #dba642;
+  --gold-light: #ffe08a;
+  --ivory: #1c160c;
+  --stone: #2c2417;
+  --charcoal: #fff2c5;
+  --cream: #171209;
+  --dark: #f8edca;
+  --gray: #c8b98c;
+  --white: #11100d;
+  --shadow: 0 4px 24px rgba(0,0,0,0.38);
+  --shadow-lg: 0 18px 58px rgba(0,0,0,0.5);
+}
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at top left, rgba(219,166,66,0.16), transparent 34rem),
+    linear-gradient(180deg, #141006 0%, #0c0b08 100%);
+}
+html[data-theme="dark"] .bg-cream,
+html[data-theme="dark"] .booking-panel {
+  background: #171209;
+}
+html[data-theme="dark"] #navbar,
+html[data-theme="dark"] .mobile-header,
+html[data-theme="dark"] .mobile-bottom-nav {
+  background: rgba(17,16,13,0.94);
+  border-color: rgba(255,224,138,0.17);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.34);
+  backdrop-filter: blur(14px);
+}
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .reservation,
+html[data-theme="dark"] .footer {
+  background: linear-gradient(135deg, #1b1305 0%, #0b1009 100%);
+}
+html[data-theme="dark"] .hero-overlay {
+  background: linear-gradient(135deg, rgba(17,11,2,0.82) 0%, rgba(111,77,18,0.48) 55%, rgba(0,0,0,0.68) 100%);
+}
+html[data-theme="dark"] .nav-links a:hover,
+html[data-theme="dark"] .menu-footer,
+html[data-theme="dark"] .theme-toggle {
+  background: rgba(219,166,66,0.16);
+  color: var(--gold-light);
+  border-color: rgba(255,224,138,0.28);
+}
+html[data-theme="dark"] .theme-toggle:hover,
+html[data-theme="dark"] .nav-cta,
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .btn-gold,
+html[data-theme="dark"] .mobile-call-btn,
+html[data-theme="dark"] .mob-nav-book {
+  background: linear-gradient(135deg, #ffe08a 0%, #dba642 62%, #a7731d 100%) !important;
+  color: #201304 !important;
+  border-color: rgba(255,224,138,0.9) !important;
+  box-shadow: 0 10px 24px rgba(219,166,66,0.26);
+}
+html[data-theme="dark"] .btn-outline-dark,
+html[data-theme="dark"] .filter-btn,
+html[data-theme="dark"] .menu-tab {
+  color: var(--gold-light);
+  border-color: rgba(255,224,138,0.38);
+  background: rgba(255,224,138,0.04);
+}
+html[data-theme="dark"] .btn-outline-dark:hover,
+html[data-theme="dark"] .filter-btn.active,
+html[data-theme="dark"] .filter-btn:hover,
+html[data-theme="dark"] .menu-tab.active,
+html[data-theme="dark"] .menu-tab:hover {
+  background: var(--gold);
+  color: #201304;
+  border-color: var(--gold);
+}
+html[data-theme="dark"] .booking-card,
+html[data-theme="dark"] .service-card,
+html[data-theme="dark"] .room-card,
+html[data-theme="dark"] .event-card,
+html[data-theme="dark"] .tourism-cards div,
+html[data-theme="dark"] .experience-list div,
+html[data-theme="dark"] .contact-card,
+html[data-theme="dark"] .contact-form-center,
+html[data-theme="dark"] .res-form-wrap,
+html[data-theme="dark"] .review-card,
+html[data-theme="dark"] .book-modal,
+html[data-theme="dark"] .menu-card {
+  background: linear-gradient(180deg, rgba(33,26,14,0.98), rgba(20,16,10,0.98));
+  border-color: rgba(255,224,138,0.18);
+  box-shadow: 0 14px 38px rgba(0,0,0,0.34);
+}
+html[data-theme="dark"] .service-card,
+html[data-theme="dark"] .room-card,
+html[data-theme="dark"] .contact-card,
+html[data-theme="dark"] .menu-card,
+html[data-theme="dark"] .event-card,
+html[data-theme="dark"] .review-card {
+  border: 1px solid rgba(255,224,138,0.15);
+}
+html[data-theme="dark"] .service-card.featured,
+html[data-theme="dark"] .room-card.featured,
+html[data-theme="dark"] .menu-card.featured {
+  border-color: var(--gold);
+}
+html[data-theme="dark"] .about-badge,
+html[data-theme="dark"] .service-featured-tag,
+html[data-theme="dark"] .room-featured-tag,
+html[data-theme="dark"] .room-badge,
+html[data-theme="dark"] .featured-badge {
+  background: var(--gold);
+  color: #201304;
+}
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .form-group select,
+html[data-theme="dark"] .form-group textarea,
+html[data-theme="dark"] .booking-field input,
+html[data-theme="dark"] .booking-field select {
+  background: #0d0c09;
+  border-color: rgba(255,224,138,0.26);
+  color: var(--dark);
+}
+html[data-theme="dark"] .form-group input:focus,
+html[data-theme="dark"] .form-group select:focus,
+html[data-theme="dark"] .form-group textarea:focus,
+html[data-theme="dark"] .booking-field input:focus,
+html[data-theme="dark"] .booking-field select:focus {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 3px rgba(219,166,66,0.16);
+}
+html[data-theme="dark"] .book-option {
+  background: rgba(255,224,138,0.06);
+  border-color: rgba(255,224,138,0.16);
+  color: var(--dark);
+}
+html[data-theme="dark"] .book-option:hover {
+  background: rgba(255,224,138,0.13);
+  border-color: rgba(255,224,138,0.42);
+}
+html[data-theme="dark"] .book-option-icon-green,
+html[data-theme="dark"] .toast {
+  background: var(--gold) !important;
+  color: #201304;
+}
 
 /* ---- BUTTONS ---- */
 .btn {

@@ -182,6 +182,19 @@
       .hamburger-toggle{display:flex!important;}
     }
     .hamburger-toggle{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--dark);}
+    .theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:7px 12px;border:1.5px solid var(--border);border-radius:999px;background:#fff;color:var(--green-dark);font-family:"Inter",sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;transition:all 0.2s;}
+    .theme-toggle:hover{border-color:var(--gold);background:var(--gold-pale);color:#5f3900;}
+    body.dark-theme{--green:#d4a23a;--green-dark:#8a6119;--green-pale:rgba(212,162,58,0.14);--green-mid:#f0bf55;--gold:#dba642;--gold-pale:rgba(219,166,66,0.16);--dark:#f8edca;--gray:#c8b98c;--border:rgba(255,224,138,0.18);--white:#15110a;--red-pale:rgba(211,47,47,0.18);--blue-pale:rgba(21,101,192,0.18);--purple-pale:rgba(106,27,154,0.20);background:radial-gradient(circle at top left,rgba(219,166,66,0.16),transparent 32rem),#0c0b08;color:var(--dark);}
+    body.dark-theme .sidebar{background:linear-gradient(180deg,#1b1305,#0b1009);border-right:1px solid rgba(255,224,138,0.16);}
+    body.dark-theme .topbar,body.dark-theme .stat-card,body.dark-theme .widget,body.dark-theme .table-wrap,body.dark-theme .notif-compose,body.dark-theme .notif-history,body.dark-theme .offer-card,body.dark-theme .room-card,body.dark-theme .messages-layout,body.dark-theme .modal{background:linear-gradient(180deg,rgba(33,26,14,0.98),rgba(20,16,10,0.98));border:1px solid rgba(255,224,138,0.15);box-shadow:0 14px 38px rgba(0,0,0,0.34);}
+    body.dark-theme thead{background:rgba(219,166,66,0.14);}
+    body.dark-theme tr:hover td,body.dark-theme .msg-thread:hover{background:rgba(255,224,138,0.06);}
+    body.dark-theme .btn-green,body.dark-theme .btn-gold,body.dark-theme .quick-btn:hover{background:linear-gradient(135deg,#ffe08a,#dba642 62%,#a7731d);color:#201304;}
+    body.dark-theme .btn-outline,body.dark-theme .cat-tab,body.dark-theme .chip,body.dark-theme .theme-toggle{background:rgba(255,224,138,0.05);border-color:rgba(255,224,138,0.28);color:var(--gold);}
+    body.dark-theme .cat-tab.active,body.dark-theme .chip.active,body.dark-theme .theme-toggle:hover{background:var(--gold);border-color:var(--gold);color:#201304;}
+    body.dark-theme input,body.dark-theme select,body.dark-theme textarea,.dark-theme .search-input{background:#0d0c09!important;border-color:rgba(255,224,138,0.26)!important;color:var(--dark)!important;}
+    body.dark-theme .offer-card-header{background:linear-gradient(135deg,#7b5511,#dba642);color:#201304;}
+    body.dark-theme .toast{background:var(--gold);color:#201304;}
   </style>
 </head>
 <body>
@@ -214,6 +227,7 @@
     </div>
     <div class="topbar-right">
       <button class="notification-btn" onclick="showPage('notifications',null)">&#128276;<span class="badge">2</span></button>
+      <button class="theme-toggle" type="button" id="admin-theme-toggle" aria-label="Switch to dark theme"><span id="admin-theme-icon">☾</span><span id="admin-theme-label">Dark</span></button>
       <div class="admin-avatar">A</div>
       <span style="font-size:0.82rem;font-weight:600;">Admin</span>
     </div>
@@ -581,6 +595,75 @@ var messages=[
   ]}
 ];
 var menuFilter="All",resFilter="All",delType="",delId="",activeThread=null;
+var API_BASE=(window.TGH_API_BASE||localStorage.getItem("tgh_api_base")||"").replace(/\/$/,"");
+var THEME_KEY="tgh_theme";
+
+function applyAdminTheme(theme){
+  var next=theme==="dark"?"dark":"light";
+  document.body.classList.toggle("dark-theme",next==="dark");
+  localStorage.setItem(THEME_KEY,next);
+  var icon=document.getElementById("admin-theme-icon");
+  var label=document.getElementById("admin-theme-label");
+  var button=document.getElementById("admin-theme-toggle");
+  if(icon)icon.textContent=next==="dark"?"☀":"☾";
+  if(label)label.textContent=next==="dark"?"Light":"Dark";
+  if(button)button.setAttribute("aria-label",next==="dark"?"Switch to light theme":"Switch to dark theme");
+}
+function initAdminTheme(){
+  var stored=localStorage.getItem(THEME_KEY);
+  var theme=stored||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+  applyAdminTheme(theme);
+  var button=document.getElementById("admin-theme-toggle");
+  if(button)button.addEventListener("click",function(){applyAdminTheme(document.body.classList.contains("dark-theme")?"light":"dark");});
+}
+
+function apiUrl(path){return API_BASE+path;}
+async function apiFetch(path,options){
+  options=options||{};
+  var response=await fetch(apiUrl(path),Object.assign({headers:Object.assign({"Content-Type":"application/json"},options.headers||{})},options));
+  var data=await response.json().catch(function(){return {};});
+  if(!response.ok)throw new Error(data.error||data.message||"Request failed");
+  return data;
+}
+function authHeaders(){
+  var token=localStorage.getItem("tgh_admin_token");
+  return token?{Authorization:"Bearer "+token}:{};
+}
+function normalizeMenuItem(item){
+  return {id:item.id,name:item.name,description:item.description||"",category:item.category,price:Number(item.price)||0,image:item.imageUrl||item.image_url||item.image||"",is_available:item.isAvailable!==undefined?item.isAvailable:item.is_available,is_featured:item.isFeatured!==undefined?item.isFeatured:item.is_featured};
+}
+function normalizeRoom(room){
+  return {id:room.id,name:room.name,num:room.roomNumber||room.room_number||room.num||"",description:room.description||"",type:room.type||"Standard",price:Number(room.price)||0,capacity:Number(room.capacity)||2,image:room.imageUrl||room.image_url||room.image||"",is_available:room.isAvailable!==undefined?room.isAvailable:room.is_available};
+}
+function normalizeOffer(offer){
+  return {id:offer.id,title:offer.title,description:offer.description||"",discount:offer.discountPercent!==undefined?offer.discountPercent:offer.discount_percent||offer.discount||0,code:offer.code||"",from:offer.startsAt||offer.starts_at||offer.from||"",to:offer.endsAt||offer.ends_at||offer.to||"",active:offer.isActive!==undefined?offer.isActive:offer.is_active!==undefined?offer.is_active:offer.active};
+}
+function normalizeReservation(res){
+  return {id:res.id,guest:res.guestName||res.guest_name||res.guest||"",phone:res.phone||"",email:res.email||"",room:res.roomName||res.room_name||res.room||"",checkin:res.checkIn||res.check_in||res.checkin||"",checkout:res.checkOut||res.check_out||res.checkout||"",guests:Number(res.guests)||1,status:res.status||"Pending",notes:res.notes||""};
+}
+function normalizeMessage(msg){
+  return {id:msg.id,name:msg.name,phone:msg.phone||"",unread:msg.status==="Unread",msgs:[{from:"guest",text:msg.message,time:msg.createdAt||msg.created_at||""}]};
+}
+async function loadBackendData(){
+  try{
+    var publicResults=await Promise.allSettled([apiFetch("/api/menu"),apiFetch("/api/rooms"),apiFetch("/api/offers")]);
+    if(publicResults[0].status==="fulfilled"&&publicResults[0].value.menuItems)menuItems=publicResults[0].value.menuItems.map(normalizeMenuItem);
+    if(publicResults[1].status==="fulfilled"&&publicResults[1].value.rooms)rooms=publicResults[1].value.rooms.map(normalizeRoom);
+    if(publicResults[2].status==="fulfilled"&&publicResults[2].value.offers)offers=publicResults[2].value.offers.map(normalizeOffer);
+    if(localStorage.getItem("tgh_admin_token")){
+      var adminResults=await Promise.allSettled([
+        apiFetch("/api/admin/reservations",{headers:authHeaders()}),
+        apiFetch("/api/admin/messages",{headers:authHeaders()})
+      ]);
+      if(adminResults[0].status==="fulfilled"&&adminResults[0].value.reservations)reservations=adminResults[0].value.reservations.map(normalizeReservation);
+      if(adminResults[1].status==="fulfilled"&&adminResults[1].value.messages)messages=adminResults[1].value.messages.map(normalizeMessage);
+    }
+    renderMenuPage();renderRoomsPage();renderResPage();renderOffersPage();renderMessagesPage();
+    showToast("Backend data loaded","info");
+  }catch(error){
+    console.log("Backend data not available, using demo data",error);
+  }
+}
 
 function showPage(name,el){
   document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
@@ -868,6 +951,8 @@ function showToast(msg,type){
   void t.offsetWidth;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("show");},2800);
 }
 renderMenuPage();
+initAdminTheme();
+loadBackendData();
 </script>
 </body>
 </html>

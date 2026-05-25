@@ -5,6 +5,55 @@
 
 // ---- DEVICE DETECTION ----
 const isMobile = () => window.innerWidth <= 768
+const API_BASE = (window.TGH_API_BASE || localStorage.getItem('tgh_api_base') || '').replace(/\/$/, '')
+const THEME_KEY = 'tgh_theme'
+
+function preferredTheme() {
+  return localStorage.getItem(THEME_KEY) ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+}
+
+function applyTheme(theme) {
+  const nextTheme = theme === 'dark' ? 'dark' : 'light'
+  document.documentElement.dataset.theme = nextTheme
+  localStorage.setItem(THEME_KEY, nextTheme)
+  document.querySelectorAll('[data-theme-toggle]').forEach(button => {
+    const icon = button.querySelector('[data-theme-icon]')
+    const label = button.querySelector('[data-theme-label]')
+    const isDark = nextTheme === 'dark'
+    if (icon) icon.textContent = isDark ? '☀' : '☾'
+    if (label) label.textContent = isDark ? 'Light' : 'Dark'
+    button.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme')
+  })
+}
+
+applyTheme(preferredTheme())
+
+function apiUrl(path) {
+  return `${API_BASE}${path}`
+}
+
+async function apiFetch(path, options = {}) {
+  const response = await fetch(apiUrl(path), {
+    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    ...options
+  })
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok) throw new Error(data.error || data.message || 'Request failed')
+  return data
+}
+
+function setButtonLoading(button, loading, text) {
+  if (!button) return
+  if (loading) {
+    button.dataset.originalText = button.textContent
+    button.textContent = text
+    button.disabled = true
+  } else {
+    button.textContent = button.dataset.originalText || button.textContent
+    button.disabled = false
+  }
+}
 
 // ---- HERO SLIDER ----
 let currentSlide = 0
@@ -164,6 +213,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial active state
   updateBottomNav()
+  applyTheme(preferredTheme())
+
+  document.querySelectorAll('[data-theme-toggle]').forEach(button => {
+    button.addEventListener('click', () => {
+      applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark')
+    })
+  })
 })
 
 function handleQuickBooking(e) {
@@ -231,22 +287,69 @@ document.querySelectorAll('.gallery-item').forEach(item => {
 })
 
 // ---- RESERVATION FORM ----
-function handleReservation(e) {
+async function handleReservation(e) {
   e.preventDefault()
+  const form = e.target
+  const submit = form.querySelector('[type="submit"]')
   const cin = document.getElementById('checkin')?.value
   const cout = document.getElementById('checkout')?.value
   const nights = cin && cout ? Math.round((new Date(cout) - new Date(cin)) / 86400000) : 0
-  showToast(nights > 0
-    ? `✅ Reservation sent! ${nights} night${nights > 1 ? 's' : ''}. We'll confirm shortly.`
-    : '✅ Reservation sent! We\'ll contact you within 24 hours.')
-  e.target.reset()
+  const data = new FormData(form)
+  const guestName = `${data.get('firstName') || ''} ${data.get('lastName') || ''}`.trim()
+  const guests = String(data.get('guests') || '1').replace(/\D/g, '') || '1'
+
+  setButtonLoading(submit, true, 'Sending...')
+  try {
+    await apiFetch('/api/reservations', {
+      method: 'POST',
+      body: JSON.stringify({
+        guestName,
+        phone: data.get('phone'),
+        email: data.get('email') || '',
+        roomName: data.get('roomName') || '',
+        checkIn: cin,
+        checkOut: cout,
+        guests: Number(guests),
+        notes: data.get('notes') || ''
+      })
+    })
+    showToast(nights > 0
+      ? `Reservation received. ${nights} night${nights > 1 ? 's' : ''}. We'll confirm shortly.`
+      : 'Reservation received. We will contact you within 24 hours.')
+    form.reset()
+  } catch (error) {
+    showToast(`Could not send online. Please call or WhatsApp us: ${error.message}`)
+  } finally {
+    setButtonLoading(submit, false)
+  }
 }
 
 // ---- CONTACT FORM ----
-function handleContact(e) {
+async function handleContact(e) {
   e.preventDefault()
-  e.target.reset()
-  showToast('✅ Message sent! Tropical Gardens Hotel will reply soon.')
+  const form = e.target
+  const submit = form.querySelector('[type="submit"]')
+  const data = new FormData(form)
+  const name = `${data.get('firstName') || ''} ${data.get('lastName') || ''}`.trim()
+
+  setButtonLoading(submit, true, 'Sending...')
+  try {
+    await apiFetch('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify({
+        name,
+        email: data.get('email') || '',
+        message: data.get('message') || '',
+        subject: 'Website contact form'
+      })
+    })
+    form.reset()
+    showToast('Message sent. Tropical Gardens Hotel will reply soon.')
+  } catch (error) {
+    showToast(`Could not send online. Please call or WhatsApp us: ${error.message}`)
+  } finally {
+    setButtonLoading(submit, false)
+  }
 }
 
 // ---- TOAST ----
@@ -331,51 +434,33 @@ if (bookFormBtn) {
 }
 
 // ==============================
-//  LOAD ADMIN DATA (Menu, Rooms, Offers)
+//  LOAD SITE DATA (Menu, Rooms, Offers)
 // ==============================
 
-// Extract data from admin.html
-async function loadAdminData() {
+async function loadSiteData() {
   try {
-    const response = await fetch('https://raw.githack.com/asiimwe3/tropical-gardens-hotel/main/admin.html');
-    const html = await response.text();
-    
-    // Parse menu items from admin.html script
-    const menuMatch = html.match(/var menuItems=\[([\s\S]*?)\];/);
-    const roomsMatch = html.match(/var rooms=\[([\s\S]*?)\];/);
-    const offersMatch = html.match(/var offers=\[([\s\S]*?)\];/);
-    
-    if (menuMatch) {
-      try {
-        const menuCode = '[' + menuMatch[1] + ']';
-        menuItems = eval(menuCode);
-        renderMenuGrid();
-      } catch (e) {
-        console.log('Menu data loaded from admin');
-      }
-    }
-    
-    if (roomsMatch) {
-      try {
-        const roomsCode = '[' + roomsMatch[1] + ']';
-        window.adminRooms = eval(roomsCode);
-        updateRoomsDisplay(window.adminRooms);
-      } catch (e) {
-        console.log('Rooms data loaded from admin');
-      }
+    const [menuResult, roomsResult, offersResult] = await Promise.allSettled([
+      apiFetch('/api/menu'),
+      apiFetch('/api/rooms'),
+      apiFetch('/api/offers')
+    ])
+
+    if (menuResult.status === 'fulfilled' && menuResult.value.menuItems?.length) {
+      menuItems = menuResult.value.menuItems
+      renderMenuGrid()
+    } else {
+      loadDefaultMenu()
     }
 
-    if (offersMatch) {
-      try {
-        const offersCode = '[' + offersMatch[1] + ']';
-        window.adminOffers = eval(offersCode);
-        displayOffers(window.adminOffers);
-      } catch (e) {
-        console.log('Offers data loaded from admin');
-      }
+    if (roomsResult.status === 'fulfilled' && roomsResult.value.rooms?.length) {
+      updateRoomsDisplay(roomsResult.value.rooms)
+    }
+
+    if (offersResult.status === 'fulfilled' && offersResult.value.offers?.length) {
+      displayOffers(offersResult.value.offers)
     }
   } catch (e) {
-    console.log('Admin data not available, using default menu');
+    console.log('API data not available, using local fallback data');
     loadDefaultMenu();
   }
 }
@@ -418,7 +503,7 @@ function renderMenuGrid() {
 
   grid.innerHTML = filtered.map(item => {
     // Try to use item image if available, otherwise generate one
-    const imageUrl = item.image || item.img || generateFoodImage(item.name, item.category);
+    const imageUrl = item.imageUrl || item.image || item.img || generateFoodImage(item.name, item.category);
     
     return `
       <div class="menu-card ${item.is_featured ? 'featured' : ''}">
@@ -544,7 +629,7 @@ document.querySelectorAll('.menu-tab').forEach(tab => {
 });
 
 // ==============================
-//  ROOMS FROM ADMIN
+//  ROOMS FROM API
 // ==============================
 function updateRoomsDisplay(rooms) {
   const roomsSection = document.getElementById('rooms');
@@ -555,11 +640,13 @@ function updateRoomsDisplay(rooms) {
 
   roomsGrid.innerHTML = rooms.map((room, idx) => {
     const roomType = room.type || 'Standard';
+    const imageUrl = room.imageUrl || room.image || generateFoodImage(room.name, roomType);
+    const isAvailable = room.isAvailable ?? room.is_available ?? true;
     return `
       <div class="room-card ${idx === 1 ? 'featured' : ''}">
         ${idx === 1 ? '<div class="room-featured-tag">Popular Choice</div>' : ''}
         <div class="room-img">
-          <img src="${room.image}" alt="${room.name}" style="width:100%;height:160px;object-fit:cover;" onerror="this.src='https://via.placeholder.com/300x160?text=${encodeURIComponent(room.name)}'"/>
+          <img src="${imageUrl}" alt="${room.name}" style="width:100%;height:160px;object-fit:cover;" onerror="this.src='${generateFoodImage(room.name, roomType)}'"/>
           <div class="room-badge">${room.name}</div>
         </div>
         <div class="room-body">
@@ -569,7 +656,7 @@ function updateRoomsDisplay(rooms) {
             <li>🛏 ${room.capacity || 2} Guest${room.capacity !== 1 ? 's' : ''}</li>
             <li>💰 UGX ${Number(room.price).toLocaleString()}/night</li>
           </ul>
-          <button class="btn btn-outline-dark book-trigger" data-room="${room.name}">Book Now</button>
+          <button class="btn btn-outline-dark book-trigger" data-room="${room.name}">${isAvailable ? 'Book Now' : 'Enquire'}</button>
         </div>
       </div>
     `;
@@ -620,7 +707,7 @@ function loadDefaultMenu() {
   renderMenuGrid();
 }
 
-// Load admin data on page load
+// Load API data on page load
 document.addEventListener('DOMContentLoaded', () => {
-  loadAdminData();
+  loadSiteData();
 });
