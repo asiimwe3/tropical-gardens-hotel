@@ -1,0 +1,133 @@
+import express from "express";
+import { query } from "../db.js";
+import { requireAuth } from "../middleware/auth.js";
+import { validate } from "../middleware/validate.js";
+import { menuItemSchema, offerSchema, roomSchema } from "../schemas.js";
+
+export const adminRouter = express.Router();
+adminRouter.use(requireAuth);
+
+adminRouter.get("/dashboard", async (_req, res, next) => {
+  try {
+    const [rooms, reservations, messages, menu] = await Promise.all([
+      query("select count(*)::int as total, count(*) filter (where is_available)::int as available from rooms"),
+      query("select count(*)::int as total, count(*) filter (where status = 'Pending')::int as pending from reservations"),
+      query("select count(*)::int as total, count(*) filter (where status = 'Unread')::int as unread from guest_messages"),
+      query("select count(*)::int as total, count(*) filter (where is_featured)::int as featured from menu_items")
+    ]);
+    res.json({
+      rooms: rooms.rows[0],
+      reservations: reservations.rows[0],
+      messages: messages.rows[0],
+      menu: menu.rows[0]
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.get("/reservations", async (_req, res, next) => {
+  try {
+    const result = await query(
+      `select id, guest_name as "guestName", phone, email, room_id as "roomId", room_name as "roomName",
+       check_in as "checkIn", check_out as "checkOut", guests, status, notes, created_at as "createdAt"
+       from reservations order by created_at desc`
+    );
+    res.json({ reservations: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.patch("/reservations/:id/status", async (req, res, next) => {
+  try {
+    const allowed = ["Pending", "Confirmed", "Checked In", "Checked Out", "Cancelled"];
+    if (!allowed.includes(req.body.status)) return res.status(400).json({ error: "Invalid status" });
+    const result = await query(
+      "update reservations set status = $1, updated_at = now() where id = $2 returning *",
+      [req.body.status, req.params.id]
+    );
+    if (!result.rowCount) return res.status(404).json({ error: "Reservation not found" });
+    res.json({ reservation: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.get("/rooms", async (_req, res, next) => {
+  try {
+    const result = await query("select * from rooms order by room_number nulls last, name asc");
+    res.json({ rooms: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.post("/rooms", validate(roomSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `insert into rooms (name, room_number, description, type, price, capacity, image_url, is_available)
+       values ($1,$2,$3,$4,$5,$6,$7,$8) returning *`,
+      [b.name, b.roomNumber || null, b.description || "", b.type || "", b.price, b.capacity, b.imageUrl || null, b.isAvailable]
+    );
+    res.status(201).json({ room: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.get("/menu", async (_req, res, next) => {
+  try {
+    const result = await query("select * from menu_items order by category asc, name asc");
+    res.json({ menuItems: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.post("/menu", validate(menuItemSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `insert into menu_items (name, description, category, price, image_url, is_available, is_featured)
+       values ($1,$2,$3,$4,$5,$6,$7) returning *`,
+      [b.name, b.description || "", b.category, b.price, b.imageUrl || null, b.isAvailable, b.isFeatured]
+    );
+    res.status(201).json({ menuItem: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.get("/offers", async (_req, res, next) => {
+  try {
+    const result = await query("select * from offers order by created_at desc");
+    res.json({ offers: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.post("/offers", validate(offerSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `insert into offers (title, description, discount_percent, code, starts_at, ends_at, is_active)
+       values ($1,$2,$3,$4,$5,$6,$7) returning *`,
+      [b.title, b.description || "", b.discountPercent, b.code || null, b.startsAt, b.endsAt, b.isActive]
+    );
+    res.status(201).json({ offer: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.get("/messages", async (_req, res, next) => {
+  try {
+    const result = await query("select * from guest_messages order by created_at desc");
+    res.json({ messages: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
