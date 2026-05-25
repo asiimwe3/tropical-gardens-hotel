@@ -13,7 +13,16 @@ export const config = {
     .map((origin) => origin.trim())
     .filter(Boolean),
   adminEmail: process.env.ADMIN_EMAIL,
-  adminPassword: process.env.ADMIN_PASSWORD
+  adminPassword: process.env.ADMIN_PASSWORD,
+  pesapal: {
+    baseUrl: process.env.PESAPAL_BASE_URL || "https://cybqa.pesapal.com/pesapalv3",
+    consumerKey: process.env.PESAPAL_CONSUMER_KEY,
+    consumerSecret: process.env.PESAPAL_CONSUMER_SECRET,
+    ipnId: process.env.PESAPAL_IPN_ID,
+    callbackUrl: process.env.PESAPAL_CALLBACK_URL,
+    cancellationUrl: process.env.PESAPAL_CANCELLATION_URL
+  },
+  paymentSuccessUrl: process.env.PAYMENT_SUCCESS_URL
 };
 
 if (!config.databaseUrl) throw new Error("DATABASE_URL is required");

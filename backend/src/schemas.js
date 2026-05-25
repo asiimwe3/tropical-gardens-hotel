@@ -25,6 +25,21 @@ export const contactSchema = z.object({
   message: z.string().min(5).max(2000)
 });
 
+export const paymentCheckoutSchema = z.object({
+  reservationId: z.string().uuid().optional(),
+  amount: z.number().min(1000),
+  currency: z.string().length(3).default("UGX"),
+  description: z.string().min(3).max(100).default("Tropical Gardens Hotel booking"),
+  customer: z.object({
+    firstName: z.string().min(1).max(80),
+    lastName: z.string().max(80).optional().or(z.literal("")),
+    email: z.string().email().optional().or(z.literal("")),
+    phone: z.string().min(7).max(40).optional().or(z.literal(""))
+  }).refine((data) => data.email || data.phone, {
+    message: "Either customer email or phone is required"
+  })
+});
+
 export const roomSchema = z.object({
   name: z.string().min(2).max(120),
   roomNumber: z.string().max(40).optional().or(z.literal("")),

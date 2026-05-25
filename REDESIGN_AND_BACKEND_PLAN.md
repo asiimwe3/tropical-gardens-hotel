@@ -41,6 +41,7 @@ I added a backend package under `backend/` with:
 - PostgreSQL schema
 - JWT admin login
 - Public reservations/contact endpoints
+- Pesapal payment checkout for Mobile Money and card collections
 - Admin routes for rooms, menu, offers, reservations, and messages
 - Validation with Zod
 - Security middleware: Helmet, CORS, rate limiting

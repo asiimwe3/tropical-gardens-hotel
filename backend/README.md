@@ -9,6 +9,7 @@ Production-ready starting backend for the hotel website.
 - JWT admin authentication
 - Public room, menu, offer, reservation, and contact endpoints
 - Admin dashboard endpoints for reservations, rooms, menu, offers, and guest messages
+- Pesapal checkout endpoints for Mobile Money and card payments
 - Helmet, CORS, rate limiting, validation, and password hashing
 
 ## Setup
@@ -43,6 +44,9 @@ Public:
 - `GET /api/offers`
 - `POST /api/reservations`
 - `POST /api/contact`
+- `POST /api/payments/pesapal/checkout`
+- `GET /api/payments/pesapal/callback`
+- `GET|POST /api/payments/pesapal/ipn`
 
 Auth:
 
@@ -87,6 +91,45 @@ async function handleReservation(e) {
   e.target.reset();
   showToast("Reservation received. We will confirm shortly.");
 }
+```
+
+## Mobile Money and Card Payments
+
+Use Pesapal for Uganda-friendly payments. The checkout URL can present available payment options such as Mobile Money and cards depending on your Pesapal merchant setup.
+
+Required environment variables:
+
+```bash
+PESAPAL_BASE_URL=https://cybqa.pesapal.com/pesapalv3
+PESAPAL_CONSUMER_KEY=...
+PESAPAL_CONSUMER_SECRET=...
+PESAPAL_IPN_ID=...
+PESAPAL_CALLBACK_URL=https://your-api-domain.com/api/payments/pesapal/callback
+PESAPAL_CANCELLATION_URL=https://your-website-domain.com/payment-cancelled.html
+PAYMENT_SUCCESS_URL=https://your-website-domain.com/payment-success.html
+```
+
+Create a checkout:
+
+```js
+const response = await fetch("https://your-api-domain.com/api/payments/pesapal/checkout", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    reservationId: "optional-reservation-uuid",
+    amount: 50000,
+    currency: "UGX",
+    description: "Tropical Gardens Hotel booking deposit",
+    customer: {
+      firstName: "Guest",
+      lastName: "Name",
+      phone: "256782460683",
+      email: "guest@example.com"
+    }
+  })
+});
+const data = await response.json();
+window.location.href = data.redirectUrl;
 ```
 
 For production, deploy the static frontend to Vercel, Netlify, or GitHub Pages, and deploy the backend to Render, Railway, Fly.io, or AWS with a managed PostgreSQL database.

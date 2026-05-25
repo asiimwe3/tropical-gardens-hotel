@@ -59,10 +59,32 @@ create table if not exists reservations (
   check_out date not null,
   guests integer not null check (guests > 0),
   status text not null default 'Pending' check (status in ('Pending','Confirmed','Checked In','Checked Out','Cancelled')),
+  payment_status text not null default 'Unpaid' check (payment_status in ('Unpaid','Pending','Paid','Failed','Refunded')),
+  amount_paid integer not null default 0 check (amount_paid >= 0),
+  payment_reference text,
   notes text not null default '',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check (check_out > check_in)
+);
+
+create table if not exists payments (
+  id uuid primary key default gen_random_uuid(),
+  reservation_id uuid references reservations(id) on delete set null,
+  merchant_reference text unique not null,
+  provider text not null default 'pesapal',
+  provider_tracking_id text,
+  amount numeric(12, 2) not null check (amount > 0),
+  currency text not null default 'UGX',
+  status text not null default 'PENDING',
+  payment_method text,
+  payment_account text,
+  confirmation_code text,
+  checkout_url text,
+  raw_status jsonb,
+  paid_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
 
 create table if not exists guest_messages (
@@ -81,3 +103,5 @@ create index if not exists idx_reservations_status on reservations(status);
 create index if not exists idx_reservations_dates on reservations(check_in, check_out);
 create index if not exists idx_menu_category on menu_items(category);
 create index if not exists idx_messages_status on guest_messages(status);
+create index if not exists idx_payments_reference on payments(merchant_reference);
+create index if not exists idx_payments_tracking on payments(provider_tracking_id);

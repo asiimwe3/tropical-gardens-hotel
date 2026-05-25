@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { config } from "./config.js";
 import { adminRouter } from "./routes/admin.js";
 import { authRouter } from "./routes/auth.js";
+import { paymentsRouter } from "./routes/payments.js";
 import { publicRouter } from "./routes/public.js";
 
 export const app = express();
@@ -31,6 +32,7 @@ app.use(
 app.get("/health", (_req, res) => res.json({ ok: true, service: "tropical-gardens-api" }));
 app.use("/api/auth", authRouter);
 app.use("/api", publicRouter);
+app.use("/api/payments", paymentsRouter);
 app.use("/api/admin", adminRouter);
 
 app.use((_req, res) => res.status(404).json({ error: "Route not found" }));
