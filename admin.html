@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Tropical Gardens Hotel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:#2e7d32;--green-dark:#1b5e20;--green-pale:#e8f5e9;--green-mid:#4caf50;
+      --gold:#f57f17;--gold-pale:#fff8e1;--dark:#1a1a1a;
+      --gray:#6b7280;--border:#e5e7eb;--white:#fff;--red:#d32f2f;--red-pale:#ffebee;
+      --blue:#1565c0;--blue-pale:#e3f2fd;--purple:#6a1b9a;--purple-pale:#f3e5f5;
+      --radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.08);--sidebar:240px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:"Inter",sans-serif;background:#f0f4f0;color:var(--dark);display:flex;min-height:100vh;}
+    .sidebar{width:var(--sidebar);background:var(--green-dark);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:200;transition:transform 0.3s;}
+    .sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px;}
+    .sidebar-logo img{height:36px;border-radius:6px;}
+    .sidebar-logo span{font-size:0.82rem;font-weight:700;line-height:1.3;}
+    .sidebar-logo small{opacity:0.6;font-size:0.68rem;font-weight:400;display:block;}
+    .nav-section{padding:12px 0 4px 16px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:0.5;margin-top:6px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;font-size:0.85rem;font-weight:500;border-left:3px solid transparent;transition:all 0.2s;color:rgba(255,255,255,0.75);}
+    .nav-item:hover{background:rgba(255,255,255,0.08);color:#fff;}
+    .nav-item.active{background:rgba(255,255,255,0.12);border-left-color:#a5d6a7;color:#fff;font-weight:600;}
+    .nav-item .icon{font-size:1rem;width:20px;text-align:center;}
+    .nav-badge{margin-left:auto;background:#ef5350;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:50px;}
+    .sidebar-footer{margin-top:auto;padding:16px 18px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.78rem;opacity:0.6;}
+    .sidebar-footer a{color:rgba(255,255,255,0.7);text-decoration:none;}
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    .topbar{background:#fff;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,0.06);position:sticky;top:0;z-index:100;}
+    .topbar-left{display:flex;align-items:center;gap:12px;}
+    .topbar h2{font-size:1rem;font-weight:700;}
+    .topbar-right{display:flex;align-items:center;gap:12px;}
+    .admin-avatar{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;}
+    .notification-btn{position:relative;background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--gray);}
+    .notification-btn .badge{position:absolute;top:-2px;right:-2px;background:#ef5350;color:#fff;font-size:0.55rem;font-weight:700;padding:1px 4px;border-radius:50px;}
+    .page{display:none;padding:24px;animation:fadeIn 0.2s ease;}
+    .page.active{display:block;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+    .stat-card{background:#fff;border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-top:3px solid var(--green);}
+    .stat-card.gold{border-top-color:var(--gold);}
+    .stat-card.blue{border-top-color:var(--blue);}
+    .stat-card.red{border-top-color:var(--red);}
+    .stat-card h3{font-size:1.8rem;font-weight:700;color:var(--green);}
+    .stat-card.gold h3{color:var(--gold);}
+    .stat-card.blue h3{color:var(--blue);}
+    .stat-card.red h3{color:var(--red);}
+    .stat-card p{font-size:0.75rem;color:var(--gray);}
+    .stat-card .trend{font-size:0.72rem;color:#4caf50;margin-top:4px;}
+    .section-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+    .section-header h2{font-size:1.05rem;font-weight:700;flex:1;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:50px;font-size:0.84rem;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;font-family:"Inter",sans-serif;white-space:nowrap;}
+    .btn-green{background:var(--green);color:#fff;}.btn-green:hover{background:var(--green-dark);}
+    .btn-outline{background:#fff;color:var(--green);border:1.5px solid var(--green);}.btn-outline:hover{background:var(--green-pale);}
+    .btn-red{background:var(--red);color:#fff;}.btn-red:hover{background:#b71c1c;}
+    .btn-gold{background:var(--gold);color:#fff;}.btn-gold:hover{background:#e65100;}
+    .btn-blue{background:var(--blue);color:#fff;}.btn-blue:hover{background:#0d47a1;}
+    .btn-sm{padding:6px 13px;font-size:0.77rem;}
+    .search-input{padding:9px 14px;border:1.5px solid var(--border);border-radius:50px;font-size:0.84rem;font-family:"Inter",sans-serif;outline:none;width:220px;transition:border-color 0.2s;}
+    .search-input:focus{border-color:var(--green);}
+    .table-wrap{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px;}
+    table{width:100%;border-collapse:collapse;}
+    thead{background:var(--green-pale);}
+    th{text-align:left;padding:11px 16px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--green-dark);white-space:nowrap;}
+    td{padding:12px 16px;font-size:0.86rem;border-bottom:1px solid #f3f4f6;vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#fafef8;}
+    .action-btns{display:flex;gap:6px;}
+    .loading-row td,.empty-row td{text-align:center;padding:40px;color:var(--gray);font-size:0.9rem;}
+    .badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.72rem;font-weight:700;}
+    .badge-green{background:var(--green-pale);color:var(--green-dark);}
+    .badge-gold{background:var(--gold-pale);color:#e65100;}
+    .badge-red{background:var(--red-pale);color:var(--red);}
+    .badge-blue{background:var(--blue-pale);color:var(--blue);}
+    .badge-gray{background:#f3f4f6;color:var(--gray);}
+    .badge-purple{background:var(--purple-pale);color:var(--purple);}
+    .toggle{position:relative;width:40px;height:22px;display:inline-block;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;border-radius:22px;background:#ccc;cursor:pointer;transition:0.3s;}
+    .toggle-slider::before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:#fff;transition:0.3s;}
+    .toggle input:checked+.toggle-slider{background:var(--green);}
+    .toggle input:checked+.toggle-slider::before{transform:translateX(18px);}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;backdrop-filter:blur(2px);}
+    .overlay.show{display:flex;align-items:center;justify-content:center;padding:20px;}
+    .modal{background:#fff;border-radius:14px;padding:28px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto;}
+    .modal-lg{max-width:680px;}
+    .modal h3{font-size:1.15rem;font-weight:700;margin-bottom:20px;}
+    .form-group{margin-bottom:14px;}
+    .form-group label{display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray);margin-bottom:5px;}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:"Inter",sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s;}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .modal-btns{display:flex;gap:10px;margin-top:20px;}
+    .modal-btns .btn{flex:1;justify-content:center;}
+    .checkbox-row{display:flex;align-items:center;gap:10px;}
+    .checkbox-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--green);}
+    .checkbox-row label{font-size:0.88rem;font-weight:500;cursor:pointer;}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green-dark);color:#fff;padding:12px 24px;border-radius:50px;font-weight:600;font-size:0.86rem;box-shadow:0 8px 32px rgba(0,0,0,0.15);opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .toast.error{background:var(--red);}
+    .toast.info{background:var(--blue);}
+    .widgets-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;}
+    .widget{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;}
+    .widget h3{font-size:0.88rem;font-weight:700;margin-bottom:14px;}
+    .activity-item{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f3f4f6;}
+    .activity-item:last-child{border-bottom:none;}
+    .activity-dot{width:8px;height:8px;border-radius:50%;background:var(--green);margin-top:5px;flex-shrink:0;}
+    .activity-dot.gold{background:var(--gold);}
+    .activity-dot.blue{background:var(--blue);}
+    .activity-dot.red{background:var(--red);}
+    .activity-text{font-size:0.82rem;line-height:1.4;}
+    .activity-time{font-size:0.72rem;color:var(--gray);margin-top:2px;}
+    .quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .quick-btn{background:var(--green-pale);border:none;border-radius:8px;padding:14px 12px;cursor:pointer;font-family:"Inter",sans-serif;font-size:0.8rem;font-weight:600;color:var(--green-dark);display:flex;flex-direction:column;align-items:center;gap:6px;transition:all 0.2s;}
+    .quick-btn:hover{background:var(--green);color:#fff;}
+    .quick-btn .q-icon{font-size:1.4rem;}
+    .notif-compose{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:20px;}
+    .notif-compose h3{font-size:0.95rem;font-weight:700;margin-bottom:16px;}
+    .target-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+    .chip{padding:6px 14px;border-radius:50px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:0.78rem;font-weight:600;color:var(--gray);transition:all 0.2s;font-family:"Inter",sans-serif;}
+    .chip.active{background:var(--green);border-color:var(--green);color:#fff;}
+    .notif-history{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+    .notif-item{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #f3f4f6;}
+    .notif-item:last-child{border-bottom:none;}
+    .notif-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;background:var(--blue-pale);}
+    .notif-info h4{font-size:0.86rem;font-weight:600;margin-bottom:2px;}
+    .notif-info p{font-size:0.78rem;color:var(--gray);}
+    .notif-meta{margin-left:auto;text-align:right;font-size:0.72rem;color:var(--gray);}
+    .offers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px;}
+    .offer-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+    .offer-card-header{background:linear-gradient(135deg,var(--green-dark),var(--green-mid));color:#fff;padding:16px 18px;}
+    .offer-card-header h4{font-size:0.95rem;font-weight:700;}
+    .offer-card-header .discount{font-size:1.8rem;font-weight:700;color:#a5d6a7;}
+    .offer-card-body{padding:14px 18px;}
+    .offer-card-body p{font-size:0.82rem;color:var(--gray);margin-bottom:10px;}
+    .offer-card-footer{padding:10px 18px 14px;display:flex;gap:8px;}
+    .cat-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+    .cat-tab{padding:7px 16px;border-radius:50px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:0.8rem;font-weight:600;color:var(--gray);transition:all 0.2s;font-family:"Inter",sans-serif;}
+    .cat-tab.active{background:var(--green);border-color:var(--green);color:#fff;}
+    .messages-layout{display:grid;grid-template-columns:300px 1fr;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;min-height:500px;}
+    .msg-list{border-right:1px solid var(--border);overflow-y:auto;}
+    .msg-list-header{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:0.88rem;}
+    .msg-thread{padding:12px 14px;border-bottom:1px solid #f3f4f6;cursor:pointer;transition:background 0.15s;}
+    .msg-thread:hover{background:#fafef8;}
+    .msg-thread.active{background:var(--green-pale);}
+    .msg-thread-name{font-size:0.86rem;font-weight:600;}
+    .msg-thread-preview{font-size:0.75rem;color:var(--gray);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .msg-thread-time{font-size:0.68rem;color:var(--gray);float:right;}
+    .unread-dot{width:8px;height:8px;background:#ef5350;border-radius:50%;display:inline-block;margin-left:6px;}
+    .msg-content{display:flex;flex-direction:column;}
+    .msg-content-header{padding:14px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:0.9rem;display:flex;align-items:center;justify-content:space-between;}
+    .msg-body{flex:1;padding:18px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;max-height:380px;}
+    .bubble{max-width:70%;padding:10px 14px;border-radius:14px;font-size:0.84rem;line-height:1.5;}
+    .bubble-guest{background:#f0f4f0;align-self:flex-start;border-bottom-left-radius:4px;}
+    .bubble-admin{background:var(--green-dark);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+    .bubble-time{font-size:0.68rem;color:var(--gray);text-align:right;margin-top:2px;}
+    .msg-compose{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:10px;}
+    .msg-compose input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:50px;font-family:"Inter",sans-serif;font-size:0.86rem;outline:none;}
+    .msg-compose input:focus{border-color:var(--green);}
+    .msg-empty{display:flex;align-items:center;justify-content:center;flex:1;color:var(--gray);font-size:0.9rem;}
+    .star{font-size:1rem;cursor:pointer;opacity:0.3;transition:opacity 0.2s;}
+    .star.on{opacity:1;}
+    .rooms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px;}
+    .room-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+    .room-card img{width:100%;height:160px;object-fit:cover;}
+    .room-card-body{padding:14px 16px;}
+    .room-card-body h4{font-size:0.95rem;font-weight:700;margin-bottom:4px;}
+    .room-card-body p{font-size:0.78rem;color:var(--gray);margin-bottom:10px;}
+    .room-card-footer{padding:10px 16px 14px;display:flex;align-items:center;justify-content:space-between;}
+    .room-price{font-weight:700;color:var(--green-dark);font-size:0.92rem;}
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.open{transform:translateX(0);}
+      .main{margin-left:0;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .widgets-row{grid-template-columns:1fr;}
+      .messages-layout{grid-template-columns:1fr;}
+      .msg-list{display:none;}
+      .hamburger-toggle{display:flex!important;}
+    }
+    .hamburger-toggle{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--dark);}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Logo"/>
+    <div><span>Tropical Gardens<small>Admin Dashboard</small></span></div>
+  </div>
+  <div class="nav-section">Main</div>
+  <div class="nav-item active" onclick="showPage('overview',this)"><span class="icon">&#128202;</span> Overview</div>
+  <div class="nav-item" onclick="showPage('reservations',this)"><span class="icon">&#128197;</span> Reservations <span class="nav-badge" id="res-badge">0</span></div>
+  <div class="nav-item" onclick="showPage('rooms',this)"><span class="icon">&#127976;</span> Rooms</div>
+  <div class="nav-section">Food &amp; Service</div>
+  <div class="nav-item" onclick="showPage('menu',this)"><span class="icon">&#127869;</span> Menu / Food</div>
+  <div class="nav-section">Marketing</div>
+  <div class="nav-item" onclick="showPage('offers',this)"><span class="icon">&#127873;</span> Offers &amp; Promos</div>
+  <div class="nav-item" onclick="showPage('notifications',this)"><span class="icon">&#128276;</span> Notifications</div>
+  <div class="nav-item" onclick="showPage('messages',this)"><span class="icon">&#128172;</span> Messages <span class="nav-badge" id="msg-badge">3</span></div>
+  <div class="nav-section">Settings</div>
+  <div class="nav-item" onclick="showPage('settings',this)"><span class="icon">&#9881;</span> Settings</div>
+  <div class="sidebar-footer"><a href="index.html">&#8592; Back to Website</a></div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger-toggle" onclick="toggleSidebar()">&#9776;</button>
+      <h2 id="page-title">Overview</h2>
+    </div>
+    <div class="topbar-right">
+      <button class="notification-btn" onclick="showPage('notifications',null)">&#128276;<span class="badge">2</span></button>
+      <div class="admin-avatar">A</div>
+      <span style="font-size:0.82rem;font-weight:600;">Admin</span>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="page active" id="page-overview">
+    <div class="stats-grid">
+      <div class="stat-card"><h3>12</h3><p>Total Rooms</p><span class="trend">4 available now</span></div>
+      <div class="stat-card gold"><h3>8</h3><p>Reservations Today</p><span class="trend" style="color:var(--gold)">+2 from yesterday</span></div>
+      <div class="stat-card blue"><h3 id="ov-menu">0</h3><p>Menu Items</p><span class="trend" style="color:var(--blue)">6 categories</span></div>
+      <div class="stat-card red"><h3>3</h3><p>Unread Messages</p><span class="trend" style="color:var(--red)">Needs attention</span></div>
+    </div>
+    <div class="widgets-row">
+      <div class="widget">
+        <h3>&#9889; Quick Actions</h3>
+        <div class="quick-actions">
+          <button class="quick-btn" onclick="showPage('menu',null)"><span class="q-icon">&#127869;</span>Add Menu Item</button>
+          <button class="quick-btn" onclick="showPage('reservations',null)"><span class="q-icon">&#128197;</span>New Reservation</button>
+          <button class="quick-btn" onclick="showPage('notifications',null)"><span class="q-icon">&#128276;</span>Send Notification</button>
+          <button class="quick-btn" onclick="showPage('offers',null)"><span class="q-icon">&#127873;</span>Create Offer</button>
+        </div>
+      </div>
+      <div class="widget">
+        <h3>&#128203; Recent Activity</h3>
+        <div class="activity-item"><div class="activity-dot gold"></div><div><div class="activity-text">New reservation: Room 4 — John Mukisa</div><div class="activity-time">10 min ago</div></div></div>
+        <div class="activity-item"><div class="activity-dot"></div><div><div class="activity-text">Menu item added: Grilled Tilapia (Dinner)</div><div class="activity-time">1 hour ago</div></div></div>
+        <div class="activity-item"><div class="activity-dot blue"></div><div><div class="activity-text">Notification sent: Weekend Special Offer</div><div class="activity-time">2 hours ago</div></div></div>
+        <div class="activity-item"><div class="activity-dot red"></div><div><div class="activity-text">Message from Sarah K.: "Is room 3 available?"</div><div class="activity-time">3 hours ago</div></div></div>
+      </div>
+    </div>
+    <div class="widgets-row">
+      <div class="widget">
+        <h3>&#128197; Today's Reservations</h3>
+        <table style="width:100%"><thead><tr><th>Guest</th><th>Room</th><th>Status</th></tr></thead><tbody>
+          <tr><td>John Mukisa</td><td>Room 4</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+          <tr><td>Grace Nalwoga</td><td>Room 2</td><td><span class="badge badge-gold">Pending</span></td></tr>
+          <tr><td>Peter Ssemanda</td><td>Suite A</td><td><span class="badge badge-blue">Upcoming</span></td></tr>
+        </tbody></table>
+      </div>
+      <div class="widget">
+        <h3>&#127869; Top Menu Items</h3>
+        <table style="width:100%"><thead><tr><th>Item</th><th>Category</th></tr></thead><tbody>
+          <tr><td>Grilled Tilapia</td><td><span class="badge badge-green">Dinner</span></td></tr>
+          <tr><td>Matooke &amp; Groundnut Stew</td><td><span class="badge badge-gold">Lunch</span></td></tr>
+          <tr><td>Fresh Passion Juice</td><td><span class="badge badge-blue">Drinks</span></td></tr>
+          <tr><td>Rolex (Egg Roll)</td><td><span class="badge badge-gray">Breakfast</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div class="page" id="page-menu">
+    <div class="stats-grid">
+      <div class="stat-card"><h3 id="ms-total">0</h3><p>Total Items</p></div>
+      <div class="stat-card gold"><h3 id="ms-available">0</h3><p>Available</p></div>
+      <div class="stat-card blue"><h3 id="ms-featured">0</h3><p>Featured</p></div>
+      <div class="stat-card red"><h3 id="ms-cats">0</h3><p>Categories</p></div>
+    </div>
+    <div class="section-header">
+      <h2>Menu Items</h2>
+      <input type="text" class="search-input" id="menu-search" placeholder="Search items..." oninput="renderMenuTable()"/>
+      <button class="btn btn-green" onclick="openMenuModal()">+ Add Item</button>
+    </div>
+    <div class="cat-tabs" id="menu-cat-tabs">
+      <button class="cat-tab active" onclick="menuFilterCat('All',this)">All</button>
+      <button class="cat-tab" onclick="menuFilterCat('Breakfast',this)">Breakfast</button>
+      <button class="cat-tab" onclick="menuFilterCat('Lunch',this)">Lunch</button>
+      <button class="cat-tab" onclick="menuFilterCat('Dinner',this)">Dinner</button>
+      <button class="cat-tab" onclick="menuFilterCat('Drinks',this)">Drinks</button>
+      <button class="cat-tab" onclick="menuFilterCat('Desserts',this)">Desserts</button>
+      <button class="cat-tab" onclick="menuFilterCat('Snacks',this)">Snacks</button>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Star</th><th>Name</th><th>Description</th><th>Category</th><th>Price (UGX)</th><th>Available</th><th>Actions</th></tr></thead>
+      <tbody id="menu-tbody"><tr class="loading-row"><td colspan="7">Loading...</td></tr></tbody>
+    </table></div>
+  </div>
+
+  <!-- ROOMS -->
+  <div class="page" id="page-rooms">
+    <div class="section-header"><h2>Rooms Management</h2><button class="btn btn-green" onclick="openRoomModal()">+ Add Room</button></div>
+    <div class="rooms-grid" id="rooms-grid"></div>
+  </div>
+
+  <!-- RESERVATIONS -->
+  <div class="page" id="page-reservations">
+    <div class="stats-grid">
+      <div class="stat-card"><h3 id="res-total">0</h3><p>Total</p></div>
+      <div class="stat-card gold"><h3 id="res-pending">0</h3><p>Pending</p></div>
+      <div class="stat-card blue"><h3 id="res-confirmed">0</h3><p>Confirmed</p></div>
+      <div class="stat-card red"><h3 id="res-checkout">0</h3><p>Checked Out</p></div>
+    </div>
+    <div class="section-header">
+      <h2>Reservations</h2>
+      <input type="text" class="search-input" id="res-search" placeholder="Search..." oninput="renderResTable()"/>
+      <button class="btn btn-green" onclick="openResModal()">+ New Reservation</button>
+    </div>
+    <div class="cat-tabs">
+      <button class="cat-tab active" onclick="resFilterStatus('All',this)">All</button>
+      <button class="cat-tab" onclick="resFilterStatus('Pending',this)">Pending</button>
+      <button class="cat-tab" onclick="resFilterStatus('Confirmed',this)">Confirmed</button>
+      <button class="cat-tab" onclick="resFilterStatus('Checked In',this)">Checked In</button>
+      <button class="cat-tab" onclick="resFilterStatus('Checked Out',this)">Checked Out</button>
+      <button class="cat-tab" onclick="resFilterStatus('Cancelled',this)">Cancelled</button>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Guest</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Guests</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="res-tbody"><tr class="loading-row"><td colspan="7">Loading...</td></tr></tbody>
+    </table></div>
+  </div>
+
+  <!-- OFFERS -->
+  <div class="page" id="page-offers">
+    <div class="section-header"><h2>Offers &amp; Promotions</h2><button class="btn btn-gold" onclick="openOfferModal()">+ Create Offer</button></div>
+    <div class="offers-grid" id="offers-grid"></div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="page" id="page-notifications">
+    <div class="notif-compose">
+      <h3>&#128226; Send Notification / Message Blast</h3>
+      <div class="form-group"><label>Title</label><input type="text" id="notif-title" placeholder="e.g. Weekend Special Offer!"/></div>
+      <div class="form-group"><label>Message</label><textarea id="notif-body" rows="3" placeholder="Write your message to guests..."></textarea></div>
+      <div class="form-group"><label>Channel</label>
+        <div class="target-chips">
+          <button class="chip active" data-ch="website" onclick="toggleChip(this)">&#127760; Website</button>
+          <button class="chip" data-ch="sms" onclick="toggleChip(this)">&#128241; SMS</button>
+          <button class="chip" data-ch="email" onclick="toggleChip(this)">&#9993; Email</button>
+          <button class="chip" data-ch="whatsapp" onclick="toggleChip(this)">&#128172; WhatsApp</button>
+        </div>
+      </div>
+      <div class="form-group"><label>Target Audience</label>
+        <div class="target-chips">
+          <button class="chip active" data-aud="all" onclick="toggleAud(this)">All Guests</button>
+          <button class="chip" data-aud="confirmed" onclick="toggleAud(this)">Confirmed Guests</button>
+          <button class="chip" data-aud="past" onclick="toggleAud(this)">Past Guests</button>
+        </div>
+      </div>
+      <button class="btn btn-green" onclick="sendNotification()" style="margin-top:8px;">&#128276; Send Now</button>
+    </div>
+    <div class="section-header"><h2>Notification History</h2></div>
+    <div class="notif-history" id="notif-history"></div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="page" id="page-messages">
+    <div class="section-header"><h2>Guest Messages</h2><button class="btn btn-blue" onclick="openNewMsgModal()">&#9993; New Message</button></div>
+    <div class="messages-layout">
+      <div class="msg-list">
+        <div class="msg-list-header">Conversations</div>
+        <div id="threads-list"></div>
+      </div>
+      <div class="msg-content" id="msg-content">
+        <div class="msg-empty">Select a conversation to start messaging</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="section-header"><h2>Hotel Settings</h2><button class="btn btn-green" onclick="saveSettings()">&#128190; Save Changes</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;">
+      <div class="widget">
+        <h3>&#127976; Hotel Info</h3>
+        <div class="form-group" style="margin-top:14px;"><label>Hotel Name</label><input type="text" id="set-name" value="Tropical Gardens Hotel Kyenjojo"/></div>
+        <div class="form-group"><label>Phone</label><input type="text" id="set-phone" value="0782460683"/></div>
+        <div class="form-group"><label>Email</label><input type="text" id="set-email" value="tropicalgardenshotel@gmail.com"/></div>
+        <div class="form-group"><label>Address</label><input type="text" id="set-address" value="Hoima Road, Kyenjojo, Uganda"/></div>
+      </div>
+      <div class="widget">
+        <h3>&#128273; Admin Security</h3>
+        <div class="form-group" style="margin-top:14px;"><label>Admin Username</label><input type="text" value="admin"/></div>
+        <div class="form-group"><label>New Password</label><input type="password" placeholder="Leave blank to keep current"/></div>
+        <div class="form-group"><label>Confirm Password</label><input type="password" placeholder="Repeat new password"/></div>
+        <button class="btn btn-red btn-sm" onclick="clearToken()" style="margin-top:8px;">&#128274; Logout</button>
+      </div>
+      <div class="widget">
+        <h3>&#128279; Social Media</h3>
+        <div class="form-group" style="margin-top:14px;"><label>Facebook URL</label><input type="text" placeholder="https://facebook.com/..."/></div>
+        <div class="form-group"><label>Instagram URL</label><input type="text" placeholder="https://instagram.com/..."/></div>
+        <div class="form-group"><label>WhatsApp Number</label><input type="text" value="0782460683"/></div>
+      </div>
+      <div class="widget">
+        <h3>&#9881; Site Preferences</h3>
+        <div class="form-group" style="margin-top:14px;"><div class="checkbox-row"><input type="checkbox" id="set-booking" checked/><label for="set-booking">Enable online reservations</label></div></div>
+        <div class="form-group"><div class="checkbox-row"><input type="checkbox" id="set-banner" checked/><label for="set-banner">Show promotional banners</label></div></div>
+        <div class="form-group"><div class="checkbox-row"><input type="checkbox" id="set-reviews"/><label for="set-reviews">Show guest reviews</label></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="menu-modal-overlay" onclick="if(event.target===this)closeMenuModal()">
+  <div class="modal">
+    <h3 id="menu-modal-title">Add Menu Item</h3>
+    <input type="hidden" id="menu-item-id"/>
+    <div class="form-group"><label>Item Name *</label><input type="text" id="mi-name" placeholder="e.g. Grilled Tilapia"/></div>
+    <div class="form-group"><label>Description</label><textarea id="mi-desc" rows="2" placeholder="Short description..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Category *</label><select id="mi-cat"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Drinks</option><option>Desserts</option><option>Snacks</option></select></div>
+      <div class="form-group"><label>Price (UGX) *</label><input type="number" id="mi-price" placeholder="25000" min="0"/></div>
+    </div>
+    <div class="form-group"><div class="checkbox-row"><input type="checkbox" id="mi-available" checked/><label for="mi-available">Available on menu</label></div></div>
+    <div class="form-group"><div class="checkbox-row"><input type="checkbox" id="mi-featured"/><label for="mi-featured">&#11088; Featured item</label></div></div>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeMenuModal()">Cancel</button><button class="btn btn-green" onclick="saveMenuItem()">Save Item</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="room-modal-overlay" onclick="if(event.target===this)closeRoomModal()">
+  <div class="modal">
+    <h3 id="room-modal-title">Add Room</h3>
+    <input type="hidden" id="room-item-id"/>
+    <div class="form-row">
+      <div class="form-group"><label>Room Name *</label><input type="text" id="ri-name" placeholder="e.g. Deluxe Suite"/></div>
+      <div class="form-group"><label>Room Number</label><input type="text" id="ri-num" placeholder="e.g. 101"/></div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea id="ri-desc" rows="2" placeholder="Room features..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Price / Night (UGX) *</label><input type="number" id="ri-price" placeholder="150000" min="0"/></div>
+      <div class="form-group"><label>Capacity (guests)</label><input type="number" id="ri-cap" placeholder="2" min="1"/></div>
+    </div>
+    <div class="form-group"><label>Type</label><select id="ri-type"><option>Standard</option><option>Deluxe</option><option>Suite</option><option>Family</option><option>Conference</option></select></div>
+    <div class="form-group"><label>Image URL</label><input type="text" id="ri-img" placeholder="https://..."/></div>
+    <div class="form-group"><div class="checkbox-row"><input type="checkbox" id="ri-available" checked/><label for="ri-available">Available for booking</label></div></div>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeRoomModal()">Cancel</button><button class="btn btn-green" onclick="saveRoom()">Save Room</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="res-modal-overlay" onclick="if(event.target===this)closeResModal()">
+  <div class="modal modal-lg">
+    <h3 id="res-modal-title">New Reservation</h3>
+    <input type="hidden" id="res-item-id"/>
+    <div class="form-row">
+      <div class="form-group"><label>Guest Name *</label><input type="text" id="resi-name" placeholder="Full name"/></div>
+      <div class="form-group"><label>Phone</label><input type="text" id="resi-phone" placeholder="07XX XXX XXX"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Email</label><input type="text" id="resi-email" placeholder="guest@email.com"/></div>
+      <div class="form-group"><label>Room *</label><select id="resi-room"><option>Room 1</option><option>Room 2</option><option>Room 3</option><option>Room 4</option><option>Suite A</option><option>Suite B</option><option>Family Room</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Check-in Date *</label><input type="date" id="resi-checkin"/></div>
+      <div class="form-group"><label>Check-out Date *</label><input type="date" id="resi-checkout"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Number of Guests</label><input type="number" id="resi-guests" value="1" min="1"/></div>
+      <div class="form-group"><label>Status</label><select id="resi-status"><option>Pending</option><option>Confirmed</option><option>Checked In</option><option>Checked Out</option><option>Cancelled</option></select></div>
+    </div>
+    <div class="form-group"><label>Special Requests</label><textarea id="resi-notes" rows="2" placeholder="Any special requirements..."></textarea></div>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeResModal()">Cancel</button><button class="btn btn-green" onclick="saveReservation()">Save Reservation</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="offer-modal-overlay" onclick="if(event.target===this)closeOfferModal()">
+  <div class="modal">
+    <h3 id="offer-modal-title">Create Offer</h3>
+    <input type="hidden" id="offer-item-id"/>
+    <div class="form-group"><label>Offer Title *</label><input type="text" id="oi-title" placeholder="e.g. Weekend Getaway Deal"/></div>
+    <div class="form-group"><label>Description</label><textarea id="oi-desc" rows="2" placeholder="Tell guests about this offer..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Discount (%)</label><input type="number" id="oi-discount" placeholder="20" min="0" max="100"/></div>
+      <div class="form-group"><label>Promo Code</label><input type="text" id="oi-code" placeholder="e.g. WEEKEND20"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Valid From</label><input type="date" id="oi-from"/></div>
+      <div class="form-group"><label>Valid Until</label><input type="date" id="oi-to"/></div>
+    </div>
+    <div class="form-group"><div class="checkbox-row"><input type="checkbox" id="oi-active" checked/><label for="oi-active">Offer is active</label></div></div>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeOfferModal()">Cancel</button><button class="btn btn-gold" onclick="saveOffer()">Save Offer</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="del-overlay" onclick="if(event.target===this)closeDelModal()">
+  <div class="modal" style="max-width:360px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:10px;">&#128465;</div>
+    <h3>Delete?</h3>
+    <p style="color:var(--gray);font-size:0.88rem;margin:10px 0 20px;">This cannot be undone. <strong id="del-target-name"></strong> will be removed.</p>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeDelModal()">Cancel</button><button class="btn btn-red" onclick="confirmDel()">Delete</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="newmsg-overlay" onclick="if(event.target===this)closeNewMsgModal()">
+  <div class="modal">
+    <h3>&#9993; New Message</h3>
+    <div class="form-group"><label>To (Guest Name)</label><input type="text" id="nm-to" placeholder="Guest name"/></div>
+    <div class="form-group"><label>Channel</label><select id="nm-channel"><option>WhatsApp</option><option>SMS</option><option>Email</option></select></div>
+    <div class="form-group"><label>Message *</label><textarea id="nm-body" rows="4" placeholder="Type your message..."></textarea></div>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeNewMsgModal()">Cancel</button><button class="btn btn-blue" onclick="sendNewMessage()">Send Message</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var menuItems=[
+  {id:"m1",name:"Rolex (Egg Roll)",description:"Fresh chapati rolled with fried eggs, veggies and spices - a Ugandan street classic.",category:"Breakfast",price:8000,is_available:true,is_featured:true},
+  {id:"m2",name:"Katogo (Offals & Matooke)",description:"Traditional Ugandan morning stew with banana and offals.",category:"Breakfast",price:12000,is_available:true,is_featured:false},
+  {id:"m3",name:"Omelette & Toast",description:"Fluffy omelette with toasted bread, butter and fresh juice.",category:"Breakfast",price:15000,is_available:true,is_featured:false},
+  {id:"m4",name:"Matooke & Groundnut Stew",description:"Steamed green bananas served with rich groundnut sauce.",category:"Lunch",price:18000,is_available:true,is_featured:true},
+  {id:"m5",name:"Rice & Beans",description:"Soft white rice with well-seasoned beans.",category:"Lunch",price:12000,is_available:true,is_featured:false},
+  {id:"m6",name:"Chicken Stew & Posho",description:"Tender chicken in tomato and onion stew with ugali.",category:"Lunch",price:22000,is_available:true,is_featured:false},
+  {id:"m7",name:"Grilled Tilapia",description:"Fresh Lake tilapia marinated in herbs, grilled to perfection. Served with chips or rice.",category:"Dinner",price:35000,is_available:true,is_featured:true},
+  {id:"m8",name:"Beef Rolex",description:"Large chapati wrap with seasoned beef strips, lettuce and tomato.",category:"Dinner",price:28000,is_available:true,is_featured:false},
+  {id:"m9",name:"Mixed Grill Platter",description:"Assorted grilled meats - chicken, beef and goat - with kachumbari.",category:"Dinner",price:55000,is_available:false,is_featured:false},
+  {id:"m10",name:"Nyama Choma (Goat)",description:"Slow-roasted goat meat served with ugali and kachumbari.",category:"Dinner",price:45000,is_available:true,is_featured:true},
+  {id:"m11",name:"Fresh Passion Juice",description:"Freshly squeezed passion fruit juice, chilled and naturally sweet.",category:"Drinks",price:5000,is_available:true,is_featured:true},
+  {id:"m12",name:"Mango Smoothie",description:"Blended fresh mango with milk and honey.",category:"Drinks",price:7000,is_available:true,is_featured:false},
+  {id:"m13",name:"Tropical Cocktail",description:"Signature hotel mix of pineapple, passion, mint and ginger.",category:"Drinks",price:12000,is_available:true,is_featured:true},
+  {id:"m14",name:"Soda / Water",description:"Assorted soft drinks and mineral water.",category:"Drinks",price:3000,is_available:true,is_featured:false},
+  {id:"m15",name:"Banana Cake",description:"Moist homemade cake with fresh bananas and vanilla cream.",category:"Desserts",price:10000,is_available:true,is_featured:false},
+  {id:"m16",name:"Mandazi",description:"Deep-fried East African doughnuts, lightly sweetened with coconut.",category:"Snacks",price:4000,is_available:true,is_featured:false},
+  {id:"m17",name:"Samosa (3 pcs)",description:"Crispy pastry filled with spiced meat or vegetables.",category:"Snacks",price:6000,is_available:true,is_featured:false},
+  {id:"m18",name:"Chips (French Fries)",description:"Golden crispy fries served with chilli sauce.",category:"Snacks",price:8000,is_available:true,is_featured:false}
+];
+var rooms=[
+  {id:"r1",name:"Standard Room",num:"101",description:"Cosy room with queen bed, fan, en-suite bathroom, and garden view.",type:"Standard",price:80000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",is_available:true},
+  {id:"r2",name:"Standard Room",num:"102",description:"Cosy room with twin beds, fan, and en-suite bathroom.",type:"Standard",price:80000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",is_available:true},
+  {id:"r3",name:"Deluxe Room",num:"201",description:"Spacious room with king bed, AC, flat-screen TV, minibar, and garden view.",type:"Deluxe",price:150000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",is_available:true},
+  {id:"r4",name:"Deluxe Room",num:"202",description:"King bed, AC, flat-screen TV, work desk and en-suite with bathtub.",type:"Deluxe",price:150000,capacity:3,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",is_available:false},
+  {id:"r5",name:"Executive Suite A",num:"301",description:"Luxurious suite with living area, king bed, AC, Jacuzzi, and panoramic garden views.",type:"Suite",price:280000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",is_available:true},
+  {id:"r6",name:"Executive Suite B",num:"302",description:"Premium suite ideal for honeymoons. Private balcony, king bed, and full amenities.",type:"Suite",price:280000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",is_available:true},
+  {id:"r7",name:"Family Room",num:"401",description:"Large room with 2 double beds, AC, TV, and extra space for kids.",type:"Family",price:200000,capacity:5,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",is_available:true},
+  {id:"r8",name:"Conference Room",num:"C1",description:"Air-conditioned conference room with projector, whiteboard, and seating for 30.",type:"Conference",price:350000,capacity:30,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",is_available:true}
+];
+var reservations=[
+  {id:"rv1",guest:"John Mukisa",phone:"0782100001",email:"john@gmail.com",room:"Room 3 (Deluxe)",checkin:"2026-05-25",checkout:"2026-05-27",guests:2,status:"Confirmed",notes:"Late check-in expected."},
+  {id:"rv2",guest:"Grace Nalwoga",phone:"0751200002",email:"grace@yahoo.com",room:"Room 2 (Standard)",checkin:"2026-05-25",checkout:"2026-05-26",guests:1,status:"Pending",notes:""},
+  {id:"rv3",guest:"Peter Ssemanda",phone:"0700300003",email:"",room:"Suite A",checkin:"2026-05-26",checkout:"2026-05-30",guests:2,status:"Confirmed",notes:"Honeymoon - please prepare flowers."},
+  {id:"rv4",guest:"Amina Nakato",phone:"0772400004",email:"amina@gmail.com",room:"Family Room",checkin:"2026-05-20",checkout:"2026-05-23",guests:4,status:"Checked Out",notes:""},
+  {id:"rv5",guest:"Robert Byamukama",phone:"0706500005",email:"",room:"Room 1 (Standard)",checkin:"2026-05-22",checkout:"2026-05-24",guests:1,status:"Checked Out",notes:""},
+  {id:"rv6",guest:"Sarah Komugisha",phone:"0789600006",email:"sarah@gmail.com",room:"Room 4 (Deluxe)",checkin:"2026-05-28",checkout:"2026-05-29",guests:2,status:"Pending",notes:""}
+];
+var offers=[
+  {id:"o1",title:"Weekend Getaway Deal",description:"Book any room Friday to Sunday and get 20% off your total stay.",discount:20,code:"WEEKEND20",from:"2026-05-01",to:"2026-05-31",active:true},
+  {id:"o2",title:"Long Stay Discount",description:"Stay 3 nights or more and enjoy 15% off. Ideal for business travellers.",discount:15,code:"STAY3",from:"2026-05-01",to:"2026-06-30",active:true},
+  {id:"o3",title:"Breakfast Combo",description:"Book any room with breakfast included and save UGX 10,000 per day.",discount:0,code:"BFAST",from:"2026-05-01",to:"2026-12-31",active:true},
+  {id:"o4",title:"Early Bird April",description:"Book 7+ days in advance for April stays and get 25% off.",discount:25,code:"EARLYBIRD",from:"2026-03-01",to:"2026-04-30",active:false}
+];
+var notifications=[
+  {id:"n1",title:"Weekend Special Offer",body:"Book this weekend and enjoy 20% off all rooms! Use code WEEKEND20.",channel:"Website Banner",audience:"All Guests",time:"2 hours ago",type:"promo"},
+  {id:"n2",title:"New Breakfast Menu",body:"We have added exciting new breakfast options. Come try them!",channel:"WhatsApp",audience:"Past Guests",time:"Yesterday",type:"update"},
+  {id:"n3",title:"Power Outage Notice",body:"Scheduled maintenance May 24, 6am-8am. Generator will be on.",channel:"SMS",audience:"Confirmed Guests",time:"2 days ago",type:"alert"}
+];
+var messages=[
+  {id:"c1",name:"Sarah Komugisha",phone:"0789600006",unread:true,msgs:[
+    {from:"guest",text:"Hello, is room 3 available for this weekend?",time:"09:12"},
+    {from:"admin",text:"Hello Sarah! Yes, Room 3 (Deluxe) is available. Would you like to make a reservation?",time:"09:20"},
+    {from:"guest",text:"Yes please! How much per night?",time:"09:22"}
+  ]},
+  {id:"c2",name:"Robert Byamukama",phone:"0706500005",unread:true,msgs:[
+    {from:"guest",text:"Do you have a conference room for hire?",time:"Yesterday"},
+    {from:"admin",text:"Yes! Our conference room seats 30 with projector and AC. UGX 350,000/day.",time:"Yesterday"},
+    {from:"guest",text:"Great, I will confirm with my team.",time:"Yesterday"}
+  ]},
+  {id:"c3",name:"Amina Nakato",phone:"0772400004",unread:true,msgs:[
+    {from:"guest",text:"Thank you for a wonderful stay! We really enjoyed it.",time:"2 days ago"},
+    {from:"admin",text:"Thank you Amina! We loved having you. Hope to see you again!",time:"2 days ago"}
+  ]},
+  {id:"c4",name:"Peter Ssemanda",phone:"0700300003",unread:false,msgs:[
+    {from:"guest",text:"Please make sure the room has flowers for arrival.",time:"3 days ago"},
+    {from:"admin",text:"Absolutely! Fresh flowers and a welcome note will be ready. Congratulations!",time:"3 days ago"}
+  ]}
+];
+var menuFilter="All",resFilter="All",delType="",delId="",activeThread=null;
+
+function showPage(name,el){
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+  var pg=document.getElementById("page-"+name);if(pg)pg.classList.add("active");
+  document.querySelectorAll(".nav-item").forEach(function(n){n.classList.remove("active");});
+  if(el)el.classList.add("active");
+  var titles={overview:"Overview",menu:"Menu / Food",rooms:"Rooms Management",reservations:"Reservations",offers:"Offers & Promotions",notifications:"Notifications",messages:"Guest Messages",settings:"Settings"};
+  var pt=document.getElementById("page-title");if(pt)pt.textContent=titles[name]||name;
+  if(name==="menu")renderMenuPage();
+  if(name==="rooms")renderRoomsPage();
+  if(name==="reservations")renderResPage();
+  if(name==="offers")renderOffersPage();
+  if(name==="notifications")renderNotifPage();
+  if(name==="messages")renderMessagesPage();
+  if(window.innerWidth<=900)document.getElementById("sidebar").classList.remove("open");
+}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");}
+
+function renderMenuPage(){
+  var el=document.getElementById("ms-total");if(el)el.textContent=menuItems.length;
+  el=document.getElementById("ms-available");if(el)el.textContent=menuItems.filter(function(i){return i.is_available;}).length;
+  el=document.getElementById("ms-featured");if(el)el.textContent=menuItems.filter(function(i){return i.is_featured;}).length;
+  var cats=menuItems.map(function(i){return i.category;}).filter(function(v,i,a){return a.indexOf(v)===i;});
+  el=document.getElementById("ms-cats");if(el)el.textContent=cats.length;
+  el=document.getElementById("ov-menu");if(el)el.textContent=menuItems.length;
+  renderMenuTable();
+}
+function menuFilterCat(cat,el){menuFilter=cat;document.querySelectorAll("#menu-cat-tabs .cat-tab").forEach(function(t){t.classList.remove("active");});el.classList.add("active");renderMenuTable();}
+function renderMenuTable(){
+  var q=(document.getElementById("menu-search")?document.getElementById("menu-search").value:"").toLowerCase();
+  var list=menuItems.filter(function(i){return menuFilter==="All"||i.category===menuFilter;});
+  if(q)list=list.filter(function(i){return i.name.toLowerCase().indexOf(q)>-1||(i.description||"").toLowerCase().indexOf(q)>-1;});
+  var tbody=document.getElementById("menu-tbody");if(!tbody)return;
+  if(!list.length){tbody.innerHTML='<tr><td colspan="7" class="empty-row">No items found.</td></tr>';return;}
+  tbody.innerHTML=list.map(function(item){
+    return '<tr><td><span class="star '+(item.is_featured?"on":"")+"\" onclick=\"menuToggleFeatured('"+item.id+"')\">&#11088;</span></td>"+
+    "<td><strong>"+item.name+"</strong></td>"+
+    "<td style=\"max-width:180px;color:var(--gray);font-size:0.8rem;\">"+(item.description||"-")+"</td>"+
+    '<td><span class="badge badge-green">'+item.category+"</span></td>"+
+    "<td style=\"font-weight:700;color:var(--green-dark);\">UGX "+Number(item.price).toLocaleString()+"</td>"+
+    "<td><label class=\"toggle\"><input type=\"checkbox\" "+(item.is_available?"checked":"")+" onchange=\"menuToggleAvail('"+item.id+"',this.checked)\"/><span class=\"toggle-slider\"></span></label></td>"+
+    "<td><div class=\"action-btns\"><button class=\"btn btn-outline btn-sm\" onclick=\"openMenuModal('"+item.id+"')\">Edit</button>"+
+    "<button class=\"btn btn-red btn-sm\" onclick=\"openDel('menu','"+item.id+"','"+item.name.replace(/'/g,"\\'")+"')\">Del</button></div></td></tr>";
+  }).join("");
+}
+function menuToggleAvail(id,val){var i=menuItems.find(function(m){return m.id===id;});if(i)i.is_available=val;renderMenuPage();showToast(val?"Available":"Hidden from menu");}
+function menuToggleFeatured(id){var i=menuItems.find(function(m){return m.id===id;});if(i)i.is_featured=!i.is_featured;renderMenuPage();showToast(i&&i.is_featured?"Marked featured":"Removed from featured");}
+function openMenuModal(id){
+  var item=id?menuItems.find(function(m){return m.id===id;}):null;
+  document.getElementById("menu-modal-title").textContent=item?"Edit Menu Item":"Add Menu Item";
+  document.getElementById("menu-item-id").value=id||"";
+  document.getElementById("mi-name").value=item?item.name:"";
+  document.getElementById("mi-desc").value=item?(item.description||""):"";
+  document.getElementById("mi-cat").value=item?item.category:"Breakfast";
+  document.getElementById("mi-price").value=item?item.price:"";
+  document.getElementById("mi-available").checked=item?item.is_available:true;
+  document.getElementById("mi-featured").checked=item?!!item.is_featured:false;
+  document.getElementById("menu-modal-overlay").classList.add("show");
+}
+function closeMenuModal(){document.getElementById("menu-modal-overlay").classList.remove("show");}
+function saveMenuItem(){
+  var name=document.getElementById("mi-name").value.trim(),price=document.getElementById("mi-price").value;
+  if(!name||!price){showToast("Name and price required","error");return;}
+  var id=document.getElementById("menu-item-id").value;
+  var data={name:name,description:document.getElementById("mi-desc").value.trim(),category:document.getElementById("mi-cat").value,price:Number(price),is_available:document.getElementById("mi-available").checked,is_featured:document.getElementById("mi-featured").checked};
+  if(id){var idx=menuItems.findIndex(function(m){return m.id===id;});if(idx>-1)menuItems[idx]=Object.assign({},menuItems[idx],data);showToast("Item updated");}
+  else{data.id="m"+Date.now();menuItems.push(data);showToast("Item added");}
+  closeMenuModal();renderMenuPage();
+}
+
+var typeColors={Standard:"badge-green",Deluxe:"badge-blue",Suite:"badge-gold",Family:"badge-purple",Conference:"badge-gray"};
+function renderRoomsPage(){
+  var grid=document.getElementById("rooms-grid");if(!grid)return;
+  grid.innerHTML=rooms.map(function(r){
+    return '<div class="room-card"><img src="'+r.image+'" alt="'+r.name+'" onerror="this.style.display=\'none\'"/>'+
+    '<div class="room-card-body"><h4>'+r.name+' <small style="font-weight:400;color:var(--gray);">#'+r.num+'</small></h4><p>'+r.description+'</p>'+
+    '<span class="badge '+(typeColors[r.type]||"badge-gray")+'">'+r.type+'</span> '+
+    '<span class="badge '+(r.is_available?"badge-green":"badge-red")+'">'+(r.is_available?"Available":"Unavailable")+'</span></div>'+
+    '<div class="room-card-footer"><span class="room-price">UGX '+Number(r.price).toLocaleString()+' / night</span>'+
+    '<div class="action-btns"><button class="btn btn-outline btn-sm" onclick="openRoomModal(\''+r.id+'\')">Edit</button>'+
+    '<button class="btn btn-red btn-sm" onclick="openDel(\'room\',\''+r.id+'\',\''+r.name.replace(/'/g,"\\'")+"')\">Del</button></div></div></div>";
+  }).join("");
+}
+function openRoomModal(id){
+  var r=id?rooms.find(function(x){return x.id===id;}):null;
+  document.getElementById("room-modal-title").textContent=r?"Edit Room":"Add Room";
+  document.getElementById("room-item-id").value=id||"";
+  document.getElementById("ri-name").value=r?r.name:"";
+  document.getElementById("ri-num").value=r?r.num:"";
+  document.getElementById("ri-desc").value=r?(r.description||""):"";
+  document.getElementById("ri-price").value=r?r.price:"";
+  document.getElementById("ri-cap").value=r?r.capacity:2;
+  document.getElementById("ri-type").value=r?r.type:"Standard";
+  document.getElementById("ri-img").value=r?(r.image||""):"";
+  document.getElementById("ri-available").checked=r?r.is_available:true;
+  document.getElementById("room-modal-overlay").classList.add("show");
+}
+function closeRoomModal(){document.getElementById("room-modal-overlay").classList.remove("show");}
+function saveRoom(){
+  var name=document.getElementById("ri-name").value.trim(),price=document.getElementById("ri-price").value;
+  if(!name||!price){showToast("Name and price required","error");return;}
+  var id=document.getElementById("room-item-id").value;
+  var data={name:name,num:document.getElementById("ri-num").value,description:document.getElementById("ri-desc").value.trim(),price:Number(price),capacity:Number(document.getElementById("ri-cap").value)||2,type:document.getElementById("ri-type").value,image:document.getElementById("ri-img").value.trim(),is_available:document.getElementById("ri-available").checked};
+  if(id){var idx=rooms.findIndex(function(x){return x.id===id;});if(idx>-1)rooms[idx]=Object.assign({},rooms[idx],data);showToast("Room updated");}
+  else{data.id="r"+Date.now();rooms.push(data);showToast("Room added");}
+  closeRoomModal();renderRoomsPage();
+}
+
+var resColors={Pending:"badge-gold",Confirmed:"badge-green","Checked In":"badge-blue","Checked Out":"badge-gray",Cancelled:"badge-red"};
+function renderResPage(){
+  var el=document.getElementById("res-total");if(el)el.textContent=reservations.length;
+  el=document.getElementById("res-pending");if(el)el.textContent=reservations.filter(function(r){return r.status==="Pending";}).length;
+  el=document.getElementById("res-confirmed");if(el)el.textContent=reservations.filter(function(r){return r.status==="Confirmed";}).length;
+  el=document.getElementById("res-checkout");if(el)el.textContent=reservations.filter(function(r){return r.status==="Checked Out";}).length;
+  el=document.getElementById("res-badge");if(el)el.textContent=reservations.filter(function(r){return r.status==="Pending";}).length;
+  renderResTable();
+}
+function resFilterStatus(s,el){resFilter=s;document.querySelectorAll(".cat-tabs .cat-tab").forEach(function(t){t.classList.remove("active");});el.classList.add("active");renderResTable();}
+function renderResTable(){
+  var q=(document.getElementById("res-search")?document.getElementById("res-search").value:"").toLowerCase();
+  var list=reservations.filter(function(r){return resFilter==="All"||r.status===resFilter;});
+  if(q)list=list.filter(function(r){return r.guest.toLowerCase().indexOf(q)>-1||r.room.toLowerCase().indexOf(q)>-1;});
+  var tbody=document.getElementById("res-tbody");if(!tbody)return;
+  if(!list.length){tbody.innerHTML='<tr><td colspan="7" class="empty-row">No reservations found.</td></tr>';return;}
+  tbody.innerHTML=list.map(function(r){
+    return "<tr><td><strong>"+r.guest+"</strong><br/><small style=\"color:var(--gray)\">"+(r.phone||"")+"</small></td>"+
+    "<td>"+r.room+"</td><td>"+r.checkin+"</td><td>"+r.checkout+"</td><td>"+r.guests+"</td>"+
+    '<td><span class="badge '+(resColors[r.status]||"badge-gray")+'">'+r.status+"</span></td>"+
+    "<td><div class=\"action-btns\"><button class=\"btn btn-outline btn-sm\" onclick=\"openResModal('"+r.id+"')\">Edit</button>"+
+    "<button class=\"btn btn-red btn-sm\" onclick=\"openDel('res','"+r.id+"','"+r.guest.replace(/'/g,"\\'")+"')\">Del</button></div></td></tr>";
+  }).join("");
+}
+function openResModal(id){
+  var r=id?reservations.find(function(x){return x.id===id;}):null;
+  document.getElementById("res-modal-title").textContent=r?"Edit Reservation":"New Reservation";
+  document.getElementById("res-item-id").value=id||"";
+  document.getElementById("resi-name").value=r?r.guest:"";
+  document.getElementById("resi-phone").value=r?(r.phone||""):"";
+  document.getElementById("resi-email").value=r?(r.email||""):"";
+  document.getElementById("resi-room").value=r?r.room:"Room 1";
+  document.getElementById("resi-checkin").value=r?r.checkin:"";
+  document.getElementById("resi-checkout").value=r?r.checkout:"";
+  document.getElementById("resi-guests").value=r?r.guests:1;
+  document.getElementById("resi-status").value=r?r.status:"Pending";
+  document.getElementById("resi-notes").value=r?(r.notes||""):"";
+  document.getElementById("res-modal-overlay").classList.add("show");
+}
+function closeResModal(){document.getElementById("res-modal-overlay").classList.remove("show");}
+function saveReservation(){
+  var name=document.getElementById("resi-name").value.trim(),ci=document.getElementById("resi-checkin").value,co=document.getElementById("resi-checkout").value;
+  if(!name||!ci||!co){showToast("Name, check-in and check-out required","error");return;}
+  var id=document.getElementById("res-item-id").value;
+  var data={guest:name,phone:document.getElementById("resi-phone").value,email:document.getElementById("resi-email").value,room:document.getElementById("resi-room").value,checkin:ci,checkout:co,guests:Number(document.getElementById("resi-guests").value)||1,status:document.getElementById("resi-status").value,notes:document.getElementById("resi-notes").value};
+  if(id){var idx=reservations.findIndex(function(x){return x.id===id;});if(idx>-1)reservations[idx]=Object.assign({},reservations[idx],data);showToast("Reservation updated");}
+  else{data.id="rv"+Date.now();reservations.push(data);showToast("Reservation added");}
+  closeResModal();renderResPage();
+}
+
+function renderOffersPage(){
+  var grid=document.getElementById("offers-grid");if(!grid)return;
+  grid.innerHTML=offers.map(function(o){
+    return '<div class="offer-card"><div class="offer-card-header"><div class="discount">'+(o.discount>0?o.discount+"% OFF":"Special")+"</div><h4>"+o.title+"</h4></div>"+
+    '<div class="offer-card-body"><p>'+o.description+"</p>"+(o.code?'<strong>Code: <span style="font-family:monospace;background:#f0f4f0;padding:2px 8px;border-radius:4px;">'+o.code+"</span></strong>":"")+
+    '<br/><small style="color:var(--gray);display:block;margin-top:6px;">Valid: '+o.from+" to "+o.to+"</small>"+
+    '<span class="badge '+(o.active?"badge-green":"badge-gray")+'" style="margin-top:8px;display:inline-block;">'+(o.active?"Active":"Inactive")+"</span></div>"+
+    '<div class="offer-card-footer"><button class="btn btn-outline btn-sm" onclick="openOfferModal(\''+o.id+"')\">Edit</button>"+
+    "<button class=\"btn btn-red btn-sm\" onclick=\"openDel('offer','"+o.id+"','"+o.title.replace(/'/g,"\\'")+"')\">Del</button>"+
+    "<button class=\"btn btn-gold btn-sm\" onclick=\"sendOfferNotif('"+o.id+"')\">"+(o.active?"Notify":"Activate")+"</button></div></div>";
+  }).join("");
+}
+function openOfferModal(id){
+  var o=id?offers.find(function(x){return x.id===id;}):null;
+  document.getElementById("offer-modal-title").textContent=o?"Edit Offer":"Create Offer";
+  document.getElementById("offer-item-id").value=id||"";
+  document.getElementById("oi-title").value=o?o.title:"";
+  document.getElementById("oi-desc").value=o?(o.description||""):"";
+  document.getElementById("oi-discount").value=o?o.discount:"";
+  document.getElementById("oi-code").value=o?(o.code||""):"";
+  document.getElementById("oi-from").value=o?o.from:"";
+  document.getElementById("oi-to").value=o?o.to:"";
+  document.getElementById("oi-active").checked=o?o.active:true;
+  document.getElementById("offer-modal-overlay").classList.add("show");
+}
+function closeOfferModal(){document.getElementById("offer-modal-overlay").classList.remove("show");}
+function saveOffer(){
+  var title=document.getElementById("oi-title").value.trim();
+  if(!title){showToast("Title required","error");return;}
+  var id=document.getElementById("offer-item-id").value;
+  var data={title:title,description:document.getElementById("oi-desc").value.trim(),discount:Number(document.getElementById("oi-discount").value)||0,code:document.getElementById("oi-code").value.trim(),from:document.getElementById("oi-from").value,to:document.getElementById("oi-to").value,active:document.getElementById("oi-active").checked};
+  if(id){var idx=offers.findIndex(function(x){return x.id===id;});if(idx>-1)offers[idx]=Object.assign({},offers[idx],data);showToast("Offer updated");}
+  else{data.id="o"+Date.now();offers.push(data);showToast("Offer created");}
+  closeOfferModal();renderOffersPage();
+}
+function sendOfferNotif(id){
+  var o=offers.find(function(x){return x.id===id;});if(!o)return;
+  if(!o.active){o.active=true;showToast("Offer activated");renderOffersPage();return;}
+  notifications.unshift({id:"n"+Date.now(),title:o.title,body:o.description+(o.code?" Code: "+o.code:""),channel:"Website Banner",audience:"All Guests",time:"Just now",type:"promo"});
+  showToast("Notification sent!","info");
+}
+
+function toggleChip(el){el.classList.toggle("active");}
+function toggleAud(el){document.querySelectorAll("[data-aud]").forEach(function(c){c.classList.remove("active");});el.classList.add("active");}
+function sendNotification(){
+  var title=document.getElementById("notif-title").value.trim(),body=document.getElementById("notif-body").value.trim();
+  if(!title||!body){showToast("Title and message required","error");return;}
+  var channels=[].slice.call(document.querySelectorAll("[data-ch].active")).map(function(c){return c.textContent.trim();}).join(", ");
+  var aud=document.querySelector("[data-aud].active");
+  notifications.unshift({id:"n"+Date.now(),title:title,body:body,channel:channels||"Website",audience:aud?aud.textContent.trim():"All Guests",time:"Just now",type:"update"});
+  document.getElementById("notif-title").value="";document.getElementById("notif-body").value="";
+  showToast("Notification sent!");renderNotifPage();
+}
+function renderNotifPage(){
+  var h=document.getElementById("notif-history");if(!h)return;
+  h.innerHTML=notifications.map(function(n){
+    return '<div class="notif-item"><div class="notif-icon">&#128276;</div>'+
+    '<div class="notif-info"><h4>'+n.title+"</h4><p>"+n.body+"</p><small style=\"color:var(--gray);\">"+n.channel+" to "+n.audience+"</small></div>"+
+    '<div class="notif-meta">'+n.time+'<br/><button class="btn btn-red btn-sm" style="margin-top:6px;" onclick="deleteNotif(\''+n.id+"')\">Del</button></div></div>";
+  }).join("");
+}
+function deleteNotif(id){notifications=notifications.filter(function(n){return n.id!==id;});renderNotifPage();showToast("Deleted");}
+
+function renderMessagesPage(){
+  var mb=document.getElementById("msg-badge");if(mb)mb.textContent=messages.filter(function(m){return m.unread;}).length||"";
+  var list=document.getElementById("threads-list");if(!list)return;
+  list.innerHTML=messages.map(function(c){
+    var last=c.msgs.length?c.msgs[c.msgs.length-1]:{text:"",time:""};
+    return '<div class="msg-thread '+(activeThread===c.id?"active":"")+"\" onclick=\"openThread('"+c.id+"')\">"+
+    '<span class="msg-thread-time">'+last.time+"</span>"+
+    '<div class="msg-thread-name">'+c.name+(c.unread?'<span class="unread-dot"></span>':"")+"</div>"+
+    '<div class="msg-thread-preview">'+last.text+"</div></div>";
+  }).join("");
+  if(activeThread)openThread(activeThread);
+}
+function openThread(id){
+  activeThread=id;var c=messages.find(function(m){return m.id===id;});if(!c)return;
+  c.unread=false;
+  var mb=document.getElementById("msg-badge");if(mb)mb.textContent=messages.filter(function(m){return m.unread;}).length||"";
+  var mc=document.getElementById("msg-content");if(!mc)return;
+  mc.innerHTML='<div class="msg-content-header">'+c.name+
+  ' <small style="font-weight:400;color:var(--gray);margin-left:6px;">'+(c.phone||"")+"</small>"+
+  '<button class="btn btn-outline btn-sm" onclick="openNewMsgModal(\''+c.name+"')\">Send</button></div>"+
+  '<div class="msg-body" id="mb-'+id+'">'+
+  c.msgs.map(function(m){return '<div><div class="bubble bubble-'+(m.from==="admin"?"admin":"guest")+'">'+m.text+'</div><div class="bubble-time">'+m.time+"</div></div>";}).join("")+
+  "</div>"+
+  '<div class="msg-compose"><input type="text" id="mi-'+id+'" placeholder="Type a reply..." onkeydown="if(event.key===\'Enter\')sendReply(\''+id+'\')">'+
+  '<button class="btn btn-green" onclick="sendReply(\''+id+"')\">Send</button></div>";
+  var body=document.getElementById("mb-"+id);if(body)body.scrollTop=body.scrollHeight;
+}
+function sendReply(id){
+  var input=document.getElementById("mi-"+id);var text=input?input.value.trim():"";if(!text)return;
+  var c=messages.find(function(m){return m.id===id;});if(!c)return;
+  var now=new Date();c.msgs.push({from:"admin",text:text,time:now.getHours()+":"+String(now.getMinutes()).padStart(2,"0")});
+  input.value="";renderMessagesPage();showToast("Reply sent");
+}
+function openNewMsgModal(name){document.getElementById("nm-to").value=name||"";document.getElementById("nm-body").value="";document.getElementById("newmsg-overlay").classList.add("show");}
+function closeNewMsgModal(){document.getElementById("newmsg-overlay").classList.remove("show");}
+function sendNewMessage(){
+  var to=document.getElementById("nm-to").value.trim(),body=document.getElementById("nm-body").value.trim();
+  if(!to||!body){showToast("Recipient and message required","error");return;}
+  var c=messages.find(function(m){return m.name===to;});
+  if(!c){c={id:"c"+Date.now(),name:to,phone:"",unread:false,msgs:[]};messages.unshift(c);}
+  var now=new Date();c.msgs.push({from:"admin",text:body,time:now.getHours()+":"+String(now.getMinutes()).padStart(2,"0")});
+  closeNewMsgModal();activeThread=c.id;renderMessagesPage();showToast("Message sent");
+}
+
+function openDel(type,id,name){delType=type;delId=id;var dn=document.getElementById("del-target-name");if(dn)dn.textContent='"'+name+'"';document.getElementById("del-overlay").classList.add("show");}
+function closeDelModal(){document.getElementById("del-overlay").classList.remove("show");}
+function confirmDel(){
+  if(delType==="menu")menuItems=menuItems.filter(function(m){return m.id!==delId;});
+  if(delType==="room")rooms=rooms.filter(function(r){return r.id!==delId;});
+  if(delType==="res")reservations=reservations.filter(function(r){return r.id!==delId;});
+  if(delType==="offer")offers=offers.filter(function(o){return o.id!==delId;});
+  closeDelModal();showToast("Deleted");
+  if(delType==="menu")renderMenuPage();
+  if(delType==="room")renderRoomsPage();
+  if(delType==="res")renderResPage();
+  if(delType==="offer")renderOffersPage();
+}
+function saveSettings(){showToast("Settings saved");}
+function clearToken(){localStorage.removeItem("tgh_admin_token");showToast("Logged out","info");}
+
+var toastT;
+function showToast(msg,type){
+  var t=document.getElementById("toast");t.textContent=msg;t.className="toast"+(type?" "+type:"");
+  void t.offsetWidth;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("show");},2800);
+}
+renderMenuPage();
+</script>
+</body>
+</html>
