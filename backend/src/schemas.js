@@ -17,6 +17,10 @@ export const reservationSchema = z.object({
   notes: z.string().max(1000).optional().or(z.literal(""))
 });
 
+export const adminReservationSchema = reservationSchema.extend({
+  status: z.enum(["Pending", "Confirmed", "Checked In", "Checked Out", "Cancelled"]).default("Pending")
+});
+
 export const contactSchema = z.object({
   name: z.string().min(2).max(120),
   phone: z.string().min(7).max(40).optional().or(z.literal("")),

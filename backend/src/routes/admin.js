@@ -2,7 +2,7 @@ import express from "express";
 import { query } from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { menuItemSchema, notificationSchema, offerSchema, roomSchema } from "../schemas.js";
+import { adminReservationSchema, menuItemSchema, notificationSchema, offerSchema, roomSchema } from "../schemas.js";
 
 export const adminRouter = express.Router();
 adminRouter.use(requireAuth);
@@ -54,6 +54,52 @@ adminRouter.patch("/reservations/:id/status", async (req, res, next) => {
   }
 });
 
+adminRouter.post("/reservations", validate(adminReservationSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `insert into reservations
+       (guest_name, phone, email, room_id, room_name, check_in, check_out, guests, status, notes)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+       returning id, guest_name as "guestName", phone, email, room_id as "roomId", room_name as "roomName",
+       check_in as "checkIn", check_out as "checkOut", guests, status, notes, created_at as "createdAt"`,
+      [b.guestName, b.phone, b.email || null, b.roomId || null, b.roomName || null, b.checkIn, b.checkOut, b.guests, b.status, b.notes || ""]
+    );
+    res.status(201).json({ reservation: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.put("/reservations/:id", validate(adminReservationSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `update reservations
+       set guest_name = $1, phone = $2, email = $3, room_id = $4, room_name = $5,
+           check_in = $6, check_out = $7, guests = $8, status = $9, notes = $10, updated_at = now()
+       where id = $11
+       returning id, guest_name as "guestName", phone, email, room_id as "roomId", room_name as "roomName",
+       check_in as "checkIn", check_out as "checkOut", guests, status, notes, created_at as "createdAt"`,
+      [b.guestName, b.phone, b.email || null, b.roomId || null, b.roomName || null, b.checkIn, b.checkOut, b.guests, b.status, b.notes || "", req.params.id]
+    );
+    if (!result.rowCount) return res.status(404).json({ error: "Reservation not found" });
+    res.json({ reservation: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.delete("/reservations/:id", async (req, res, next) => {
+  try {
+    const result = await query("delete from reservations where id = $1 returning id", [req.params.id]);
+    if (!result.rowCount) return res.status(404).json({ error: "Reservation not found" });
+    res.json({ ok: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
 adminRouter.get("/rooms", async (_req, res, next) => {
   try {
     const result = await query("select * from rooms order by room_number nulls last, name asc");
@@ -72,6 +118,33 @@ adminRouter.post("/rooms", validate(roomSchema), async (req, res, next) => {
       [b.name, b.roomNumber || null, b.description || "", b.type || "", b.price, b.capacity, b.imageUrl || null, b.isAvailable]
     );
     res.status(201).json({ room: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.put("/rooms/:id", validate(roomSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `update rooms
+       set name = $1, room_number = $2, description = $3, type = $4, price = $5,
+           capacity = $6, image_url = $7, is_available = $8, updated_at = now()
+       where id = $9 returning *`,
+      [b.name, b.roomNumber || null, b.description || "", b.type || "", b.price, b.capacity, b.imageUrl || null, b.isAvailable, req.params.id]
+    );
+    if (!result.rowCount) return res.status(404).json({ error: "Room not found" });
+    res.json({ room: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.delete("/rooms/:id", async (req, res, next) => {
+  try {
+    const result = await query("delete from rooms where id = $1 returning id", [req.params.id]);
+    if (!result.rowCount) return res.status(404).json({ error: "Room not found" });
+    res.json({ ok: true });
   } catch (error) {
     next(error);
   }
@@ -100,6 +173,33 @@ adminRouter.post("/menu", validate(menuItemSchema), async (req, res, next) => {
   }
 });
 
+adminRouter.put("/menu/:id", validate(menuItemSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `update menu_items
+       set name = $1, description = $2, category = $3, price = $4, image_url = $5,
+           is_available = $6, is_featured = $7, updated_at = now()
+       where id = $8 returning *`,
+      [b.name, b.description || "", b.category, b.price, b.imageUrl || null, b.isAvailable, b.isFeatured, req.params.id]
+    );
+    if (!result.rowCount) return res.status(404).json({ error: "Menu item not found" });
+    res.json({ menuItem: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.delete("/menu/:id", async (req, res, next) => {
+  try {
+    const result = await query("delete from menu_items where id = $1 returning id", [req.params.id]);
+    if (!result.rowCount) return res.status(404).json({ error: "Menu item not found" });
+    res.json({ ok: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
 adminRouter.get("/offers", async (_req, res, next) => {
   try {
     const result = await query("select * from offers order by created_at desc");
@@ -118,6 +218,33 @@ adminRouter.post("/offers", validate(offerSchema), async (req, res, next) => {
       [b.title, b.description || "", b.discountPercent, b.code || null, b.startsAt, b.endsAt, b.isActive]
     );
     res.status(201).json({ offer: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.put("/offers/:id", validate(offerSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `update offers
+       set title = $1, description = $2, discount_percent = $3, code = $4,
+           starts_at = $5, ends_at = $6, is_active = $7, updated_at = now()
+       where id = $8 returning *`,
+      [b.title, b.description || "", b.discountPercent, b.code || null, b.startsAt, b.endsAt, b.isActive, req.params.id]
+    );
+    if (!result.rowCount) return res.status(404).json({ error: "Offer not found" });
+    res.json({ offer: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.delete("/offers/:id", async (req, res, next) => {
+  try {
+    const result = await query("delete from offers where id = $1 returning id", [req.params.id]);
+    if (!result.rowCount) return res.status(404).json({ error: "Offer not found" });
+    res.json({ ok: true });
   } catch (error) {
     next(error);
   }

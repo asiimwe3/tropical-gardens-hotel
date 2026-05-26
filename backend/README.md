@@ -57,13 +57,22 @@ Admin, requires `Authorization: Bearer <token>`:
 
 - `GET /api/admin/dashboard`
 - `GET /api/admin/reservations`
+- `POST /api/admin/reservations`
+- `PUT /api/admin/reservations/:id`
 - `PATCH /api/admin/reservations/:id/status`
+- `DELETE /api/admin/reservations/:id`
 - `GET /api/admin/rooms`
 - `POST /api/admin/rooms`
+- `PUT /api/admin/rooms/:id`
+- `DELETE /api/admin/rooms/:id`
 - `GET /api/admin/menu`
 - `POST /api/admin/menu`
+- `PUT /api/admin/menu/:id`
+- `DELETE /api/admin/menu/:id`
 - `GET /api/admin/offers`
 - `POST /api/admin/offers`
+- `PUT /api/admin/offers/:id`
+- `DELETE /api/admin/offers/:id`
 - `GET /api/admin/notifications`
 - `POST /api/admin/notifications`
 - `DELETE /api/admin/notifications/:id`
