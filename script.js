@@ -126,7 +126,7 @@ if (hamburger && navLinks) {
 
 // ---- MOBILE BOTTOM NAV — ACTIVE STATE ----
 function updateBottomNav() {
-  const sections = ['home', 'rooms', 'reservation', 'gallery', 'contact']
+  const sections = ['home', 'signature', 'rooms', 'reservation', 'menu', 'gallery', 'contact']
   const navItems = document.querySelectorAll('.mob-nav-item')
   if (!navItems.length) return
 
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Scroll reveal
-  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card, .event-card, .review-card, .tourism-cards div, .experience-list div')
+  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card, .event-card, .review-card, .tourism-cards div, .experience-list div, .proof-item, .signature-card, .journey-step')
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
@@ -355,6 +355,7 @@ async function handleContact(e) {
 // ---- TOAST ----
 function showToast(msg) {
   const toast = document.getElementById('toast')
+  if (!toast) return
   toast.textContent = msg
   toast.classList.add('show')
   setTimeout(() => toast.classList.remove('show'), 4200)
