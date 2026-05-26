@@ -48,6 +48,18 @@ create table if not exists offers (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists notifications (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  body text not null default '',
+  channel text not null default 'Website',
+  audience text not null default 'All Guests',
+  type text not null default 'update' check (type in ('update','promo','alert')),
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists reservations (
   id uuid primary key default gen_random_uuid(),
   guest_name text not null,
@@ -103,5 +115,6 @@ create index if not exists idx_reservations_status on reservations(status);
 create index if not exists idx_reservations_dates on reservations(check_in, check_out);
 create index if not exists idx_menu_category on menu_items(category);
 create index if not exists idx_messages_status on guest_messages(status);
+create index if not exists idx_notifications_active on notifications(is_active, created_at desc);
 create index if not exists idx_payments_reference on payments(merchant_reference);
 create index if not exists idx_payments_tracking on payments(provider_tracking_id);

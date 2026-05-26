@@ -44,6 +44,21 @@ publicRouter.get("/offers", async (_req, res, next) => {
   }
 });
 
+publicRouter.get("/notifications", async (_req, res, next) => {
+  try {
+    const result = await query(
+      `select id, title, body, channel, audience, type, created_at as "createdAt"
+       from notifications
+       where is_active = true and channel ilike '%website%'
+       order by created_at desc
+       limit 20`
+    );
+    res.json({ notifications: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
 publicRouter.post("/reservations", validate(reservationSchema), async (req, res, next) => {
   try {
     const b = req.body;

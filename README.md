@@ -10,6 +10,7 @@ The site is designed to feel calm, polished, and booking-first. It presents the 
 - Fast booking panel with check-in, check-out, guests, and room selection.
 - Sticky action bar for calls, WhatsApp concierge, reservations, and directions.
 - Hotel facilities, events, tourism gateway, rooms, signature packages, menu, gallery, contact, and guest journey sections.
+- Public notifications section that shows website notices sent from the admin dashboard.
 - Responsive mobile layout with bottom navigation and quick booking access.
 - Dark mode support.
 - Backend-ready forms for reservations and contact messages.
@@ -21,7 +22,7 @@ The site is designed to feel calm, polished, and booking-first. It presents the 
 - `style.css` - responsive premium visual design.
 - `script.js` - interactions, booking modal, forms, gallery filtering, menu rendering, and API integration.
 - `admin.html` - admin interface.
-- `backend/` - API, authentication, reservations, rooms, menu, offers, messages, and payments.
+- `backend/` - API, authentication, reservations, rooms, menu, offers, notifications, messages, and payments.
 
 ## Brand Direction
 

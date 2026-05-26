@@ -2,7 +2,7 @@ import express from "express";
 import { query } from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { menuItemSchema, offerSchema, roomSchema } from "../schemas.js";
+import { menuItemSchema, notificationSchema, offerSchema, roomSchema } from "../schemas.js";
 
 export const adminRouter = express.Router();
 adminRouter.use(requireAuth);
@@ -118,6 +118,43 @@ adminRouter.post("/offers", validate(offerSchema), async (req, res, next) => {
       [b.title, b.description || "", b.discountPercent, b.code || null, b.startsAt, b.endsAt, b.isActive]
     );
     res.status(201).json({ offer: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.get("/notifications", async (_req, res, next) => {
+  try {
+    const result = await query(
+      `select id, title, body, channel, audience, type, is_active as "isActive", created_at as "createdAt"
+       from notifications order by created_at desc`
+    );
+    res.json({ notifications: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.post("/notifications", validate(notificationSchema), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const result = await query(
+      `insert into notifications (title, body, channel, audience, type, is_active)
+       values ($1,$2,$3,$4,$5,$6)
+       returning id, title, body, channel, audience, type, is_active as "isActive", created_at as "createdAt"`,
+      [b.title, b.body || "", b.channel || "Website", b.audience || "All Guests", b.type || "update", b.isActive]
+    );
+    res.status(201).json({ notification: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.delete("/notifications/:id", async (req, res, next) => {
+  try {
+    const result = await query("delete from notifications where id = $1 returning id", [req.params.id]);
+    if (!result.rowCount) return res.status(404).json({ error: "Notification not found" });
+    res.json({ ok: true });
   } catch (error) {
     next(error);
   }

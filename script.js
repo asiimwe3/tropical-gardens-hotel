@@ -7,6 +7,7 @@
 const isMobile = () => window.innerWidth <= 768
 const API_BASE = (window.TGH_API_BASE || localStorage.getItem('tgh_api_base') || '').replace(/\/$/, '')
 const THEME_KEY = 'tgh_theme'
+const NOTIFICATIONS_KEY = 'tgh_public_notifications'
 
 function preferredTheme() {
   return localStorage.getItem(THEME_KEY) ||
@@ -52,6 +53,88 @@ function setButtonLoading(button, loading, text) {
   } else {
     button.textContent = button.dataset.originalText || button.textContent
     button.disabled = false
+  }
+}
+
+function escapeHTML(value) {
+  return String(value || '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]))
+}
+
+function normalizeNotification(notification) {
+  return {
+    id: notification.id || `local-${Date.now()}`,
+    title: notification.title || 'Hotel update',
+    body: notification.body || notification.message || '',
+    channel: notification.channel || 'Website',
+    audience: notification.audience || 'All Guests',
+    type: notification.type || 'update',
+    createdAt: notification.createdAt || notification.created_at || notification.time || ''
+  }
+}
+
+function readStoredNotifications() {
+  try {
+    return JSON.parse(localStorage.getItem(NOTIFICATIONS_KEY) || '[]').map(normalizeNotification)
+  } catch (error) {
+    return []
+  }
+}
+
+function formatNotificationDate(value) {
+  if (!value) return 'Latest update'
+  if (String(value).toLowerCase().includes('ago') || String(value).toLowerCase().includes('now') || String(value).toLowerCase().includes('yesterday')) return value
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
+function renderPublicNotifications(notifications) {
+  const grid = document.getElementById('public-notifications')
+  if (!grid) return
+
+  const websiteNotifications = notifications
+    .map(normalizeNotification)
+    .filter(item => String(item.channel || '').toLowerCase().includes('website'))
+    .slice(0, 12)
+
+  if (!websiteNotifications.length) {
+    grid.innerHTML = '<div class="notification-empty">No guest notifications yet.</div>'
+    return
+  }
+
+  grid.innerHTML = websiteNotifications.map(item => `
+    <article class="notification-card">
+      <span class="notification-type ${escapeHTML(item.type)}">${escapeHTML(item.type)}</span>
+      <h3>${escapeHTML(item.title)}</h3>
+      <p>${escapeHTML(item.body)}</p>
+      <div class="notification-meta">${escapeHTML(item.audience)} · ${escapeHTML(formatNotificationDate(item.createdAt))}</div>
+    </article>
+  `).join('')
+}
+
+async function loadPublicNotifications() {
+  const stored = readStoredNotifications()
+  renderPublicNotifications(stored)
+
+  try {
+    const data = await apiFetch('/api/notifications')
+    const backendNotifications = (data.notifications || []).map(normalizeNotification)
+    const merged = [...backendNotifications, ...stored]
+    const seen = new Set()
+    renderPublicNotifications(merged.filter(item => {
+      const key = `${item.id}-${item.title}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    }))
+  } catch (error) {
+    // Static GitHub Pages uses localStorage notifications when no backend is configured.
   }
 }
 
@@ -191,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Scroll reveal
-  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card, .event-card, .review-card, .tourism-cards div, .experience-list div, .proof-item, .signature-card, .journey-step')
+  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card, .event-card, .review-card, .tourism-cards div, .experience-list div, .proof-item, .signature-card, .notification-card, .journey-step')
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
@@ -252,6 +335,8 @@ function handleQuickBooking(e) {
     showToast('Availability request ready. Complete your reservation details.')
   }
 }
+
+loadPublicNotifications()
 
 // ---- SCROLL EVENTS ----
 window.addEventListener('scroll', () => {

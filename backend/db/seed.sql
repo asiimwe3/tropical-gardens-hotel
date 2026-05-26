@@ -14,3 +14,8 @@ on conflict do nothing;
 insert into offers (title, description, discount_percent, code, starts_at, ends_at, is_active) values
 ('Weekend Garden Escape', 'Save on Friday to Sunday stays for couples and families.', 20, 'GARDEN20', current_date, current_date + interval '60 days', true)
 on conflict do nothing;
+
+insert into notifications (title, body, channel, audience, type, is_active) values
+('Weekend Special Offer', 'Book this weekend and enjoy 20% off all rooms. Use code GARDEN20.', 'Website Banner', 'All Guests', 'promo', true),
+('New Breakfast Menu', 'We have added new breakfast options for guests and visitors.', 'Website', 'All Guests', 'update', true)
+on conflict do nothing;

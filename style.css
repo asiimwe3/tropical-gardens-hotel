@@ -167,6 +167,7 @@ html[data-theme="dark"] .tourism-cards div,
 html[data-theme="dark"] .experience-list div,
 html[data-theme="dark"] .proof-item,
 html[data-theme="dark"] .signature-card,
+html[data-theme="dark"] .notification-card,
 html[data-theme="dark"] .journey-step,
 html[data-theme="dark"] .contact-card,
 html[data-theme="dark"] .contact-form-center,
@@ -185,6 +186,7 @@ html[data-theme="dark"] .menu-card,
 html[data-theme="dark"] .event-card,
 html[data-theme="dark"] .proof-item,
 html[data-theme="dark"] .signature-card,
+html[data-theme="dark"] .notification-card,
 html[data-theme="dark"] .journey-step,
 html[data-theme="dark"] .review-card {
   border: 1px solid rgba(255,224,138,0.15);
@@ -924,6 +926,80 @@ h4,
 }
 
 /* ==============================
+   PUBLIC NOTIFICATIONS
+   ============================== */
+.notifications-section {
+  background:
+    linear-gradient(180deg, var(--white) 0%, var(--cream) 100%);
+}
+.notifications-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.notification-card {
+  min-height: 220px;
+  padding: 24px;
+  background: var(--white);
+  border: 1px solid rgba(27,94,32,0.12);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.notification-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.notification-type {
+  align-self: flex-start;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: var(--green-pale);
+  color: var(--green-dark);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.notification-type.promo {
+  background: rgba(245,127,23,0.16);
+  color: #a35408;
+}
+.notification-type.alert {
+  background: #fff3cd;
+  color: #8a5b00;
+}
+.notification-card h3 {
+  font-family: var(--font-serif);
+  color: var(--dark);
+  font-size: 1.22rem;
+}
+.notification-card p {
+  color: var(--gray);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.notification-meta {
+  margin-top: auto;
+  color: var(--green-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+.notification-empty {
+  grid-column: 1 / -1;
+  padding: 28px;
+  text-align: center;
+  border: 1px dashed rgba(27,94,32,0.22);
+  border-radius: 18px;
+  color: var(--gray);
+  font-weight: 800;
+  background: rgba(255,255,255,0.72);
+}
+
+/* ==============================
    GALLERY
    ============================== */
 .gallery-filter { display: flex; gap: 8px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap; }
@@ -1115,7 +1191,7 @@ h4,
    ============================== */
 @media (max-width: 1024px) {
   .about-grid, .res-grid { grid-template-columns: 1fr; gap: 36px; }
-  .services-grid, .rooms-grid, .proof-grid, .signature-grid, .journey-grid { grid-template-columns: 1fr 1fr; }
+  .services-grid, .rooms-grid, .proof-grid, .signature-grid, .notifications-grid, .journey-grid { grid-template-columns: 1fr 1fr; }
   .booking-card { grid-template-columns: repeat(2, 1fr); }
   .booking-submit { grid-column: 1 / -1; }
   .experience-grid, .tourism-layout, .proof-layout { grid-template-columns: 1fr; gap: 34px; }
@@ -1195,7 +1271,7 @@ h4,
   .experience-media { grid-template-columns: 1fr; }
   .experience-media img,
   .experience-media img:last-child { height: 240px; margin-bottom: 0; }
-  .proof-grid, .event-grid, .tourism-cards, .review-grid, .journey-grid { grid-template-columns: 1fr; }
+  .proof-grid, .event-grid, .tourism-cards, .review-grid, .notifications-grid, .journey-grid { grid-template-columns: 1fr; }
   .proof-item, .journey-step { min-height: auto; }
 
   /* Rooms — single column */

@@ -42,6 +42,7 @@ Public:
 - `GET /api/rooms`
 - `GET /api/menu`
 - `GET /api/offers`
+- `GET /api/notifications`
 - `POST /api/reservations`
 - `POST /api/contact`
 - `POST /api/payments/pesapal/checkout`
@@ -63,6 +64,9 @@ Admin, requires `Authorization: Bearer <token>`:
 - `POST /api/admin/menu`
 - `GET /api/admin/offers`
 - `POST /api/admin/offers`
+- `GET /api/admin/notifications`
+- `POST /api/admin/notifications`
+- `DELETE /api/admin/notifications/:id`
 - `GET /api/admin/messages`
 
 ## Frontend Integration

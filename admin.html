@@ -597,6 +597,17 @@ var messages=[
 var menuFilter="All",resFilter="All",delType="",delId="",activeThread=null;
 var API_BASE=(window.TGH_API_BASE||localStorage.getItem("tgh_api_base")||"").replace(/\/$/,"");
 var THEME_KEY="tgh_theme";
+var NOTIFICATIONS_KEY="tgh_public_notifications";
+
+function savePublicNotifications(){
+  localStorage.setItem(NOTIFICATIONS_KEY,JSON.stringify(notifications));
+}
+function loadPublicNotifications(){
+  try{
+    var stored=JSON.parse(localStorage.getItem(NOTIFICATIONS_KEY)||"[]");
+    if(stored.length)notifications=stored.map(normalizeNotification);
+  }catch(error){}
+}
 
 function applyAdminTheme(theme){
   var next=theme==="dark"?"dark":"light";
@@ -638,6 +649,9 @@ function normalizeRoom(room){
 function normalizeOffer(offer){
   return {id:offer.id,title:offer.title,description:offer.description||"",discount:offer.discountPercent!==undefined?offer.discountPercent:offer.discount_percent||offer.discount||0,code:offer.code||"",from:offer.startsAt||offer.starts_at||offer.from||"",to:offer.endsAt||offer.ends_at||offer.to||"",active:offer.isActive!==undefined?offer.isActive:offer.is_active!==undefined?offer.is_active:offer.active};
 }
+function normalizeNotification(notification){
+  return {id:notification.id,title:notification.title||"Hotel update",body:notification.body||notification.message||"",channel:notification.channel||"Website",audience:notification.audience||"All Guests",time:notification.createdAt||notification.created_at||notification.time||"Just now",type:notification.type||"update",active:notification.isActive!==undefined?notification.isActive:notification.is_active!==undefined?notification.is_active:notification.active!==false};
+}
 function normalizeReservation(res){
   return {id:res.id,guest:res.guestName||res.guest_name||res.guest||"",phone:res.phone||"",email:res.email||"",room:res.roomName||res.room_name||res.room||"",checkin:res.checkIn||res.check_in||res.checkin||"",checkout:res.checkOut||res.check_out||res.checkout||"",guests:Number(res.guests)||1,status:res.status||"Pending",notes:res.notes||""};
 }
@@ -646,19 +660,23 @@ function normalizeMessage(msg){
 }
 async function loadBackendData(){
   try{
-    var publicResults=await Promise.allSettled([apiFetch("/api/menu"),apiFetch("/api/rooms"),apiFetch("/api/offers")]);
+    loadPublicNotifications();
+    var publicResults=await Promise.allSettled([apiFetch("/api/menu"),apiFetch("/api/rooms"),apiFetch("/api/offers"),apiFetch("/api/notifications")]);
     if(publicResults[0].status==="fulfilled"&&publicResults[0].value.menuItems)menuItems=publicResults[0].value.menuItems.map(normalizeMenuItem);
     if(publicResults[1].status==="fulfilled"&&publicResults[1].value.rooms)rooms=publicResults[1].value.rooms.map(normalizeRoom);
     if(publicResults[2].status==="fulfilled"&&publicResults[2].value.offers)offers=publicResults[2].value.offers.map(normalizeOffer);
+    if(publicResults[3].status==="fulfilled"&&publicResults[3].value.notifications){notifications=publicResults[3].value.notifications.map(normalizeNotification);savePublicNotifications();}
     if(localStorage.getItem("tgh_admin_token")){
       var adminResults=await Promise.allSettled([
         apiFetch("/api/admin/reservations",{headers:authHeaders()}),
-        apiFetch("/api/admin/messages",{headers:authHeaders()})
+        apiFetch("/api/admin/messages",{headers:authHeaders()}),
+        apiFetch("/api/admin/notifications",{headers:authHeaders()})
       ]);
       if(adminResults[0].status==="fulfilled"&&adminResults[0].value.reservations)reservations=adminResults[0].value.reservations.map(normalizeReservation);
       if(adminResults[1].status==="fulfilled"&&adminResults[1].value.messages)messages=adminResults[1].value.messages.map(normalizeMessage);
+      if(adminResults[2].status==="fulfilled"&&adminResults[2].value.notifications){notifications=adminResults[2].value.notifications.map(normalizeNotification);savePublicNotifications();}
     }
-    renderMenuPage();renderRoomsPage();renderResPage();renderOffersPage();renderMessagesPage();
+    renderMenuPage();renderRoomsPage();renderResPage();renderOffersPage();renderNotifPage();renderMessagesPage();
     showToast("Backend data loaded","info");
   }catch(error){
     console.log("Backend data not available, using demo data",error);
@@ -857,21 +875,38 @@ function saveOffer(){
   else{data.id="o"+Date.now();offers.push(data);showToast("Offer created");}
   closeOfferModal();renderOffersPage();
 }
-function sendOfferNotif(id){
+async function sendOfferNotif(id){
   var o=offers.find(function(x){return x.id===id;});if(!o)return;
   if(!o.active){o.active=true;showToast("Offer activated");renderOffersPage();return;}
-  notifications.unshift({id:"n"+Date.now(),title:o.title,body:o.description+(o.code?" Code: "+o.code:""),channel:"Website Banner",audience:"All Guests",time:"Just now",type:"promo"});
+  var notif={id:"n"+Date.now(),title:o.title,body:o.description+(o.code?" Code: "+o.code:""),channel:"Website Banner",audience:"All Guests",time:"Just now",type:"promo",active:true};
+  if(localStorage.getItem("tgh_admin_token")){
+    try{
+      var saved=await apiFetch("/api/admin/notifications",{method:"POST",headers:authHeaders(),body:JSON.stringify({title:notif.title,body:notif.body,channel:notif.channel,audience:notif.audience,type:notif.type,isActive:true})});
+      if(saved.notification)notif=normalizeNotification(saved.notification);
+    }catch(error){console.log("Notification API unavailable, saved locally",error);}
+  }
+  notifications.unshift(notif);
+  savePublicNotifications();
+  renderNotifPage();
   showToast("Notification sent!","info");
 }
 
 function toggleChip(el){el.classList.toggle("active");}
 function toggleAud(el){document.querySelectorAll("[data-aud]").forEach(function(c){c.classList.remove("active");});el.classList.add("active");}
-function sendNotification(){
+async function sendNotification(){
   var title=document.getElementById("notif-title").value.trim(),body=document.getElementById("notif-body").value.trim();
   if(!title||!body){showToast("Title and message required","error");return;}
   var channels=[].slice.call(document.querySelectorAll("[data-ch].active")).map(function(c){return c.textContent.trim();}).join(", ");
   var aud=document.querySelector("[data-aud].active");
-  notifications.unshift({id:"n"+Date.now(),title:title,body:body,channel:channels||"Website",audience:aud?aud.textContent.trim():"All Guests",time:"Just now",type:"update"});
+  var notif={id:"n"+Date.now(),title:title,body:body,channel:channels||"Website",audience:aud?aud.textContent.trim():"All Guests",time:"Just now",type:"update",active:true};
+  if(localStorage.getItem("tgh_admin_token")){
+    try{
+      var saved=await apiFetch("/api/admin/notifications",{method:"POST",headers:authHeaders(),body:JSON.stringify({title:notif.title,body:notif.body,channel:notif.channel,audience:notif.audience,type:notif.type,isActive:true})});
+      if(saved.notification)notif=normalizeNotification(saved.notification);
+    }catch(error){console.log("Notification API unavailable, saved locally",error);}
+  }
+  notifications.unshift(notif);
+  savePublicNotifications();
   document.getElementById("notif-title").value="";document.getElementById("notif-body").value="";
   showToast("Notification sent!");renderNotifPage();
 }
@@ -883,7 +918,15 @@ function renderNotifPage(){
     '<div class="notif-meta">'+n.time+'<br/><button class="btn btn-red btn-sm" style="margin-top:6px;" onclick="deleteNotif(\''+n.id+"')\">Del</button></div></div>";
   }).join("");
 }
-function deleteNotif(id){notifications=notifications.filter(function(n){return n.id!==id;});renderNotifPage();showToast("Deleted");}
+async function deleteNotif(id){
+  if(localStorage.getItem("tgh_admin_token")){
+    try{await apiFetch("/api/admin/notifications/"+id,{method:"DELETE",headers:authHeaders()});}catch(error){console.log("Notification delete API unavailable, deleted locally",error);}
+  }
+  notifications=notifications.filter(function(n){return n.id!==id;});
+  savePublicNotifications();
+  renderNotifPage();
+  showToast("Deleted");
+}
 
 function renderMessagesPage(){
   var mb=document.getElementById("msg-badge");if(mb)mb.textContent=messages.filter(function(m){return m.unread;}).length||"";
