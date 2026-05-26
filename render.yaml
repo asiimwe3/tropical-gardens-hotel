@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: tropical-gardens-hotel-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    preDeployCommand: npm run db:setup && npm run admin:create
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: CORS_ORIGIN
+        value: https://asiimwe3.github.io,http://127.0.0.1:4173,http://localhost:4173
+      - key: ADMIN_EMAIL
+        value: tropicalgardenshotel@gmail.com
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tropical-gardens-hotel-db
+          property: connectionString
+      - key: PESAPAL_BASE_URL
+        value: https://pay.pesapal.com/v3
+      - key: PESAPAL_CONSUMER_KEY
+        sync: false
+      - key: PESAPAL_CONSUMER_SECRET
+        sync: false
+      - key: PESAPAL_IPN_ID
+        sync: false
+      - key: PESAPAL_CALLBACK_URL
+        value: https://tropical-gardens-hotel-api.onrender.com/api/payments/pesapal/callback
+      - key: PESAPAL_CANCELLATION_URL
+        value: https://asiimwe3.github.io/tropical-gardens-hotel/payment-cancelled.html
+      - key: PAYMENT_SUCCESS_URL
+        value: https://asiimwe3.github.io/tropical-gardens-hotel/payment-success.html
+
+databases:
+  - name: tropical-gardens-hotel-db
+    databaseName: tropical_gardens
+    user: tropical_gardens

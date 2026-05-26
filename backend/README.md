@@ -146,3 +146,26 @@ window.location.href = data.redirectUrl;
 ```
 
 For production, deploy the static frontend to Vercel, Netlify, or GitHub Pages, and deploy the backend to Render, Railway, Fly.io, or AWS with a managed PostgreSQL database.
+
+## Render Deployment
+
+This repository includes a root `render.yaml` Blueprint for hosting the real backend:
+
+- Node API service: `tropical-gardens-hotel-api`
+- PostgreSQL database: `tropical-gardens-hotel-db`
+- Pre-deploy setup: runs the database schema, seed data, and admin user creation
+
+Create a new Render Blueprint from the GitHub repository, then provide the secret values Render asks for:
+
+- `ADMIN_PASSWORD`
+- `PESAPAL_CONSUMER_KEY`
+- `PESAPAL_CONSUMER_SECRET`
+- `PESAPAL_IPN_ID`
+
+The public website is configured through `app-config.js` to call:
+
+```js
+window.TGH_API_BASE = "https://tropical-gardens-hotel-api.onrender.com";
+```
+
+If Render gives the API a different URL, update `app-config.js` and redeploy GitHub Pages.
