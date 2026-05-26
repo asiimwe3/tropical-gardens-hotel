@@ -182,19 +182,6 @@
       .hamburger-toggle{display:flex!important;}
     }
     .hamburger-toggle{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--dark);}
-    .theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:7px 12px;border:1.5px solid var(--border);border-radius:999px;background:#fff;color:var(--green-dark);font-family:"Inter",sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;transition:all 0.2s;}
-    .theme-toggle:hover{border-color:var(--gold);background:var(--gold-pale);color:#5f3900;}
-    body.dark-theme{--green:#d4a23a;--green-dark:#8a6119;--green-pale:rgba(212,162,58,0.14);--green-mid:#f0bf55;--gold:#dba642;--gold-pale:rgba(219,166,66,0.16);--dark:#f8edca;--gray:#c8b98c;--border:rgba(255,224,138,0.18);--white:#15110a;--red-pale:rgba(211,47,47,0.18);--blue-pale:rgba(21,101,192,0.18);--purple-pale:rgba(106,27,154,0.20);background:radial-gradient(circle at top left,rgba(219,166,66,0.16),transparent 32rem),#0c0b08;color:var(--dark);}
-    body.dark-theme .sidebar{background:linear-gradient(180deg,#1b1305,#0b1009);border-right:1px solid rgba(255,224,138,0.16);}
-    body.dark-theme .topbar,body.dark-theme .stat-card,body.dark-theme .widget,body.dark-theme .table-wrap,body.dark-theme .notif-compose,body.dark-theme .notif-history,body.dark-theme .offer-card,body.dark-theme .room-card,body.dark-theme .messages-layout,body.dark-theme .modal{background:linear-gradient(180deg,rgba(33,26,14,0.98),rgba(20,16,10,0.98));border:1px solid rgba(255,224,138,0.15);box-shadow:0 14px 38px rgba(0,0,0,0.34);}
-    body.dark-theme thead{background:rgba(219,166,66,0.14);}
-    body.dark-theme tr:hover td,body.dark-theme .msg-thread:hover{background:rgba(255,224,138,0.06);}
-    body.dark-theme .btn-green,body.dark-theme .btn-gold,body.dark-theme .quick-btn:hover{background:linear-gradient(135deg,#ffe08a,#dba642 62%,#a7731d);color:#201304;}
-    body.dark-theme .btn-outline,body.dark-theme .cat-tab,body.dark-theme .chip,body.dark-theme .theme-toggle{background:rgba(255,224,138,0.05);border-color:rgba(255,224,138,0.28);color:var(--gold);}
-    body.dark-theme .cat-tab.active,body.dark-theme .chip.active,body.dark-theme .theme-toggle:hover{background:var(--gold);border-color:var(--gold);color:#201304;}
-    body.dark-theme input,body.dark-theme select,body.dark-theme textarea,.dark-theme .search-input{background:#0d0c09!important;border-color:rgba(255,224,138,0.26)!important;color:var(--dark)!important;}
-    body.dark-theme .offer-card-header{background:linear-gradient(135deg,#7b5511,#dba642);color:#201304;}
-    body.dark-theme .toast{background:var(--gold);color:#201304;}
   </style>
 </head>
 <body>
@@ -214,6 +201,13 @@
   <div class="nav-item" onclick="showPage('offers',this)"><span class="icon">&#127873;</span> Offers &amp; Promos</div>
   <div class="nav-item" onclick="showPage('notifications',this)"><span class="icon">&#128276;</span> Notifications</div>
   <div class="nav-item" onclick="showPage('messages',this)"><span class="icon">&#128172;</span> Messages <span class="nav-badge" id="msg-badge">3</span></div>
+  <div class="nav-section">Management</div>
+  <div class="nav-item" onclick="showPage('payments',this)"><span class="icon">&#128176;</span> Payments</div>
+  <div class="nav-item" onclick="showPage('reviews',this)"><span class="icon">&#11088;</span> Reviews</div>
+  <div class="nav-item" onclick="showPage('gallery',this)"><span class="icon">&#128247;</span> Gallery</div>
+  <div class="nav-item" onclick="showPage('calendar',this)"><span class="icon">&#128198;</span> Availability</div>
+  <div class="nav-item" onclick="showPage('staff',this)"><span class="icon">&#128100;</span> Staff / Roles</div>
+  <div class="nav-item" onclick="showPage('analytics',this)"><span class="icon">&#128200;</span> Analytics</div>
   <div class="nav-section">Settings</div>
   <div class="nav-item" onclick="showPage('settings',this)"><span class="icon">&#9881;</span> Settings</div>
   <div class="sidebar-footer"><a href="index.html">&#8592; Back to Website</a></div>
@@ -227,7 +221,6 @@
     </div>
     <div class="topbar-right">
       <button class="notification-btn" onclick="showPage('notifications',null)">&#128276;<span class="badge">2</span></button>
-      <button class="theme-toggle" type="button" id="admin-theme-toggle" aria-label="Switch to dark theme"><span id="admin-theme-icon">☾</span><span id="admin-theme-label">Dark</span></button>
       <div class="admin-avatar">A</div>
       <span style="font-size:0.82rem;font-weight:600;">Admin</span>
     </div>
@@ -420,6 +413,100 @@
       </div>
     </div>
   </div>
+
+  <!-- PAYMENTS -->
+  <div class="page" id="page-payments">
+    <div class="stats-grid">
+      <div class="stat-card"><h3 id="pay-total">0</h3><p>Total Transactions</p></div>
+      <div class="stat-card gold"><h3 id="pay-paid">0</h3><p>Paid</p></div>
+      <div class="stat-card blue"><h3 id="pay-pending">0</h3><p>Pending</p></div>
+      <div class="stat-card red"><h3 id="pay-failed">0</h3><p>Failed</p></div>
+    </div>
+    <div class="section-header"><h2>Payment Transactions</h2><input type="text" class="search-input" id="pay-search" placeholder="Search guest..." oninput="renderPaymentsTable()"/></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Guest</th><th>Room</th><th>Check-in</th><th>Amount (UGX)</th><th>Method</th><th>Status</th><th>Reference</th><th>Actions</th></tr></thead>
+      <tbody id="pay-tbody"></tbody>
+    </table></div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="page" id="page-reviews">
+    <div class="stats-grid">
+      <div class="stat-card"><h3 id="rev-total">0</h3><p>Total Reviews</p></div>
+      <div class="stat-card gold"><h3 id="rev-avg">0</h3><p>Avg Rating</p></div>
+      <div class="stat-card blue"><h3 id="rev-pending">0</h3><p>Pending Approval</p></div>
+      <div class="stat-card"><h3 id="rev-published">0</h3><p>Published</p></div>
+    </div>
+    <div class="section-header"><h2>Guest Reviews</h2><button class="btn btn-green" onclick="openReviewModal()">+ Add Review</button></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Guest</th><th>Rating</th><th>Review</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="rev-tbody"></tbody>
+    </table></div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="page" id="page-gallery">
+    <div class="section-header"><h2>Photo Gallery</h2><button class="btn btn-green" onclick="openGalleryModal()">+ Add Photo</button></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:24px;" id="gallery-grid"></div>
+  </div>
+
+  <!-- AVAILABILITY CALENDAR -->
+  <div class="page" id="page-calendar">
+    <div class="section-header"><h2>Room Availability Calendar</h2>
+      <button class="btn btn-outline" onclick="calPrev()">&#8592; Prev</button>
+      <span id="cal-month-label" style="font-weight:700;font-size:1rem;min-width:160px;text-align:center;"></span>
+      <button class="btn btn-outline" onclick="calNext()">Next &#8594;</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="cal-table" style="border-collapse:collapse;min-width:900px;width:100%;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;"></table>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;font-size:0.8rem;">
+      <span><span style="display:inline-block;width:14px;height:14px;background:var(--red-pale);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Booked</span>
+      <span><span style="display:inline-block;width:14px;height:14px;background:var(--green-pale);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Available</span>
+      <span><span style="display:inline-block;width:14px;height:14px;background:var(--gold-pale);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Pending</span>
+    </div>
+  </div>
+
+  <!-- STAFF -->
+  <div class="page" id="page-staff">
+    <div class="section-header"><h2>Staff &amp; User Roles</h2><button class="btn btn-green" onclick="openStaffModal()">+ Add Staff</button></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Access</th><th>Last Login</th><th>Actions</th></tr></thead>
+      <tbody id="staff-tbody"></tbody>
+    </table></div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="page" id="page-analytics">
+    <div class="stats-grid">
+      <div class="stat-card"><h3 id="an-revenue">0</h3><p>Total Revenue (UGX)</p></div>
+      <div class="stat-card gold"><h3 id="an-occ">0%</h3><p>Occupancy Rate</p></div>
+      <div class="stat-card blue"><h3 id="an-bookings">0</h3><p>Total Bookings</p></div>
+      <div class="stat-card red"><h3 id="an-cancel">0</h3><p>Cancellations</p></div>
+    </div>
+    <div class="widgets-row">
+      <div class="widget">
+        <h3>&#128200; Monthly Revenue (UGX)</h3>
+        <canvas id="revenue-chart" height="200"></canvas>
+      </div>
+      <div class="widget">
+        <h3>&#127976; Bookings by Room Type</h3>
+        <canvas id="room-chart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="widgets-row">
+      <div class="widget">
+        <h3>&#127869; Top Selling Menu Items</h3>
+        <table style="width:100%"><thead><tr><th>Item</th><th>Category</th><th>Est. Orders</th></tr></thead>
+        <tbody id="top-menu-tbody"></tbody></table>
+      </div>
+      <div class="widget">
+        <h3>&#128202; Reservation Status Breakdown</h3>
+        <canvas id="status-chart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- MODALS -->
@@ -522,6 +609,105 @@
   </div>
 </div>
 
+
+<!-- REVIEW MODAL -->
+<div class="overlay" id="review-modal-overlay" onclick="if(event.target===this)closeReviewModal()">
+  <div class="modal">
+    <h3 id="review-modal-title">Add Review</h3>
+    <input type="hidden" id="review-item-id"/>
+    <div class="form-row">
+      <div class="form-group"><label>Guest Name *</label><input type="text" id="revi-name" placeholder="Guest name"/></div>
+      <div class="form-group"><label>Rating (1-5) *</label><select id="revi-rating"><option value="5">&#11088;&#11088;&#11088;&#11088;&#11088; 5</option><option value="4">&#11088;&#11088;&#11088;&#11088; 4</option><option value="3">&#11088;&#11088;&#11088; 3</option><option value="2">&#11088;&#11088; 2</option><option value="1">&#11088; 1</option></select></div>
+    </div>
+    <div class="form-group"><label>Review *</label><textarea id="revi-text" rows="3" placeholder="Guest review text..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="revi-date"/></div>
+      <div class="form-group"><label>Status</label><select id="revi-status"><option>Pending</option><option>Published</option><option>Rejected</option></select></div>
+    </div>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeReviewModal()">Cancel</button><button class="btn btn-green" onclick="saveReview()">Save Review</button></div>
+  </div>
+</div>
+
+<!-- GALLERY MODAL -->
+<div class="overlay" id="gallery-modal-overlay" onclick="if(event.target===this)closeGalleryModal()">
+  <div class="modal">
+    <h3>Add Photo</h3>
+    <div class="form-group"><label>Image URL *</label><input type="text" id="gal-url" placeholder="https://..." oninput="previewGalImg()"/></div>
+    <div class="form-group"><label>Caption</label><input type="text" id="gal-caption" placeholder="e.g. Poolside view"/></div>
+    <div class="form-group"><label>Category</label><select id="gal-cat"><option>Rooms</option><option>Restaurant</option><option>Garden</option><option>Facilities</option><option>Events</option></select></div>
+    <img id="gal-preview" src="" style="width:100%;border-radius:8px;margin-top:8px;display:none;max-height:180px;object-fit:cover;"/>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeGalleryModal()">Cancel</button><button class="btn btn-green" onclick="saveGalleryPhoto()">Add Photo</button></div>
+  </div>
+</div>
+
+<!-- STAFF MODAL -->
+<div class="overlay" id="staff-modal-overlay" onclick="if(event.target===this)closeStaffModal()">
+  <div class="modal">
+    <h3 id="staff-modal-title">Add Staff Member</h3>
+    <input type="hidden" id="staff-item-id"/>
+    <div class="form-row">
+      <div class="form-group"><label>Full Name *</label><input type="text" id="st-name" placeholder="Full name"/></div>
+      <div class="form-group"><label>Email *</label><input type="text" id="st-email" placeholder="email@hotel.com"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Role *</label><select id="st-role"><option>Super Admin</option><option>Manager</option><option>Receptionist</option><option>Kitchen Staff</option><option>Housekeeping</option></select></div>
+      <div class="form-group"><label>Phone</label><input type="text" id="st-phone" placeholder="07XX XXX XXX"/></div>
+    </div>
+    <div class="form-group"><label>Access Permissions</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+        <div class="checkbox-row"><input type="checkbox" id="acc-menu" checked/><label for="acc-menu">Menu</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="acc-rooms" checked/><label for="acc-rooms">Rooms</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="acc-res" checked/><label for="acc-res">Reservations</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="acc-pay"/><label for="acc-pay">Payments</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="acc-msg" checked/><label for="acc-msg">Messages</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="acc-notif"/><label for="acc-notif">Notifications</label></div>
+      </div>
+    </div>
+    <div class="modal-btns"><button class="btn btn-outline" onclick="closeStaffModal()">Cancel</button><button class="btn btn-green" onclick="saveStaff()">Save Staff</button></div>
+  </div>
+</div>
+
+
+<!-- LOGIN GATE -->
+<div id="login-gate" style="display:none;position:fixed;inset:0;background:var(--green-dark);z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:18px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 24px 80px rgba(0,0,0,0.3);text-align:center;">
+    <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" style="height:52px;border-radius:8px;margin-bottom:18px;" alt="Logo"/>
+    <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:4px;">Admin Dashboard</h2>
+    <p style="font-size:0.82rem;color:var(--gray);margin-bottom:24px;">Tropical Gardens Hotel &mdash; Kyenjojo</p>
+    <div class="form-group" style="text-align:left;"><label>Username</label><input type="text" id="login-user" placeholder="admin" autocomplete="username"/></div>
+    <div class="form-group" style="text-align:left;"><label>Password</label><input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div id="login-err" style="color:var(--red);font-size:0.82rem;margin-bottom:12px;display:none;">Incorrect username or password.</div>
+    <button class="btn btn-green" style="width:100%;justify-content:center;margin-top:4px;" onclick="doLogin()">&#128273; Sign In</button>
+    <p style="font-size:0.72rem;color:var(--gray);margin-top:16px;">Default: admin / admin123</p>
+  </div>
+</div>
+
+<!-- INVOICE MODAL -->
+<div class="overlay" id="invoice-overlay" onclick="if(event.target===this)closeInvoice()">
+  <div class="modal modal-lg" id="invoice-content">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+      <div><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" style="height:44px;border-radius:6px;"/><h3 style="margin-top:8px;margin-bottom:2px;">Tropical Gardens Hotel</h3><p style="font-size:0.78rem;color:var(--gray);">Hoima Road, Kyenjojo &bull; 0782460683</p></div>
+      <div style="text-align:right;"><div style="font-size:1.4rem;font-weight:700;color:var(--green);">INVOICE</div><div id="inv-ref" style="font-size:0.8rem;color:var(--gray);margin-top:4px;"></div><div id="inv-date" style="font-size:0.8rem;color:var(--gray);"></div></div>
+    </div>
+    <div style="background:var(--green-pale);border-radius:8px;padding:14px 16px;margin-bottom:18px;">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--gray);margin-bottom:6px;">Bill To</div>
+      <div id="inv-guest" style="font-weight:700;"></div>
+      <div id="inv-contact" style="font-size:0.82rem;color:var(--gray);margin-top:2px;"></div>
+    </div>
+    <table style="width:100%;margin-bottom:18px;">
+      <thead><tr><th>Description</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th style="text-align:right;">Amount</th></tr></thead>
+      <tbody id="inv-body"></tbody>
+    </table>
+    <div style="text-align:right;border-top:2px solid var(--border);padding-top:14px;">
+      <div style="font-size:0.9rem;color:var(--gray);">Subtotal: <strong id="inv-sub"></strong></div>
+      <div style="font-size:1.2rem;font-weight:700;color:var(--green);margin-top:6px;">Total: <span id="inv-total"></span></div>
+      <div id="inv-pay-status" style="margin-top:6px;"></div>
+    </div>
+    <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--border);text-align:center;font-size:0.78rem;color:var(--gray);">Thank you for staying at Tropical Gardens Hotel &bull; tropicalgardenshotel@gmail.com</div>
+    <div class="modal-btns" style="margin-top:20px;"><button class="btn btn-outline" onclick="closeInvoice()">Close</button><button class="btn btn-green" onclick="window.print()">&#128424; Print</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -595,93 +781,6 @@ var messages=[
   ]}
 ];
 var menuFilter="All",resFilter="All",delType="",delId="",activeThread=null;
-var API_BASE=(window.TGH_API_BASE||localStorage.getItem("tgh_api_base")||"").replace(/\/$/,"");
-var THEME_KEY="tgh_theme";
-var NOTIFICATIONS_KEY="tgh_public_notifications";
-
-function savePublicNotifications(){
-  localStorage.setItem(NOTIFICATIONS_KEY,JSON.stringify(notifications));
-}
-function loadPublicNotifications(){
-  try{
-    var stored=JSON.parse(localStorage.getItem(NOTIFICATIONS_KEY)||"[]");
-    if(stored.length)notifications=stored.map(normalizeNotification);
-  }catch(error){}
-}
-
-function applyAdminTheme(theme){
-  var next=theme==="dark"?"dark":"light";
-  document.body.classList.toggle("dark-theme",next==="dark");
-  localStorage.setItem(THEME_KEY,next);
-  var icon=document.getElementById("admin-theme-icon");
-  var label=document.getElementById("admin-theme-label");
-  var button=document.getElementById("admin-theme-toggle");
-  if(icon)icon.textContent=next==="dark"?"☀":"☾";
-  if(label)label.textContent=next==="dark"?"Light":"Dark";
-  if(button)button.setAttribute("aria-label",next==="dark"?"Switch to light theme":"Switch to dark theme");
-}
-function initAdminTheme(){
-  var stored=localStorage.getItem(THEME_KEY);
-  var theme=stored||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
-  applyAdminTheme(theme);
-  var button=document.getElementById("admin-theme-toggle");
-  if(button)button.addEventListener("click",function(){applyAdminTheme(document.body.classList.contains("dark-theme")?"light":"dark");});
-}
-
-function apiUrl(path){return API_BASE+path;}
-async function apiFetch(path,options){
-  options=options||{};
-  var response=await fetch(apiUrl(path),Object.assign({headers:Object.assign({"Content-Type":"application/json"},options.headers||{})},options));
-  var data=await response.json().catch(function(){return {};});
-  if(!response.ok)throw new Error(data.error||data.message||"Request failed");
-  return data;
-}
-function authHeaders(){
-  var token=localStorage.getItem("tgh_admin_token");
-  return token?{Authorization:"Bearer "+token}:{};
-}
-function normalizeMenuItem(item){
-  return {id:item.id,name:item.name,description:item.description||"",category:item.category,price:Number(item.price)||0,image:item.imageUrl||item.image_url||item.image||"",is_available:item.isAvailable!==undefined?item.isAvailable:item.is_available,is_featured:item.isFeatured!==undefined?item.isFeatured:item.is_featured};
-}
-function normalizeRoom(room){
-  return {id:room.id,name:room.name,num:room.roomNumber||room.room_number||room.num||"",description:room.description||"",type:room.type||"Standard",price:Number(room.price)||0,capacity:Number(room.capacity)||2,image:room.imageUrl||room.image_url||room.image||"",is_available:room.isAvailable!==undefined?room.isAvailable:room.is_available};
-}
-function normalizeOffer(offer){
-  return {id:offer.id,title:offer.title,description:offer.description||"",discount:offer.discountPercent!==undefined?offer.discountPercent:offer.discount_percent||offer.discount||0,code:offer.code||"",from:offer.startsAt||offer.starts_at||offer.from||"",to:offer.endsAt||offer.ends_at||offer.to||"",active:offer.isActive!==undefined?offer.isActive:offer.is_active!==undefined?offer.is_active:offer.active};
-}
-function normalizeNotification(notification){
-  return {id:notification.id,title:notification.title||"Hotel update",body:notification.body||notification.message||"",channel:notification.channel||"Website",audience:notification.audience||"All Guests",time:notification.createdAt||notification.created_at||notification.time||"Just now",type:notification.type||"update",active:notification.isActive!==undefined?notification.isActive:notification.is_active!==undefined?notification.is_active:notification.active!==false};
-}
-function normalizeReservation(res){
-  return {id:res.id,guest:res.guestName||res.guest_name||res.guest||"",phone:res.phone||"",email:res.email||"",room:res.roomName||res.room_name||res.room||"",checkin:res.checkIn||res.check_in||res.checkin||"",checkout:res.checkOut||res.check_out||res.checkout||"",guests:Number(res.guests)||1,status:res.status||"Pending",notes:res.notes||""};
-}
-function normalizeMessage(msg){
-  return {id:msg.id,name:msg.name,phone:msg.phone||"",unread:msg.status==="Unread",msgs:[{from:"guest",text:msg.message,time:msg.createdAt||msg.created_at||""}]};
-}
-async function loadBackendData(){
-  try{
-    loadPublicNotifications();
-    var publicResults=await Promise.allSettled([apiFetch("/api/menu"),apiFetch("/api/rooms"),apiFetch("/api/offers"),apiFetch("/api/notifications")]);
-    if(publicResults[0].status==="fulfilled"&&publicResults[0].value.menuItems)menuItems=publicResults[0].value.menuItems.map(normalizeMenuItem);
-    if(publicResults[1].status==="fulfilled"&&publicResults[1].value.rooms)rooms=publicResults[1].value.rooms.map(normalizeRoom);
-    if(publicResults[2].status==="fulfilled"&&publicResults[2].value.offers)offers=publicResults[2].value.offers.map(normalizeOffer);
-    if(publicResults[3].status==="fulfilled"&&publicResults[3].value.notifications){notifications=publicResults[3].value.notifications.map(normalizeNotification);savePublicNotifications();}
-    if(localStorage.getItem("tgh_admin_token")){
-      var adminResults=await Promise.allSettled([
-        apiFetch("/api/admin/reservations",{headers:authHeaders()}),
-        apiFetch("/api/admin/messages",{headers:authHeaders()}),
-        apiFetch("/api/admin/notifications",{headers:authHeaders()})
-      ]);
-      if(adminResults[0].status==="fulfilled"&&adminResults[0].value.reservations)reservations=adminResults[0].value.reservations.map(normalizeReservation);
-      if(adminResults[1].status==="fulfilled"&&adminResults[1].value.messages)messages=adminResults[1].value.messages.map(normalizeMessage);
-      if(adminResults[2].status==="fulfilled"&&adminResults[2].value.notifications){notifications=adminResults[2].value.notifications.map(normalizeNotification);savePublicNotifications();}
-    }
-    renderMenuPage();renderRoomsPage();renderResPage();renderOffersPage();renderNotifPage();renderMessagesPage();
-    showToast("Backend data loaded","info");
-  }catch(error){
-    console.log("Backend data not available, using demo data",error);
-  }
-}
 
 function showPage(name,el){
   document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
@@ -875,38 +974,21 @@ function saveOffer(){
   else{data.id="o"+Date.now();offers.push(data);showToast("Offer created");}
   closeOfferModal();renderOffersPage();
 }
-async function sendOfferNotif(id){
+function sendOfferNotif(id){
   var o=offers.find(function(x){return x.id===id;});if(!o)return;
   if(!o.active){o.active=true;showToast("Offer activated");renderOffersPage();return;}
-  var notif={id:"n"+Date.now(),title:o.title,body:o.description+(o.code?" Code: "+o.code:""),channel:"Website Banner",audience:"All Guests",time:"Just now",type:"promo",active:true};
-  if(localStorage.getItem("tgh_admin_token")){
-    try{
-      var saved=await apiFetch("/api/admin/notifications",{method:"POST",headers:authHeaders(),body:JSON.stringify({title:notif.title,body:notif.body,channel:notif.channel,audience:notif.audience,type:notif.type,isActive:true})});
-      if(saved.notification)notif=normalizeNotification(saved.notification);
-    }catch(error){console.log("Notification API unavailable, saved locally",error);}
-  }
-  notifications.unshift(notif);
-  savePublicNotifications();
-  renderNotifPage();
+  notifications.unshift({id:"n"+Date.now(),title:o.title,body:o.description+(o.code?" Code: "+o.code:""),channel:"Website Banner",audience:"All Guests",time:"Just now",type:"promo"});
   showToast("Notification sent!","info");
 }
 
 function toggleChip(el){el.classList.toggle("active");}
 function toggleAud(el){document.querySelectorAll("[data-aud]").forEach(function(c){c.classList.remove("active");});el.classList.add("active");}
-async function sendNotification(){
+function sendNotification(){
   var title=document.getElementById("notif-title").value.trim(),body=document.getElementById("notif-body").value.trim();
   if(!title||!body){showToast("Title and message required","error");return;}
   var channels=[].slice.call(document.querySelectorAll("[data-ch].active")).map(function(c){return c.textContent.trim();}).join(", ");
   var aud=document.querySelector("[data-aud].active");
-  var notif={id:"n"+Date.now(),title:title,body:body,channel:channels||"Website",audience:aud?aud.textContent.trim():"All Guests",time:"Just now",type:"update",active:true};
-  if(localStorage.getItem("tgh_admin_token")){
-    try{
-      var saved=await apiFetch("/api/admin/notifications",{method:"POST",headers:authHeaders(),body:JSON.stringify({title:notif.title,body:notif.body,channel:notif.channel,audience:notif.audience,type:notif.type,isActive:true})});
-      if(saved.notification)notif=normalizeNotification(saved.notification);
-    }catch(error){console.log("Notification API unavailable, saved locally",error);}
-  }
-  notifications.unshift(notif);
-  savePublicNotifications();
+  notifications.unshift({id:"n"+Date.now(),title:title,body:body,channel:channels||"Website",audience:aud?aud.textContent.trim():"All Guests",time:"Just now",type:"update"});
   document.getElementById("notif-title").value="";document.getElementById("notif-body").value="";
   showToast("Notification sent!");renderNotifPage();
 }
@@ -918,15 +1000,7 @@ function renderNotifPage(){
     '<div class="notif-meta">'+n.time+'<br/><button class="btn btn-red btn-sm" style="margin-top:6px;" onclick="deleteNotif(\''+n.id+"')\">Del</button></div></div>";
   }).join("");
 }
-async function deleteNotif(id){
-  if(localStorage.getItem("tgh_admin_token")){
-    try{await apiFetch("/api/admin/notifications/"+id,{method:"DELETE",headers:authHeaders()});}catch(error){console.log("Notification delete API unavailable, deleted locally",error);}
-  }
-  notifications=notifications.filter(function(n){return n.id!==id;});
-  savePublicNotifications();
-  renderNotifPage();
-  showToast("Deleted");
-}
+function deleteNotif(id){notifications=notifications.filter(function(n){return n.id!==id;});renderNotifPage();showToast("Deleted");}
 
 function renderMessagesPage(){
   var mb=document.getElementById("msg-badge");if(mb)mb.textContent=messages.filter(function(m){return m.unread;}).length||"";
@@ -994,8 +1068,335 @@ function showToast(msg,type){
   void t.offsetWidth;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("show");},2800);
 }
 renderMenuPage();
-initAdminTheme();
-loadBackendData();
+
+// ════ SAMPLE DATA — NEW SECTIONS ════
+var payments=[
+  {id:"p1",guest:"John Mukisa",room:"Room 3 (Deluxe)",checkin:"2026-05-25",amount:300000,method:"MTN Mobile Money",status:"Paid",ref:"TGH-001-2605"},
+  {id:"p2",guest:"Grace Nalwoga",room:"Room 2 (Standard)",checkin:"2026-05-25",amount:80000,method:"Visa Card",status:"Pending",ref:"TGH-002-2605"},
+  {id:"p3",guest:"Peter Ssemanda",room:"Suite A",checkin:"2026-05-26",amount:1120000,method:"Airtel Money",status:"Paid",ref:"TGH-003-2605"},
+  {id:"p4",guest:"Amina Nakato",room:"Family Room",checkin:"2026-05-20",amount:600000,method:"Cash",status:"Paid",ref:"TGH-004-2005"},
+  {id:"p5",guest:"Sarah Komugisha",room:"Room 4 (Deluxe)",checkin:"2026-05-28",amount:150000,method:"MTN Mobile Money",status:"Failed",ref:"TGH-005-2605"},
+  {id:"p6",guest:"Robert Byamukama",room:"Room 1 (Standard)",checkin:"2026-05-22",amount:80000,method:"Cash",status:"Paid",ref:"TGH-006-2205"}
+];
+var reviews=[
+  {id:"rv1",guest:"John Mukisa",rating:5,text:"Wonderful stay! The staff were very welcoming and the rooms spotlessly clean. The food was amazing, especially the grilled tilapia. Will definitely come back!",date:"2026-05-27",status:"Published"},
+  {id:"rv2",guest:"Grace Nalwoga",rating:4,text:"Very comfortable and peaceful. Loved the garden views. Breakfast was fresh and delicious. Only wish there was a swimming pool.",date:"2026-05-26",status:"Published"},
+  {id:"rv3",guest:"Amina Nakato",rating:5,text:"Perfect family getaway. Kids loved it, rooms were spacious, and service was top notch. The groundnut stew is a must try!",date:"2026-05-24",status:"Published"},
+  {id:"rv4",guest:"Peter Ssemanda",rating:5,text:"Honeymoon was perfect thanks to the team. Fresh flowers in the room, romantic dinner, and everything we asked was taken care of.",date:"2026-05-30",status:"Pending"},
+  {id:"rv5",guest:"Anonymous",rating:3,text:"Good location and friendly staff. Room was okay but AC was not working well. Food took a while to arrive.",date:"2026-05-15",status:"Pending"}
+];
+var gallery=[
+  {id:"g1",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",caption:"Hotel Exterior",cat:"Facilities"},
+  {id:"g2",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",caption:"Standard Room",cat:"Rooms"},
+  {id:"g3",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",caption:"Garden View",cat:"Garden"},
+  {id:"g4",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",caption:"Dining Area",cat:"Restaurant"},
+  {id:"g5",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",caption:"Executive Suite",cat:"Rooms"},
+  {id:"g6",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",caption:"Conference Setup",cat:"Events"}
+];
+var staff=[
+  {id:"s1",name:"Admin User",email:"admin@tropicalgardens.ug",role:"Super Admin",phone:"0782460683",access:["menu","rooms","res","pay","msg","notif"],lastLogin:"Today 08:30"},
+  {id:"s2",name:"Mary Ajambo",email:"mary@tropicalgardens.ug",role:"Receptionist",phone:"0701234567",access:["rooms","res","msg"],lastLogin:"Today 09:00"},
+  {id:"s3",name:"James Otim",email:"james@tropicalgardens.ug",role:"Kitchen Staff",phone:"0712345678",access:["menu"],lastLogin:"Yesterday 18:00"}
+];
+
+var calYear=2026, calMonth=4; // 0-indexed, 4 = May
+var pageMap={overview:"Overview",menu:"Menu / Food",rooms:"Rooms Management",reservations:"Reservations",offers:"Offers & Promotions",notifications:"Notifications",messages:"Guest Messages",payments:"Payments",reviews:"Guest Reviews",gallery:"Photo Gallery",calendar:"Availability Calendar",staff:"Staff & Roles",analytics:"Analytics",settings:"Settings"};
+
+// ════ LOGIN GATE ════
+(function(){
+  var authed = sessionStorage.getItem("tgh_authed");
+  if(!authed){
+    var gate = document.getElementById("login-gate");
+    if(gate){ gate.style.display="flex"; document.querySelector(".main").style.display="none"; document.getElementById("sidebar").style.display="none"; }
+  }
+})();
+function doLogin(){
+  var u=document.getElementById("login-user").value.trim();
+  var p=document.getElementById("login-pass").value.trim();
+  var err=document.getElementById("login-err");
+  if((u==="admin"&&p==="admin123")||(u==="admin"&&p==="admin")){
+    sessionStorage.setItem("tgh_authed","1");
+    document.getElementById("login-gate").style.display="none";
+    document.querySelector(".main").style.display="";
+    document.getElementById("sidebar").style.display="";
+    showToast("Welcome back, Admin!");
+  } else {
+    err.style.display="block";
+  }
+}
+
+// ════ PAYMENTS ════
+var payColors={Paid:"badge-green",Pending:"badge-gold",Failed:"badge-red",Refunded:"badge-blue"};
+function renderPaymentsPage(){
+  var el=document.getElementById("pay-total");if(el)el.textContent=payments.length;
+  el=document.getElementById("pay-paid");if(el)el.textContent=payments.filter(function(p){return p.status==="Paid";}).length;
+  el=document.getElementById("pay-pending");if(el)el.textContent=payments.filter(function(p){return p.status==="Pending";}).length;
+  el=document.getElementById("pay-failed");if(el)el.textContent=payments.filter(function(p){return p.status==="Failed";}).length;
+  renderPaymentsTable();
+}
+function renderPaymentsTable(){
+  var q=(document.getElementById("pay-search")?document.getElementById("pay-search").value:"").toLowerCase();
+  var list=payments.filter(function(p){return !q||p.guest.toLowerCase().indexOf(q)>-1;});
+  var tbody=document.getElementById("pay-tbody");if(!tbody)return;
+  tbody.innerHTML=list.map(function(p){
+    return "<tr><td><strong>"+p.guest+"</strong></td><td>"+p.room+"</td><td>"+p.checkin+"</td>"+
+    "<td style='font-weight:700;color:var(--green-dark);'>UGX "+Number(p.amount).toLocaleString()+"</td>"+
+    "<td>"+p.method+"</td>"+
+    "<td><span class='badge "+(payColors[p.status]||"badge-gray")+"'>"+p.status+"</span></td>"+
+    "<td><code style='font-size:0.75rem;'>"+p.ref+"</code></td>"+
+    "<td><button class='btn btn-outline btn-sm' onclick='openInvoice(""+p.id+"")'> Receipt</button></td></tr>";
+  }).join("");
+}
+
+// ════ INVOICE / RECEIPT ════
+function openInvoice(payId){
+  var pay=payments.find(function(p){return p.id===payId;});if(!pay)return;
+  var res=reservations.find(function(r){return r.guest===pay.guest;});
+  document.getElementById("inv-ref").textContent="Ref: "+pay.ref;
+  document.getElementById("inv-date").textContent="Date: "+new Date().toLocaleDateString("en-GB");
+  document.getElementById("inv-guest").textContent=pay.guest;
+  document.getElementById("inv-contact").textContent=(res&&res.phone?res.phone+" | ":"")+(res&&res.email?res.email:"");
+  var nights=1;
+  if(res){var ci=new Date(res.checkin),co=new Date(res.checkout);nights=Math.max(1,Math.round((co-ci)/(1000*60*60*24)));}
+  document.getElementById("inv-body").innerHTML="<tr><td>"+pay.room+"</td><td>"+(res?res.checkin:"-")+"</td><td>"+(res?res.checkout:"-")+"</td><td>"+nights+"</td><td style='text-align:right;font-weight:700;'>UGX "+Number(pay.amount).toLocaleString()+"</td></tr>";
+  document.getElementById("inv-sub").textContent="UGX "+Number(pay.amount).toLocaleString();
+  document.getElementById("inv-total").textContent="UGX "+Number(pay.amount).toLocaleString();
+  document.getElementById("inv-pay-status").innerHTML="<span class='badge "+(payColors[pay.status]||"badge-gray")+"'>"+pay.status+" &bull; "+pay.method+"</span>";
+  document.getElementById("invoice-overlay").classList.add("show");
+}
+function closeInvoice(){document.getElementById("invoice-overlay").classList.remove("show");}
+
+// ════ REVIEWS ════
+var starStr=function(n){var s="";for(var i=0;i<n;i++)s+="&#11088;";return s;};
+var revColors={Published:"badge-green",Pending:"badge-gold",Rejected:"badge-red"};
+function renderReviewsPage(){
+  var el=document.getElementById("rev-total");if(el)el.textContent=reviews.length;
+  var avg=reviews.reduce(function(a,r){return a+r.rating;},0)/Math.max(1,reviews.length);
+  el=document.getElementById("rev-avg");if(el)el.textContent=avg.toFixed(1);
+  el=document.getElementById("rev-pending");if(el)el.textContent=reviews.filter(function(r){return r.status==="Pending";}).length;
+  el=document.getElementById("rev-published");if(el)el.textContent=reviews.filter(function(r){return r.status==="Published";}).length;
+  renderReviewsTable();
+}
+function renderReviewsTable(){
+  var tbody=document.getElementById("rev-tbody");if(!tbody)return;
+  tbody.innerHTML=reviews.map(function(r){
+    return "<tr><td><strong>"+r.guest+"</strong></td><td>"+starStr(r.rating)+"</td>"+
+    "<td style='max-width:280px;font-size:0.82rem;color:var(--gray);'>"+r.text+"</td>"+
+    "<td>"+r.date+"</td><td><span class='badge "+(revColors[r.status]||"badge-gray")+"'>"+r.status+"</span></td>"+
+    "<td><div class='action-btns'>"+
+    (r.status==="Pending"?"<button class='btn btn-green btn-sm' onclick='approveReview(""+r.id+"")'>Approve</button>":"")+
+    "<button class='btn btn-outline btn-sm' onclick='openReviewModal(""+r.id+"")'> Edit</button>"+
+    "<button class='btn btn-red btn-sm' onclick='deleteReview(""+r.id+"")'>Del</button>"+
+    "</div></td></tr>";
+  }).join("");
+}
+function approveReview(id){var r=reviews.find(function(x){return x.id===id;});if(r)r.status="Published";renderReviewsPage();showToast("Review published!");}
+function deleteReview(id){reviews=reviews.filter(function(r){return r.id!==id;});renderReviewsPage();showToast("Review deleted");}
+function openReviewModal(id){
+  var r=id?reviews.find(function(x){return x.id===id;}):null;
+  document.getElementById("review-modal-title").textContent=r?"Edit Review":"Add Review";
+  document.getElementById("review-item-id").value=id||"";
+  document.getElementById("revi-name").value=r?r.guest:"";
+  document.getElementById("revi-rating").value=r?r.rating:5;
+  document.getElementById("revi-text").value=r?r.text:"";
+  document.getElementById("revi-date").value=r?r.date:"";
+  document.getElementById("revi-status").value=r?r.status:"Pending";
+  document.getElementById("review-modal-overlay").classList.add("show");
+}
+function closeReviewModal(){document.getElementById("review-modal-overlay").classList.remove("show");}
+function saveReview(){
+  var name=document.getElementById("revi-name").value.trim(),text=document.getElementById("revi-text").value.trim();
+  if(!name||!text){showToast("Name and review required","error");return;}
+  var id=document.getElementById("review-item-id").value;
+  var data={guest:name,rating:Number(document.getElementById("revi-rating").value),text:text,date:document.getElementById("revi-date").value||new Date().toISOString().slice(0,10),status:document.getElementById("revi-status").value};
+  if(id){var idx=reviews.findIndex(function(x){return x.id===id;});if(idx>-1)reviews[idx]=Object.assign({},reviews[idx],data);}
+  else{data.id="rv"+Date.now();reviews.push(data);}
+  closeReviewModal();renderReviewsPage();showToast("Review saved");
+}
+
+// ════ GALLERY ════
+function renderGalleryPage(){
+  var grid=document.getElementById("gallery-grid");if(!grid)return;
+  grid.innerHTML=gallery.map(function(g){
+    return "<div style='background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;'>"+
+    "<img src='"+g.url+"' alt='"+g.caption+"' style='width:100%;height:150px;object-fit:cover;' onerror='this.style.background="#eee"'/>"+
+    "<div style='padding:10px 12px;'>"+
+    "<div style='font-size:0.86rem;font-weight:600;'>"+g.caption+"</div>"+
+    "<span class='badge badge-green' style='margin-top:4px;display:inline-block;'>"+g.cat+"</span>"+
+    "</div><div style='padding:6px 12px 10px;display:flex;gap:6px;'>"+
+    "<button class='btn btn-red btn-sm' onclick='deletePhoto(""+g.id+"")'>Del</button>"+
+    "</div></div>";
+  }).join("");
+}
+function openGalleryModal(){document.getElementById("gal-url").value="";document.getElementById("gal-caption").value="";document.getElementById("gal-preview").style.display="none";document.getElementById("gallery-modal-overlay").classList.add("show");}
+function closeGalleryModal(){document.getElementById("gallery-modal-overlay").classList.remove("show");}
+function previewGalImg(){var u=document.getElementById("gal-url").value.trim();var p=document.getElementById("gal-preview");if(u){p.src=u;p.style.display="block";}else{p.style.display="none";}}
+function saveGalleryPhoto(){
+  var url=document.getElementById("gal-url").value.trim();
+  if(!url){showToast("Image URL required","error");return;}
+  gallery.push({id:"g"+Date.now(),url:url,caption:document.getElementById("gal-caption").value.trim()||"Photo",cat:document.getElementById("gal-cat").value});
+  closeGalleryModal();renderGalleryPage();showToast("Photo added");
+}
+function deletePhoto(id){gallery=gallery.filter(function(g){return g.id!==id;});renderGalleryPage();showToast("Photo removed");}
+
+// ════ AVAILABILITY CALENDAR ════
+function renderCalendar(){
+  var months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var el=document.getElementById("cal-month-label");if(el)el.textContent=months[calMonth]+" "+calYear;
+  var table=document.getElementById("cal-table");if(!table)return;
+  var daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  var days=[];for(var d=1;d<=daysInMonth;d++)days.push(d);
+  // header row: rooms
+  var thead="<thead><tr><th style='padding:10px 14px;background:var(--green-pale);color:var(--green-dark);font-size:0.72rem;text-align:left;'>Room</th>";
+  for(var i=1;i<=daysInMonth;i++){
+    var dt=new Date(calYear,calMonth,i);
+    var isToday=(i===26&&calMonth===4&&calYear===2026);
+    thead+="<th style='padding:6px 4px;background:var(--green-pale);color:"+(isToday?"var(--green)":"var(--green-dark)")+";"+(isToday?"font-weight:900;":"")+"font-size:0.7rem;text-align:center;min-width:28px;'>"+i+"</th>";
+  }
+  thead+="</tr></thead>";
+  // body rows: each room
+  var tbody="<tbody>";
+  rooms.forEach(function(r){
+    tbody+="<tr><td style='padding:8px 14px;font-size:0.8rem;font-weight:600;white-space:nowrap;border-bottom:1px solid #f3f4f6;'>"+r.name+" #"+r.num+"</td>";
+    for(var d2=1;d2<=daysInMonth;d2++){
+      var dateStr=calYear+"-"+String(calMonth+1).padStart(2,"0")+"-"+String(d2).padStart(2,"0");
+      var res2=reservations.filter(function(rv){return rv.room.indexOf(r.name)>-1&&dateStr>=rv.checkin&&dateStr<rv.checkout;});
+      var color="#fff";var title="";
+      if(res2.length){
+        if(res2[0].status==="Confirmed"||res2[0].status==="Checked In"){color="var(--red-pale)";title=res2[0].guest;}
+        else if(res2[0].status==="Pending"){color="var(--gold-pale)";title=res2[0].guest;}
+        else{color="var(--green-pale)";}
+      } else if(r.is_available){color="var(--green-pale)";}
+      else{color="#f3f4f6";}
+      tbody+="<td style='background:"+color+";border:1px solid #f0f0f0;width:28px;' title='"+title+"'></td>";
+    }
+    tbody+="</tr>";
+  });
+  tbody+="</tbody>";
+  table.innerHTML=thead+tbody;
+}
+function calPrev(){if(calMonth===0){calMonth=11;calYear--;}else{calMonth--;}renderCalendar();}
+function calNext(){if(calMonth===11){calMonth=0;calYear++;}else{calMonth++;}renderCalendar();}
+
+// ════ STAFF ════
+var roleColors={"Super Admin":"badge-red",Manager:"badge-blue",Receptionist:"badge-green","Kitchen Staff":"badge-gold",Housekeeping:"badge-gray"};
+function renderStaffPage(){
+  var tbody=document.getElementById("staff-tbody");if(!tbody)return;
+  tbody.innerHTML=staff.map(function(s){
+    return "<tr><td><strong>"+s.name+"</strong><br/><small style='color:var(--gray);'>"+s.phone+"</small></td>"+
+    "<td>"+s.email+"</td>"+
+    "<td><span class='badge "+(roleColors[s.role]||"badge-gray")+"'>"+s.role+"</span></td>"+
+    "<td><div style='display:flex;gap:4px;flex-wrap:wrap;'>"+s.access.map(function(a){return "<span class='badge badge-gray' style='font-size:0.65rem;'>"+a+"</span>";}).join("")+"</div></td>"+
+    "<td style='font-size:0.8rem;color:var(--gray);'>"+s.lastLogin+"</td>"+
+    "<td><div class='action-btns'>"+
+    "<button class='btn btn-outline btn-sm' onclick='openStaffModal(""+s.id+"")'> Edit</button>"+
+    (s.role!=="Super Admin"?"<button class='btn btn-red btn-sm' onclick='deleteStaff(""+s.id+"")'>Del</button>":"")+
+    "</div></td></tr>";
+  }).join("");
+}
+function openStaffModal(id){
+  var s=id?staff.find(function(x){return x.id===id;}):null;
+  document.getElementById("staff-modal-title").textContent=s?"Edit Staff":"Add Staff Member";
+  document.getElementById("staff-item-id").value=id||"";
+  document.getElementById("st-name").value=s?s.name:"";
+  document.getElementById("st-email").value=s?s.email:"";
+  document.getElementById("st-role").value=s?s.role:"Receptionist";
+  document.getElementById("st-phone").value=s?s.phone:"";
+  document.getElementById("acc-menu").checked=s?s.access.indexOf("menu")>-1:true;
+  document.getElementById("acc-rooms").checked=s?s.access.indexOf("rooms")>-1:true;
+  document.getElementById("acc-res").checked=s?s.access.indexOf("res")>-1:true;
+  document.getElementById("acc-pay").checked=s?s.access.indexOf("pay")>-1:false;
+  document.getElementById("acc-msg").checked=s?s.access.indexOf("msg")>-1:true;
+  document.getElementById("acc-notif").checked=s?s.access.indexOf("notif")>-1:false;
+  document.getElementById("staff-modal-overlay").classList.add("show");
+}
+function closeStaffModal(){document.getElementById("staff-modal-overlay").classList.remove("show");}
+function saveStaff(){
+  var name=document.getElementById("st-name").value.trim(),email=document.getElementById("st-email").value.trim();
+  if(!name||!email){showToast("Name and email required","error");return;}
+  var acc=[];
+  ["menu","rooms","res","pay","msg","notif"].forEach(function(a){if(document.getElementById("acc-"+a).checked)acc.push(a);});
+  var id=document.getElementById("staff-item-id").value;
+  var data={name:name,email:email,role:document.getElementById("st-role").value,phone:document.getElementById("st-phone").value,access:acc,lastLogin:"Never"};
+  if(id){var idx=staff.findIndex(function(x){return x.id===id;});if(idx>-1)staff[idx]=Object.assign({},staff[idx],data);showToast("Staff updated");}
+  else{data.id="s"+Date.now();staff.push(data);showToast("Staff added");}
+  closeStaffModal();renderStaffPage();
+}
+function deleteStaff(id){staff=staff.filter(function(s){return s.id!==id;});renderStaffPage();showToast("Staff removed");}
+
+// ════ ANALYTICS ════
+function renderAnalyticsPage(){
+  var totalRev=payments.filter(function(p){return p.status==="Paid";}).reduce(function(a,p){return a+p.amount;},0);
+  var el=document.getElementById("an-revenue");if(el)el.textContent="UGX "+Math.round(totalRev/1000)+"K";
+  var occ=Math.round((reservations.filter(function(r){return r.status==="Confirmed"||r.status==="Checked In";}).length/Math.max(1,rooms.length))*100);
+  el=document.getElementById("an-occ");if(el)el.textContent=occ+"%";
+  el=document.getElementById("an-bookings");if(el)el.textContent=reservations.length;
+  el=document.getElementById("an-cancel");if(el)el.textContent=reservations.filter(function(r){return r.status==="Cancelled";}).length;
+  // Top menu
+  var tbody=document.getElementById("top-menu-tbody");
+  if(tbody)tbody.innerHTML=menuItems.filter(function(i){return i.is_featured;}).slice(0,5).map(function(i){
+    return "<tr><td>"+i.name+"</td><td><span class='badge badge-green'>"+i.category+"</span></td><td><strong>"+Math.floor(Math.random()*15+5)+"</strong></td></tr>";
+  }).join("");
+  // Charts
+  drawCharts();
+}
+function drawCharts(){
+  try{
+    var rc=document.getElementById("revenue-chart");
+    if(rc&&rc.getContext){
+      var ctx=rc.getContext("2d");
+      var months=["Dec","Jan","Feb","Mar","Apr","May"];
+      var vals=[320000,450000,380000,520000,490000,630000];
+      var max=Math.max.apply(null,vals);
+      ctx.clearRect(0,0,rc.width,rc.height);
+      var w=rc.width,h=rc.height,pad=30,barW=(w-pad*2)/months.length*0.6,gap=(w-pad*2)/months.length;
+      ctx.fillStyle="#e8f5e9";ctx.fillRect(0,0,w,h);
+      months.forEach(function(m,i){
+        var bh=(vals[i]/max)*(h-pad*2);
+        var x=pad+i*gap+gap*0.2,y=h-pad-bh;
+        ctx.fillStyle="#2e7d32";ctx.fillRect(x,y,barW,bh);
+        ctx.fillStyle="#6b7280";ctx.font="10px Inter";ctx.textAlign="center";ctx.fillText(m,x+barW/2,h-8);
+        ctx.fillStyle="#1b5e20";ctx.fillText((vals[i]/1000).toFixed(0)+"K",x+barW/2,y-4);
+      });
+    }
+    var sc=document.getElementById("status-chart");
+    if(sc&&sc.getContext){
+      var ctx2=sc.getContext("2d");
+      var statuses=["Confirmed","Pending","Checked Out","Cancelled"];
+      var statColors=["#2e7d32","#f57f17","#6b7280","#d32f2f"];
+      var statVals=statuses.map(function(s){return reservations.filter(function(r){return r.status===s;}).length;});
+      var total2=statVals.reduce(function(a,b){return a+b;},0)||1;
+      var cx=sc.width/2,cy=sc.height/2,rad=Math.min(cx,cy)-20,start=0;
+      ctx2.clearRect(0,0,sc.width,sc.height);
+      statVals.forEach(function(v,i){
+        var slice=(v/total2)*Math.PI*2;
+        ctx2.beginPath();ctx2.moveTo(cx,cy);ctx2.arc(cx,cy,rad,start,start+slice);ctx2.closePath();
+        ctx2.fillStyle=statColors[i];ctx2.fill();
+        start+=slice;
+      });
+      // legend
+      statuses.forEach(function(s,i){
+        ctx2.fillStyle=statColors[i];ctx2.fillRect(10,10+i*18,12,12);
+        ctx2.fillStyle="#1a1a1a";ctx2.font="11px Inter";ctx2.textAlign="left";
+        ctx2.fillText(s+" ("+statVals[i]+")",26,21+i*18);
+      });
+    }
+  }catch(e){}
+}
+
+// ════ PATCH showPage to handle new pages ════
+var _origShowPage = showPage;
+showPage = function(name, el) {
+  _origShowPage(name, el);
+  var pt=document.getElementById("page-title");if(pt&&pageMap[name])pt.textContent=pageMap[name];
+  if(name==="payments")renderPaymentsPage();
+  if(name==="reviews")renderReviewsPage();
+  if(name==="gallery")renderGalleryPage();
+  if(name==="calendar")renderCalendar();
+  if(name==="staff")renderStaffPage();
+  if(name==="analytics")renderAnalyticsPage();
+};
+
 </script>
 </body>
 </html>
