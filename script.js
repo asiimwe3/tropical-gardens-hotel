@@ -557,6 +557,26 @@ async function loadSiteData() {
 let menuItems = [];
 let activeMenuCat = 'Breakfast';
 
+const FOOD_IMAGE_LIBRARY = {
+  rolex: 'https://commons.wikimedia.org/wiki/Special:FilePath/Rolex%20in%20Mbarara.jpg?width=900',
+  katogo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Katogo%20n%27entula.jpg?width=900',
+  omelette: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bread%20omelette%20in%20Manali%20%283777565066%29.jpg?width=900',
+  matooke: 'https://commons.wikimedia.org/wiki/Special:FilePath/Emere%20Matooke%20ne%20Binyebwa%20bye%27byenyanja.JPG?width=900',
+  beans: 'https://commons.wikimedia.org/wiki/Special:FilePath/Red%20beans%20and%20rice.jpg?width=900',
+  chicken: 'https://commons.wikimedia.org/wiki/Special:FilePath/Preparing%20chicken%20stew.jpg?width=900',
+  tilapia: 'https://commons.wikimedia.org/wiki/Special:FilePath/Grilled%20Tilapia%20001.jpg?width=900',
+  beef: 'https://commons.wikimedia.org/wiki/Special:FilePath/Rolex%20wrap.jpg?width=900',
+  grill: 'https://commons.wikimedia.org/wiki/Special:FilePath/Mixed%20grilled%20meat%20and%20salad%20on%20a%20wooden%20board.jpg?width=900',
+  nyama: 'https://commons.wikimedia.org/wiki/Special:FilePath/Roasting%20Nyama%20Choma.jpg?width=900',
+  passion: 'https://commons.wikimedia.org/wiki/Special:FilePath/2020-03-23%2023%2059%2021%20A%20glass%20of%20passion%20juice%20in%20the%20Franklin%20Farm%20section%20of%20Oak%20Hill%2C%20Fairfax%20County%2C%20Virginia.jpg?width=900',
+  mango: 'https://commons.wikimedia.org/wiki/Special:FilePath/Fresh-mango-smoothie%2001.jpg?width=900',
+  cocktail: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tuxedo%20No.%202%20cocktail.jpg?width=900',
+  soda: 'https://commons.wikimedia.org/wiki/Special:FilePath/Soda%20bottles.jpg?width=900',
+  cake: 'https://commons.wikimedia.org/wiki/Special:FilePath/Chocolate%20banana%20cake%20garnished%20with%20strawberry%20ice%20cream.jpg?width=900'
+};
+
+const MENU_FALLBACK_IMAGE = 'https://commons.wikimedia.org/wiki/Special:FilePath/Ugandan%20Food..JPG?width=900';
+
 // Food category colors for fallback images
 const categoryEmojis = {
   'Breakfast': '🌅',
@@ -569,6 +589,24 @@ const categoryEmojis = {
 
 // Generate food images based on item name
 function generateFoodImage(itemName, category) {
+  const name = String(itemName || '').toLowerCase();
+  if (name.includes('rolex') && name.includes('beef')) return FOOD_IMAGE_LIBRARY.beef;
+  if (name.includes('rolex')) return FOOD_IMAGE_LIBRARY.rolex;
+  if (name.includes('katogo')) return FOOD_IMAGE_LIBRARY.katogo;
+  if (name.includes('omelette') || name.includes('toast')) return FOOD_IMAGE_LIBRARY.omelette;
+  if (name.includes('matooke') || name.includes('groundnut')) return FOOD_IMAGE_LIBRARY.matooke;
+  if (name.includes('beans') || name.includes('rice')) return FOOD_IMAGE_LIBRARY.beans;
+  if (name.includes('chicken')) return FOOD_IMAGE_LIBRARY.chicken;
+  if (name.includes('tilapia')) return FOOD_IMAGE_LIBRARY.tilapia;
+  if (name.includes('mixed grill') || name.includes('grill platter')) return FOOD_IMAGE_LIBRARY.grill;
+  if (name.includes('nyama') || name.includes('goat')) return FOOD_IMAGE_LIBRARY.nyama;
+  if (name.includes('passion')) return FOOD_IMAGE_LIBRARY.passion;
+  if (name.includes('mango')) return FOOD_IMAGE_LIBRARY.mango;
+  if (name.includes('cocktail')) return FOOD_IMAGE_LIBRARY.cocktail;
+  if (name.includes('soda') || name.includes('water')) return FOOD_IMAGE_LIBRARY.soda;
+  if (name.includes('cake') || name.includes('dessert') || name.includes('banana')) return FOOD_IMAGE_LIBRARY.cake;
+  return MENU_FALLBACK_IMAGE;
+
   // Using placeholder images with item names
   const encodedName = encodeURIComponent(itemName.substring(0, 20));
   const emoji = categoryEmojis[category] || '🍽️';

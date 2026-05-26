@@ -1500,6 +1500,11 @@ h4,
   border-radius: var(--radius); font-size: 0.9rem;
 }
 .menu-footer a { color: var(--green); font-weight: 600; }
+.menu-credit {
+  margin-top: 8px;
+  font-size: 0.76rem;
+  color: var(--gray);
+}
 
 /* responsive */
 @media (max-width: 1024px) { .menu-grid { grid-template-columns: repeat(2, 1fr); } }
