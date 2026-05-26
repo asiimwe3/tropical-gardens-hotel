@@ -35,6 +35,7 @@ body {
   font-family: var(--font-sans);
   color: var(--dark);
   background: var(--white);
+  font-weight: 600;
   line-height: 1.65;
   overflow-x: hidden;
   transition: background 0.25s ease, color 0.25s ease;
@@ -274,6 +275,62 @@ html[data-theme="dark"] .toast {
 .section-header .section-title,
 .proof-copy .section-title {
   letter-spacing: 0;
+}
+
+body p,
+body li,
+body span,
+body a,
+body label,
+body input,
+body select,
+body textarea,
+body button {
+  font-weight: 600;
+}
+
+strong,
+h1,
+h2,
+h3,
+h4,
+.section-title,
+.section-tag,
+.btn,
+.nav-links a,
+.nav-cta,
+.hero-tag,
+.room-badge,
+.room-featured-tag,
+.service-featured-tag,
+.featured-badge,
+.menu-card-name,
+.menu-card-price,
+.contact-card h4,
+.footer-col h4 {
+  font-weight: 800;
+}
+
+.section-sub,
+.hero-sub,
+.about-text p,
+.service-body p,
+.experience-copy p,
+.event-card p,
+.tourism-cards span,
+.room-body p,
+.room-features li,
+.signature-card p,
+.res-contact-item p,
+.contact-card p,
+.review-card p,
+.footer-brand p,
+.footer-col p,
+.footer-col ul a,
+.menu-card-desc,
+.book-modal-sub,
+.book-option-text span {
+  font-weight: 700;
 }
 
 /* ==============================
