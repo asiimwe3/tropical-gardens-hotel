@@ -524,30 +524,43 @@ if (bookFormBtn) {
 // ==============================
 
 async function loadSiteData() {
+  // --- Fetch menu from Base44 live API ---
   try {
-    const [menuResult, roomsResult, offersResult] = await Promise.allSettled([
-      apiFetch('/api/menu'),
-      apiFetch('/api/rooms'),
-      apiFetch('/api/offers')
-    ])
-
-    if (menuResult.status === 'fulfilled' && menuResult.value.menuItems?.length) {
-      menuItems = menuResult.value.menuItems
-      renderMenuGrid()
+    const menuRes = await fetch('https://6a06dff0946d9cf169ac63e2.base44.app/functions/getMenuItems');
+    const menuData = await menuRes.json();
+    if (menuData.items && menuData.items.length) {
+      // Map Base44 fields to the format renderMenuGrid() expects
+      menuItems = menuData.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        description: item.description || '',
+        category: item.category,
+        price: item.price,
+        is_available: item.is_available !== false,
+        is_featured: !!item.is_featured
+      }));
+      renderMenuGrid();
     } else {
-      loadDefaultMenu()
-    }
-
-    if (roomsResult.status === 'fulfilled' && roomsResult.value.rooms?.length) {
-      updateRoomsDisplay(roomsResult.value.rooms)
-    }
-
-    if (offersResult.status === 'fulfilled' && offersResult.value.offers?.length) {
-      displayOffers(offersResult.value.offers)
+      loadDefaultMenu();
     }
   } catch (e) {
-    console.log('API data not available, using local fallback data');
     loadDefaultMenu();
+  }
+
+  // --- Rooms and offers still try the local backend (no-op if offline) ---
+  try {
+    const [roomsResult, offersResult] = await Promise.allSettled([
+      apiFetch('/api/rooms'),
+      apiFetch('/api/offers')
+    ]);
+    if (roomsResult.status === 'fulfilled' && roomsResult.value.rooms?.length) {
+      updateRoomsDisplay(roomsResult.value.rooms);
+    }
+    if (offersResult.status === 'fulfilled' && offersResult.value.offers?.length) {
+      displayOffers(offersResult.value.offers);
+    }
+  } catch (e) {
+    // backend not running yet — that's fine
   }
 }
 
