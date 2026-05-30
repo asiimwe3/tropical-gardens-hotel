@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://tropicalgardenshotelkyenjojo.com/</loc>
+    <image:image>
+      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg</image:loc>
+      <image:title>Tropical Gardens Hotel Kyenjojo gardens and rooms</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/1-1.jpg</image:loc>
+      <image:title>Tropical Gardens Hotel exterior in Kyenjojo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/4-min.jpg</image:loc>
+      <image:title>Guest room at Tropical Gardens Hotel</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery1.jpg</image:loc>
+      <image:title>Conference hall at Tropical Gardens Hotel</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/13.jpg</image:loc>
+      <image:title>Restaurant and dining at Tropical Gardens Hotel</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-1.jpg</image:loc>
+      <image:title>Gardens and outdoor space at Tropical Gardens Hotel</image:title>
+    </image:image>
+  </url>
+</urlset>
