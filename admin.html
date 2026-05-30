@@ -339,6 +339,7 @@
     ::-webkit-scrollbar-thumb{background:rgba(46,139,46,0.4);border-radius:3px;}
     ::-webkit-scrollbar-thumb:hover{background:rgba(46,139,46,0.7);}
   </style>
+  <script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -870,26 +871,33 @@
 
 <script src="app-config.js"></script>
 <script>
-// ── BASE44 MENU INTEGRATION ──
-async function loadMenuFromBase44(){
+// ── SUPABASE INTEGRATION ──
+var SB_BASE='https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1';
+var SB_SRK=window._SB_SRK;
+var SB_ANON=window._SB_ANON;
+
+async function loadMenuFromSupabase(){
   try{
-    var res=await fetch("https://6a06dff0946d9cf169ac63e2.base44.app/functions/getMenuItems");
-    var data=await res.json();
-    if(data.items&&data.items.length){
-      menuItems=data.items.map(normalizeMenuItem);
+    var res=await fetch(SB_BASE+'/menu_items?select=*&order=sort_order.asc,name.asc',{
+      headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK}
+    });
+    var rows=await res.json();
+    if(rows&&rows.length){
+      menuItems=rows.map(normalizeMenuItem);
       renderMenuPage();
+      var el=document.getElementById("ov-menu");
+      if(el)el.textContent=rows.length;
     }
-  }catch(e){
-    console.log("Base44 menu load failed:",e.message);
-  }
+  }catch(e){console.log("Supabase menu load failed:",e.message);}
 }
 
 async function deleteMenuItem(id){
   if(!confirm("Delete this item permanently?"))return;
-  var token=localStorage.getItem("tgh_admin_token");
-  if(!token){showToast("Enter your admin token first","error");return;}
   try{
-    var res=await fetch("https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem/"+id,{method:"DELETE",headers:{"Authorization":"Bearer "+token}});
+    var res=await fetch(SB_BASE+'/menu_items?id=eq.'+id,{
+      method:'DELETE',
+      headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK}
+    });
     if(!res.ok)throw new Error("Delete failed");
     menuItems=menuItems.filter(function(m){return m.id!==id;});
     renderMenuPage();
@@ -902,10 +910,55 @@ async function menuToggleFeatured(id,val){
   if(item)item.is_featured=val;
   renderMenuPage();
   showToast(val?"⭐ Featured":"Removed from featured");
-  var token=localStorage.getItem("tgh_admin_token");
-  if(!token)return;
-  fetch("https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem/"+id,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({is_featured:val})}).catch(function(){});
+  fetch(SB_BASE+'/menu_items?id=eq.'+id,{method:'PATCH',headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK,'Content-Type':'application/json'},body:JSON.stringify({is_featured:val})}).catch(function(){});
 }
+
+async function loadBookingsFromSupabase(){
+  try{
+    var res=await fetch(SB_BASE+'/bookings?select=*&order=created_at.desc',{
+      headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK}
+    });
+    var rows=await res.json();
+    if(!Array.isArray(rows))return;
+    var el=document.getElementById("ov-bookings");if(el)el.textContent=rows.length;
+    renderBookingsTable(rows);
+  }catch(e){console.log("Bookings load failed:",e);}
+}
+
+function renderBookingsTable(rows){
+  var container=document.getElementById("bookings-table-body");
+  if(!container)return;
+  if(!rows.length){container.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;opacity:0.5;">No bookings yet</td></tr>';return;}
+  container.innerHTML=rows.map(function(b){
+    var statusColor={pending:'var(--gold)',confirmed:'var(--g4)',cancelled:'var(--red)',completed:'var(--blue)'};
+    return '<tr>'+
+      '<td>'+b.guest_name+'</td>'+
+      '<td>'+b.guest_email+'</td>'+
+      '<td>'+(b.guest_phone||'-')+'</td>'+
+      '<td>'+(b.check_in||'-')+' → '+(b.check_out||'-')+'</td>'+
+      '<td>'+(b.adults||1)+' adults'+(b.children?' / '+b.children+' kids':'')+'</td>'+
+      '<td><span style="color:'+(statusColor[b.status]||'#fff')+';font-weight:600">'+b.status+'</span></td>'+
+      '<td>'+(b.notes||'-')+'</td>'+
+      '<td><button onclick="updateBookingStatus(''+b.id+'','confirmed')" class="btn-small" style="background:var(--g4);color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:11px">Confirm</button> '+
+      '<button onclick="updateBookingStatus(''+b.id+'','cancelled')" class="btn-small" style="background:var(--red);color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:11px">Cancel</button></td>'+
+      '</tr>';
+  }).join('');
+}
+
+async function updateBookingStatus(id,status){
+  try{
+    await fetch(SB_BASE+'/bookings?id=eq.'+id,{method:'PATCH',headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK,'Content-Type':'application/json'},body:JSON.stringify({status:status})});
+    showToast("Booking "+status+"!");
+    loadBookingsFromSupabase();
+  }catch(e){showToast("Error: "+e.message,"error");}
+}
+
+
+
+
+
+
+
 
 var menuItems=[];
 var rooms=[
@@ -1138,10 +1191,8 @@ function menuToggleAvail(id,val){
   var item=menuItems.find(function(m){return m.id===id;});
   if(item)item.is_available=val;
   renderMenuPage();
-  showToast(val?"✅ Available":"⏸ Hidden from menu");
-  var token=localStorage.getItem("tgh_admin_token");
-  if(!token)return;
-  fetch("https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem/"+id,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({is_available:val})}).catch(function(){});
+  showToast(val?"✅ Available":"⏸ Hidden");
+  fetch('https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/menu_items?id=eq.'+id,{method:'PATCH',headers:{'apikey':window._SB_SRK,'Authorization':'Bearer '+window._SB_SRK+'','Content-Type':'application/json'},body:JSON.stringify({is_available:val})}).catch(function(){});
 }
 
 function openMenuModal(id){
@@ -1162,24 +1213,16 @@ async function saveMenuItem(){
   var name=document.getElementById("mi-name").value.trim(),price=document.getElementById("mi-price").value;
   if(!name||!price){showToast("Name and price required","error");return;}
   var id=document.getElementById("menu-item-id").value;
-  var data={
-    name:name,
-    description:document.getElementById("mi-desc").value.trim(),
-    category:document.getElementById("mi-cat").value,
-    price:Number(price),
-    currency:"UGX",
-    is_available:document.getElementById("mi-available").checked,
-    is_featured:document.getElementById("mi-featured").checked
-  };
-  var token=localStorage.getItem("tgh_admin_token");
-  if(!token){showToast("Enter your admin token first","error");return;}
+  var data={name:name,description:document.getElementById("mi-desc").value.trim(),category:document.getElementById("mi-cat").value,price:Number(price),currency:"UGX",is_available:document.getElementById("mi-available").checked,is_featured:document.getElementById("mi-featured").checked};
   try{
-    var url=id?("https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem/"+id):"https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem";
-    var method=id?"PUT":"POST";
-    var res=await fetch(url,{method:method,headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify(data)});
+    var url='https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/menu_items'+(id?'/'+id:'');
+    var method=id?'PATCH':'POST';
+    var headers={'apikey':window._SB_SRK,'Authorization':'Bearer '+window._SB_SRK+'','Content-Type':'application/json','Prefer':'return=representation'};
+    var res=await fetch(url,{method:method,headers:headers,body:JSON.stringify(data)});
     var saved=await res.json();
-    if(!res.ok)throw new Error(saved.error||saved.message||"Save failed");
-    var normalized=normalizeMenuItem(saved);
+    if(!res.ok)throw new Error((saved[0]&&saved[0].message)||saved.message||'Save failed');
+    var item=Array.isArray(saved)?saved[0]:saved;
+    var normalized=normalizeMenuItem(item);
     if(id){var idx=menuItems.findIndex(function(m){return m.id===id;});if(idx>-1)menuItems[idx]=normalized;}
     else menuItems.push(normalized);
     showToast(id?"✅ Item updated!":"✅ Item added!");
@@ -1778,6 +1821,9 @@ updateConnectionStatus();
 loadBackendData();
 
 loadMenuFromBase44();
+
+loadMenuFromSupabase();
+loadBookingsFromSupabase();
 </script>
 </body>
 </html>
