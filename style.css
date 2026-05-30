@@ -1526,3 +1526,32 @@ h4,
   .menu-tab { padding: 7px 14px; font-size: 0.78rem; }
   .menu-card { padding: 16px; }
 }
+.policy-page {
+  background: var(--cream);
+  min-height: 100vh;
+}
+
+.policy-page .container {
+  max-width: 920px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: clamp(28px, 5vw, 56px);
+}
+
+.policy-page h1,
+.policy-page h2 {
+  color: var(--green-dark);
+}
+
+.policy-page h2 {
+  margin-top: 28px;
+  font-size: 1.25rem;
+}
+
+.policy-page p {
+  color: var(--text);
+  line-height: 1.75;
+  margin-top: 12px;
+}

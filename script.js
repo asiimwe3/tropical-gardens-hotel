@@ -47,6 +47,10 @@ async function _sbFetch(resource,action,id,payload){
 async function submitBookingToSupabase(data){
   return await _sbFetch('bookings','create',null,data);
 }
+
+async function submitContactToSupabase(data){
+  return await _sbFetch('guest_messages','create',null,data);
+}
 // ---- DEVICE DETECTION ----
 const isMobile = () => window.innerWidth <= 768
 const API_BASE = (window.TGH_API_BASE || localStorage.getItem('tgh_api_base') || '').replace(/\/$/, '')
@@ -177,7 +181,7 @@ async function loadPublicNotifications() {
       return true
     }))
   } catch (error) {
-    // Static GitHub Pages uses localStorage notifications when no backend is configured.
+    // Static hosting keeps showing locally cached notifications when the API is offline.
   }
 }
 
@@ -490,7 +494,9 @@ async function handleReservation(e) {
         deposit_amount: paymentMode === 'pay' ? Math.max(1000, depositAmount || 50000) : 0,
         payment_status: paymentMode === 'pay' ? 'Pending' : 'Unpaid'
       })
-      showToast('Reservation saved. Reception will contact you to complete payment.')
+      showToast(paymentMode === 'pay'
+        ? 'Reservation saved. Online payment is temporarily unavailable; reception will contact you to complete payment.'
+        : 'Reservation saved. Reception will contact you to complete payment.')
       form.reset()
     } catch (supabaseError) {
       showToast(`Could not send online. Please call or WhatsApp us: ${error.message}`)
@@ -522,7 +528,19 @@ async function handleContact(e) {
     form.reset()
     showToast('Message sent. Tropical Gardens Hotel will reply soon.')
   } catch (error) {
-    showToast(`Could not send online. Please call or WhatsApp us: ${error.message}`)
+    try {
+      await submitContactToSupabase({
+        name,
+        email: data.get('email') || '',
+        phone: data.get('phone') || '',
+        subject: 'Website contact form',
+        message: data.get('message') || ''
+      })
+      form.reset()
+      showToast('Message saved. Tropical Gardens Hotel will reply soon.')
+    } catch (supabaseError) {
+      showToast(`Could not send online. Please call or WhatsApp us: ${error.message}`)
+    }
   } finally {
     setButtonLoading(submit, false)
   }

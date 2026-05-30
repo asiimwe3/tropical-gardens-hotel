@@ -1313,7 +1313,7 @@ function showToast(msg,type){
 }
 renderMenuPage();
 
-// ════ SAMPLE DATA — NEW SECTIONS ════
+// ════ PREVIEW FALLBACK DATA — HIDDEN AFTER LIVE BACKEND LOGIN ════
 var payments=[
   {id:"p1",guest:"John Mukisa",room:"Room 3 (Deluxe)",checkin:"2026-05-25",amount:300000,method:"Pesapal Mobile Money",status:"Paid",ref:"TGH-001-2605"},
   {id:"p2",guest:"Grace Nalwoga",room:"Room 2 (Standard)",checkin:"2026-05-25",amount:80000,method:"Pesapal Card",status:"Pending",ref:"TGH-002-2605"},
@@ -1388,6 +1388,7 @@ function reservationPayload(data){return {guestName:data.guest||data.guestName,p
 function offerPayload(data){return {title:data.title,description:data.description||"",discountPercent:Number(data.discount)||Number(data.discountPercent)||0,code:data.code||"",startsAt:data.from||data.startsAt,endsAt:data.to||data.endsAt,isActive:data.active!==undefined?data.active:data.isActive};}
 async function loadBackendData(){
   if(!hasAdminSession())return;
+  reservations=[];messages=[];payments=[];notifications=[];menuItems=[];rooms=[];offers=[];
   var results=await Promise.allSettled([
     apiFetch("/api/admin/reservations",{headers:authHeaders()}),
     apiFetch("/api/admin/messages",{headers:authHeaders()}),
@@ -1397,6 +1398,7 @@ async function loadBackendData(){
     apiFetch("/api/admin/rooms",{headers:authHeaders()}),
     apiFetch("/api/admin/offers",{headers:authHeaders()})
   ]);
+  var loaded=results.some(function(result){return result.status==="fulfilled";});
   if(results[0].status==="fulfilled"&&results[0].value.reservations)reservations=results[0].value.reservations.map(normalizeReservation);
   if(results[1].status==="fulfilled"&&results[1].value.messages)messages=results[1].value.messages.map(normalizeMessage);
   if(results[2].status==="fulfilled"&&results[2].value.payments)payments=results[2].value.payments.map(normalizePayment);
@@ -1405,6 +1407,7 @@ async function loadBackendData(){
   if(results[5].status==="fulfilled"&&results[5].value.rooms)rooms=results[5].value.rooms.map(function(r){return {id:r.id,name:r.name,num:r.room_number||r.roomNumber||"",description:r.description,type:r.type,price:Number(r.price)||0,capacity:Number(r.capacity)||2,image:r.image_url||r.imageUrl||"",is_available:r.is_available!==undefined?r.is_available:r.isAvailable};});
   if(results[6].status==="fulfilled"&&results[6].value.offers)offers=results[6].value.offers.map(function(o){return {id:o.id,title:o.title,description:o.description,discount:o.discount_percent||o.discountPercent||0,code:o.code||"",from:o.starts_at||o.startsAt||"",to:o.ends_at||o.endsAt||"",active:o.is_active!==undefined?o.is_active:o.isActive};});
   renderMenuPage();renderRoomsPage();renderResPage();renderOffersPage();renderNotifPage();renderMessagesPage();renderPaymentsPage();
+  if(!loaded)showToast("Backend data unavailable. Demo data hidden until API is fixed.","error");
 }
 
 // ════ PAYMENTS ════

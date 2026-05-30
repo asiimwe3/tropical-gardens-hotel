@@ -171,4 +171,17 @@ window.TGH_API_BASE = "https://tropical-gardens-hotel-api.onrender.com";
 
 If Render gives the API a different URL, update `app-config.js` and redeploy GitHub Pages.
 
+For production, keep the commercial domain in `CORS_ORIGIN`:
+
+```text
+https://tropicalgardenshotelkyenjojo.com,https://www.tropicalgardenshotelkyenjojo.com
+```
+
+Payment result pages should use the commercial domain:
+
+```text
+PESAPAL_CANCELLATION_URL=https://tropicalgardenshotelkyenjojo.com/payment-cancelled.html
+PAYMENT_SUCCESS_URL=https://tropicalgardenshotelkyenjojo.com/payment-success.html
+```
+
 Never commit Pesapal keys to Git. Put live credentials only in Render environment variables or a local ignored `backend/.env` file.

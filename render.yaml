@@ -17,7 +17,7 @@ services:
       - key: JWT_EXPIRES_IN
         value: 8h
       - key: CORS_ORIGIN
-        value: https://asiimwe3.github.io,http://127.0.0.1:4173,http://localhost:4173
+        value: https://tropicalgardenshotelkyenjojo.com,https://www.tropicalgardenshotelkyenjojo.com,https://asiimwe3.github.io,http://127.0.0.1:4173,http://localhost:4173
       - key: ADMIN_EMAIL
         value: tropicalgardenshotel@gmail.com
       - key: ADMIN_PASSWORD
@@ -39,9 +39,9 @@ services:
       - key: PESAPAL_CALLBACK_URL
         value: https://tropical-gardens-hotel-api.onrender.com/api/payments/pesapal/callback
       - key: PESAPAL_CANCELLATION_URL
-        value: https://asiimwe3.github.io/tropical-gardens-hotel/payment-cancelled.html
+        value: https://tropicalgardenshotelkyenjojo.com/payment-cancelled.html
       - key: PAYMENT_SUCCESS_URL
-        value: https://asiimwe3.github.io/tropical-gardens-hotel/payment-success.html
+        value: https://tropicalgardenshotelkyenjojo.com/payment-success.html
 
 databases:
   - name: tropical-gardens-hotel-db
