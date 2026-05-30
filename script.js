@@ -3,6 +3,23 @@
 //  Device-aware + mobile bottom nav
 // ===========================
 
+
+// ── SUPABASE CONFIG ──
+var SUPABASE_URL='https://eiyexnuhqdscomilwpqg.supabase.co';
+var SUPABASE_ANON=window._SB_ANON;
+var SB=SUPABASE_URL+'/rest/v1';
+
+async function submitBookingToSupabase(data){
+  var res=await fetch(SB+'/bookings',{
+    method:'POST',
+    headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=representation'},
+    body:JSON.stringify(data)
+  });
+  var result=await res.json();
+  if(!res.ok)throw new Error((result[0]&&result[0].message)||result.message||'Booking failed');
+  return result;
+}
+
 // ---- DEVICE DETECTION ----
 const isMobile = () => window.innerWidth <= 768
 const API_BASE = (window.TGH_API_BASE || localStorage.getItem('tgh_api_base') || '').replace(/\/$/, '')
@@ -523,45 +540,36 @@ if (bookFormBtn) {
 //  LOAD SITE DATA (Menu, Rooms, Offers)
 // ==============================
 
-async function loadSiteData() {
-  // --- Fetch menu from Base44 live API ---
-  try {
-    const menuRes = await fetch('https://6a06dff0946d9cf169ac63e2.base44.app/functions/getMenuItems');
-    const menuData = await menuRes.json();
-    if (menuData.items && menuData.items.length) {
-      // Map Base44 fields to the format renderMenuGrid() expects
-      menuItems = menuData.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        description: item.description || '',
-        category: item.category,
-        price: item.price,
-        is_available: item.is_available !== false,
-        is_featured: !!item.is_featured
-      }));
+async function loadSiteData(){
+  // Menu from Supabase
+  try{
+    var res=await fetch('https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/menu_items?select=*&order=sort_order.asc,name.asc&is_available=eq.true',{
+      headers:{'apikey':window._SB_ANON,'Authorization':'Bearer '+window._SB_ANON+''}
+    });
+    var rows=await res.json();
+    if(rows&&rows.length){
+      menuItems=rows.map(function(r){
+        return {id:r.id,name:r.name,description:r.description||'',category:r.category,price:r.price,is_available:r.is_available,is_featured:r.is_featured,image:r.image_url||''};
+      });
       renderMenuGrid();
-    } else {
-      loadDefaultMenu();
-    }
-  } catch (e) {
-    loadDefaultMenu();
-  }
-
-  // --- Rooms and offers still try the local backend (no-op if offline) ---
-  try {
-    const [roomsResult, offersResult] = await Promise.allSettled([
-      apiFetch('/api/rooms'),
-      apiFetch('/api/offers')
-    ]);
-    if (roomsResult.status === 'fulfilled' && roomsResult.value.rooms?.length) {
-      updateRoomsDisplay(roomsResult.value.rooms);
-    }
-    if (offersResult.status === 'fulfilled' && offersResult.value.offers?.length) {
-      displayOffers(offersResult.value.offers);
-    }
-  } catch (e) {
-    // backend not running yet — that's fine
-  }
+    }else{loadDefaultMenu();}
+  }catch(e){loadDefaultMenu();}
+  // Rooms from Supabase
+  try{
+    var rres=await fetch('https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/rooms?select=*&is_available=eq.true&order=sort_order.asc',{
+      headers:{'apikey':window._SB_ANON,'Authorization':'Bearer '+window._SB_ANON+''}
+    });
+    var rooms=await rres.json();
+    if(rooms&&rooms.length&&typeof updateRoomsDisplay==='function')updateRoomsDisplay(rooms);
+  }catch(e){}
+  // Notifications from Supabase
+  try{
+    var nres=await fetch('https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/notifications?select=*&is_active=eq.true&order=created_at.desc',{
+      headers:{'apikey':window._SB_ANON,'Authorization':'Bearer '+window._SB_ANON+''}
+    });
+    var notifs=await nres.json();
+    if(notifs&&notifs.length&&typeof renderPublicNotifications==='function')renderPublicNotifications(notifs);
+  }catch(e){}
 }
 
 // ==============================
