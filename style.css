@@ -1368,6 +1368,8 @@ h4,
 
   /* Reservation */
   .res-grid { grid-template-columns: 1fr; gap: 28px; }
+  .res-grid > * { min-width: 0; max-width: 100%; }
+  .res-info, .res-form-wrap { width: 100%; max-width: 100%; }
   .res-form-wrap { padding: 20px; }
   .res-form h3 { font-size: 1.25rem; }
   .form-row { grid-template-columns: 1fr; gap: 0; }
