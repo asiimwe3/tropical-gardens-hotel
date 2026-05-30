@@ -160,7 +160,7 @@ Create a new Render Blueprint from the GitHub repository, then provide the secre
 - `ADMIN_PASSWORD`
 - `PESAPAL_CONSUMER_KEY`
 - `PESAPAL_CONSUMER_SECRET`
-- `PESAPAL_IPN_ID`
+- `PESAPAL_IPN_ID` if you already registered one. Otherwise leave it blank and keep `PESAPAL_IPN_URL` set so the backend can register the IPN URL with Pesapal.
 
 The public website is configured through `app-config.js` to call:
 
@@ -169,3 +169,5 @@ window.TGH_API_BASE = "https://tropical-gardens-hotel-api.onrender.com";
 ```
 
 If Render gives the API a different URL, update `app-config.js` and redeploy GitHub Pages.
+
+Never commit Pesapal keys to Git. Put live credentials only in Render environment variables or a local ignored `backend/.env` file.

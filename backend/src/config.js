@@ -19,6 +19,7 @@ export const config = {
     consumerKey: process.env.PESAPAL_CONSUMER_KEY,
     consumerSecret: process.env.PESAPAL_CONSUMER_SECRET,
     ipnId: process.env.PESAPAL_IPN_ID,
+    ipnUrl: process.env.PESAPAL_IPN_URL,
     callbackUrl: process.env.PESAPAL_CALLBACK_URL,
     cancellationUrl: process.env.PESAPAL_CANCELLATION_URL
   },

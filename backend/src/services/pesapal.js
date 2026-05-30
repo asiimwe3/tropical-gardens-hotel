@@ -1,10 +1,13 @@
 import { config } from "../config.js";
 
-function ensurePesapalConfig() {
+let tokenCache = null;
+let ipnIdCache = null;
+
+function ensurePesapalConfig({ requireIpn = true } = {}) {
   const missing = [];
   if (!config.pesapal.consumerKey) missing.push("PESAPAL_CONSUMER_KEY");
   if (!config.pesapal.consumerSecret) missing.push("PESAPAL_CONSUMER_SECRET");
-  if (!config.pesapal.ipnId) missing.push("PESAPAL_IPN_ID");
+  if (requireIpn && !config.pesapal.ipnId && !config.pesapal.ipnUrl) missing.push("PESAPAL_IPN_ID or PESAPAL_IPN_URL");
   if (!config.pesapal.callbackUrl) missing.push("PESAPAL_CALLBACK_URL");
   if (missing.length) {
     throw new Error(`Missing Pesapal configuration: ${missing.join(", ")}`);
@@ -28,7 +31,9 @@ async function pesapalRequest(path, options = {}) {
 }
 
 export async function getPesapalToken() {
-  ensurePesapalConfig();
+  ensurePesapalConfig({ requireIpn: false });
+  if (tokenCache && tokenCache.expiresAt > Date.now() + 30_000) return tokenCache.token;
+
   const data = await pesapalRequest("/api/Auth/RequestToken", {
     method: "POST",
     body: JSON.stringify({
@@ -36,15 +41,39 @@ export async function getPesapalToken() {
       consumer_secret: config.pesapal.consumerSecret
     })
   });
+  const expiryDate = data.expiryDate ? new Date(data.expiryDate).getTime() : Date.now() + 4 * 60_000;
+  tokenCache = { token: data.token, expiresAt: Number.isFinite(expiryDate) ? expiryDate : Date.now() + 4 * 60_000 };
   return data.token;
 }
 
-export async function submitPesapalOrder(order) {
+export async function registerPesapalIpn() {
+  if (config.pesapal.ipnId) return config.pesapal.ipnId;
+  if (ipnIdCache) return ipnIdCache;
+  if (!config.pesapal.ipnUrl) {
+    throw new Error("PESAPAL_IPN_URL is required when PESAPAL_IPN_ID is not set");
+  }
+
   const token = await getPesapalToken();
+  const data = await pesapalRequest("/api/URLSetup/RegisterIPN", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      url: config.pesapal.ipnUrl,
+      ipn_notification_type: "POST"
+    })
+  });
+  ipnIdCache = data.ipn_id;
+  return ipnIdCache;
+}
+
+export async function submitPesapalOrder(order) {
+  ensurePesapalConfig();
+  const token = await getPesapalToken();
+  const notificationId = order.notification_id || await registerPesapalIpn();
   return pesapalRequest("/api/Transactions/SubmitOrderRequest", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
-    body: JSON.stringify(order)
+    body: JSON.stringify({ ...order, notification_id: notificationId })
   });
 }
 

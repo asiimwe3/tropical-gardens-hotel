@@ -426,9 +426,12 @@ async function handleReservation(e) {
   const guestName = `${data.get('firstName') || ''} ${data.get('lastName') || ''}`.trim()
   const guests = String(data.get('guests') || '1').replace(/\D/g, '') || '1'
 
-  setButtonLoading(submit, true, 'Sending...')
+  const paymentMode = data.get('paymentMode') || 'later'
+  const depositAmount = Number(data.get('depositAmount') || 50000)
+
+  setButtonLoading(submit, true, paymentMode === 'pay' ? 'Opening Pesapal...' : 'Sending...')
   try {
-    await apiFetch('/api/reservations', {
+    const reservationResult = await apiFetch('/api/reservations', {
       method: 'POST',
       body: JSON.stringify({
         guestName,
@@ -441,6 +444,31 @@ async function handleReservation(e) {
         notes: data.get('notes') || ''
       })
     })
+
+    if (paymentMode === 'pay') {
+      const checkout = await apiFetch('/api/payments/pesapal/checkout', {
+        method: 'POST',
+        body: JSON.stringify({
+          reservationId: reservationResult.reservation?.id,
+          amount: Math.max(1000, depositAmount || 50000),
+          currency: 'UGX',
+          description: 'Tropical Gardens Hotel booking deposit',
+          customer: {
+            firstName: data.get('firstName') || guestName || 'Guest',
+            lastName: data.get('lastName') || '',
+            phone: data.get('phone') || '',
+            email: data.get('email') || ''
+          }
+        })
+      })
+      if (checkout.redirectUrl) {
+        showToast('Redirecting to secure Pesapal checkout...')
+        window.location.href = checkout.redirectUrl
+        return
+      }
+      throw new Error('Pesapal checkout link was not returned')
+    }
+
     showToast(nights > 0
       ? `Reservation received. ${nights} night${nights > 1 ? 's' : ''}. We'll confirm shortly.`
       : 'Reservation received. We will contact you within 24 hours.')

@@ -34,6 +34,8 @@ services:
         sync: false
       - key: PESAPAL_IPN_ID
         sync: false
+      - key: PESAPAL_IPN_URL
+        value: https://tropical-gardens-hotel-api.onrender.com/api/payments/pesapal/ipn
       - key: PESAPAL_CALLBACK_URL
         value: https://tropical-gardens-hotel-api.onrender.com/api/payments/pesapal/callback
       - key: PESAPAL_CANCELLATION_URL

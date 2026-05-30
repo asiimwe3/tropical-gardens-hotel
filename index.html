@@ -163,7 +163,7 @@
   <section class="stats-bar">
     <div class="stats-container">
       <div class="stat-item"><strong>24/7</strong><span>Reception support</span></div>
-      <div class="stat-item"><strong>MoMo</strong><span>Payments planned</span></div>
+      <div class="stat-item"><strong>MoMo</strong><span>Pesapal payments</span></div>
       <div class="stat-item"><strong>Wi-Fi</strong><span>Guest connectivity</span></div>
       <div class="stat-item"><strong>Safe</strong><span>Parking available</span></div>
       <div class="stat-item"><strong>Road</strong><span>Hoima Road, Kyenjojo</span></div>
@@ -182,7 +182,7 @@
         <div class="proof-grid">
           <div class="proof-item"><span>01</span><strong>Arrival confidence</strong><p>Clear directions, reception contacts, WhatsApp support, and fast reservation actions.</p></div>
           <div class="proof-item"><span>02</span><strong>Premium presentation</strong><p>Editorial room cards, signature packages, elegant spacing, and stronger visual hierarchy.</p></div>
-          <div class="proof-item"><span>03</span><strong>Booking readiness</strong><p>Room enquiry, event enquiry, restaurant contact, and planned Pesapal payments are surfaced clearly.</p></div>
+          <div class="proof-item"><span>03</span><strong>Booking readiness</strong><p>Room enquiry, event enquiry, restaurant contact, and Pesapal payments are surfaced clearly.</p></div>
         </div>
       </div>
     </div>
@@ -304,7 +304,7 @@
           <div class="experience-list">
             <div><strong>Garden calm</strong><span>Relax outdoors, dine in fresh air, and enjoy quiet evenings.</span></div>
             <div><strong>Guest comfort</strong><span>Clean rooms, helpful reception, secure parking, and warm service.</span></div>
-            <div><strong>Easy booking</strong><span>Reserve by form, phone, WhatsApp, or online payment once enabled.</span></div>
+            <div><strong>Easy booking</strong><span>Reserve by form, phone, WhatsApp, or secure online Pesapal checkout.</span></div>
           </div>
         </div>
         <div class="experience-media">
@@ -595,8 +595,20 @@
               </div>
             </div>
             <div class="form-group"><label>Special Requests</label><textarea name="notes" placeholder="Any special requests..." rows="3"></textarea></div>
-            <button type="submit" class="btn btn-primary full-btn">Submit Reservation</button>
-            <p class="form-note">🔒 We'll confirm within 24 hours.</p>
+            <div class="payment-box">
+              <div class="payment-box-head">
+                <strong>Secure Pesapal payment</strong>
+                <span>Mobile Money or card</span>
+              </div>
+              <label class="payment-choice"><input type="radio" name="paymentMode" value="pay" checked /> Pay booking deposit now</label>
+              <label class="payment-choice"><input type="radio" name="paymentMode" value="later" /> Reserve now, pay after hotel confirmation</label>
+              <div class="form-group payment-amount">
+                <label>Deposit Amount (UGX)</label>
+                <input type="number" name="depositAmount" min="1000" step="1000" value="50000" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary full-btn">Reserve & Continue</button>
+            <p class="form-note">Secure Pesapal checkout opens after your reservation is saved.</p>
           </form>
         </div>
       </div>
@@ -627,12 +639,12 @@
         <div class="review-card highlight">
           <p class="section-tag">Guest confidence</p>
           <h2 class="section-title">Built for comfortable stays and easy booking</h2>
-          <p>Guests can contact reception directly, reserve rooms quickly, and soon pay deposits online by Mobile Money or card through Pesapal checkout.</p>
+          <p>Guests can contact reception directly, reserve rooms quickly, and pay deposits online by Mobile Money or card through Pesapal checkout.</p>
           <a href="#reservation" class="btn btn-primary">Reserve Now</a>
         </div>
         <div class="review-card"><span>Clean rooms</span><p>Comfortable accommodation for couples, families, and business travellers.</p></div>
         <div class="review-card"><span>Warm service</span><p>Friendly hospitality and practical support throughout your stay.</p></div>
-        <div class="review-card"><span>Secure payments</span><p>Mobile Money and card collection is prepared in the backend for launch after domain setup.</p></div>
+        <div class="review-card"><span>Secure payments</span><p>Mobile Money and card collection runs through Pesapal checkout on the live backend.</p></div>
         <div class="review-card"><span>Concierge support</span><p>Guests can ask about transport, room setup, meals, family needs, and event planning before arrival.</p></div>
       </div>
     </div>

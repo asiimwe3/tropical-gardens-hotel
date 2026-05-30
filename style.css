@@ -1037,6 +1037,18 @@ h4,
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--green); }
 .form-group textarea { resize: vertical; }
 .form-note { font-size: 0.76rem; color: var(--gray); text-align: center; margin-top: 8px; }
+.payment-box { border: 1px solid rgba(27,94,32,0.14); border-radius: 12px; padding: 14px; margin: 8px 0 16px; background: #f8fbf6; }
+.payment-box-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.payment-box-head strong { color: var(--green-dark); font-weight: 800; font-size: 0.92rem; }
+.payment-box-head span { color: var(--gold); font-weight: 800; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 1px; }
+.payment-choice { display: flex; align-items: center; gap: 8px; color: var(--dark); font-weight: 700; font-size: 0.86rem; margin: 8px 0; cursor: pointer; }
+.payment-choice input { width: auto; accent-color: var(--green); }
+.payment-amount { margin-top: 12px; margin-bottom: 0; }
+.payment-status-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: linear-gradient(135deg, #0d3318, #1b5e20); }
+.payment-status-card { width: min(560px, 100%); background: var(--white); border-radius: var(--radius); padding: 34px; box-shadow: var(--shadow-lg); text-align: center; }
+.payment-status-card h1 { font-family: var(--font-serif); color: var(--green-dark); margin-bottom: 12px; }
+.payment-status-card p { color: var(--gray); line-height: 1.7; }
+.payment-status-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
 
 /* ==============================
    GUEST JOURNEY

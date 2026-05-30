@@ -8,12 +8,13 @@ import { getPesapalTransactionStatus, submitPesapalOrder } from "../services/pes
 export const paymentsRouter = express.Router();
 
 function merchantReference() {
-  return `TGH-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return `TGH-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 }
 
 async function syncPesapalPayment(orderTrackingId, merchantReferenceValue) {
   const status = await getPesapalTransactionStatus(orderTrackingId);
-  const paid = String(status.payment_status_description || "").toUpperCase() === "COMPLETED";
+  const paymentStatus = String(status.payment_status_description || status.status || "UNKNOWN").toUpperCase();
+  const paid = ["COMPLETED", "PAID"].includes(paymentStatus);
 
   const result = await query(
     `update payments
@@ -21,17 +22,17 @@ async function syncPesapalPayment(orderTrackingId, merchantReferenceValue) {
          payment_method = $2,
          payment_account = $3,
          confirmation_code = $4,
-         raw_status = $5,
+         raw_status = $5::jsonb,
          paid_at = case when $6 then coalesce(paid_at, now()) else paid_at end,
          updated_at = now()
      where provider_tracking_id = $7 or merchant_reference = $8
      returning *`,
     [
-      status.payment_status_description || "UNKNOWN",
+      paymentStatus,
       status.payment_method || null,
       status.payment_account || null,
       status.confirmation_code || null,
-      status,
+      JSON.stringify(status),
       paid,
       orderTrackingId,
       merchantReferenceValue
@@ -61,6 +62,7 @@ paymentsRouter.post("/pesapal/checkout", validate(paymentCheckoutSchema), async 
       currency: req.body.currency,
       amount: req.body.amount,
       description: req.body.description,
+      redirect_mode: "TOP_WINDOW",
       callback_url: config.pesapal.callbackUrl,
       cancellation_url: config.pesapal.cancellationUrl,
       notification_id: config.pesapal.ipnId,
@@ -92,6 +94,7 @@ paymentsRouter.post("/pesapal/checkout", validate(paymentCheckoutSchema), async 
     );
 
     res.status(201).json({
+      ok: true,
       merchantReference: reference,
       orderTrackingId: pesapal.order_tracking_id,
       redirectUrl: pesapal.redirect_url
@@ -110,7 +113,7 @@ paymentsRouter.get("/pesapal/callback", async (req, res, next) => {
     const synced = await syncPesapalPayment(orderTrackingId, merchantReferenceValue);
     if (config.paymentSuccessUrl) {
       const url = new URL(config.paymentSuccessUrl);
-      url.searchParams.set("status", synced.status.payment_status_description || "UNKNOWN");
+      url.searchParams.set("status", synced.status.payment_status_description || synced.status.status || "UNKNOWN");
       url.searchParams.set("reference", merchantReferenceValue || "");
       return res.redirect(url.toString());
     }
@@ -123,8 +126,8 @@ paymentsRouter.get("/pesapal/callback", async (req, res, next) => {
 
 paymentsRouter.all("/pesapal/ipn", async (req, res) => {
   try {
-    const orderTrackingId = req.body.OrderTrackingId || req.query.OrderTrackingId;
-    const merchantReferenceValue = req.body.OrderMerchantReference || req.query.OrderMerchantReference;
+    const orderTrackingId = req.body.OrderTrackingId || req.body.orderTrackingId || req.query.OrderTrackingId;
+    const merchantReferenceValue = req.body.OrderMerchantReference || req.body.orderMerchantReference || req.query.OrderMerchantReference;
     if (!orderTrackingId) {
       return res.status(400).json({ orderNotificationType: "IPNCHANGE", status: 500 });
     }

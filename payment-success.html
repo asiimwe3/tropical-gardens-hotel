@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Status | Tropical Gardens Hotel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="payment-status-page">
+    <section class="payment-status-card">
+      <p class="section-tag">Pesapal checkout</p>
+      <h1>Payment Status Received</h1>
+      <p id="payment-message">Thank you. We are confirming your payment with Pesapal.</p>
+      <div class="payment-status-actions">
+        <a class="btn btn-primary" href="index.html#reservation">Make another booking</a>
+        <a class="btn btn-outline-dark" href="index.html#contact">Contact reception</a>
+      </div>
+    </section>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status") || "UNKNOWN";
+    const reference = params.get("reference") || "";
+    const message = document.getElementById("payment-message");
+    message.textContent = `Pesapal status: ${status}${reference ? `. Reference: ${reference}` : ""}. Reception will confirm your reservation shortly.`;
+  </script>
+</body>
+</html>
