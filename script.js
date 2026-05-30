@@ -4,43 +4,44 @@
 // ===========================
 
 
-// Supabase config
-var _c=(function(){
-  var a=atob('c2Jfc2VjcmV0X1ZzeDF0ckhLUkExcGh5QWVFbXMxY0FfWFVzblFydno=');
-  var s=atob('c2JfcHVibGlzaGFibGVfUzF1X2FQcXEyVVN5SmNLcGVpc09sUV9UTXpiSHh0WA==');
-  return {a:a,s:s,base:'https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1'};
-})();
+// Supabase config is loaded from supabase-config.js.
+var _c = {
+  key: window.TGH_SUPABASE_ANON_KEY || '',
+  base: `${(window.TGH_SUPABASE_URL || '').replace(/\/$/, '')}/rest/v1`
+};
 
 async function _sbFetch(resource,action,id,payload){
   var url=_c.base+'/'+resource;
   var method='GET';
-  var hdrs={'apikey':_c.a,'Authorization':'Bearer '+_c.a,'Content-Type':'application/json'};
+  if (!_c.key || _c.base.indexOf('http') !== 0) return [];
+  var hdrs={'apikey':_c.key,'Authorization':'Bearer '+_c.key,'Content-Type':'application/json'};
   var body=undefined;
   if(action==='list'){
     var q=['select=*'];
     if(resource==='menu_items')q.push('order=sort_order.asc,name.asc');
     if(resource==='rooms'){q.push('is_available=eq.true');q.push('order=sort_order.asc');}
     if(resource==='notifications'){q.push('is_active=eq.true');}
-    if(resource==='bookings'){hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json'};}
     url+='?'+q.join('&');
   }else if(action==='create'){
     method='POST';
-    hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json','Prefer':'return=representation'};
+    hdrs={'apikey':_c.key,'Authorization':'Bearer '+_c.key,'Content-Type':'application/json','Prefer':'return=representation'};
     body=JSON.stringify(payload);
   }else if(action==='update'){
     method='PATCH';
-    hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json','Prefer':'return=representation'};
+    hdrs={'apikey':_c.key,'Authorization':'Bearer '+_c.key,'Content-Type':'application/json','Prefer':'return=representation'};
     url+='?id=eq.'+id;
     body=JSON.stringify(payload);
   }else if(action==='delete'){
     method='DELETE';
-    hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json'};
+    hdrs={'apikey':_c.key,'Authorization':'Bearer '+_c.key,'Content-Type':'application/json'};
     url+='?id=eq.'+id;
   }
   var opts={method:method,headers:hdrs};
   if(body)opts.body=body;
   var r=await fetch(url,opts);
-  return await r.json();
+  var json=await r.json().catch(function(){return [];});
+  if(!r.ok)throw new Error(json.message||json.error_description||'Supabase request failed');
+  return json;
 }
 
 async function submitBookingToSupabase(data){
@@ -428,21 +429,22 @@ async function handleReservation(e) {
 
   const paymentMode = data.get('paymentMode') || 'later'
   const depositAmount = Number(data.get('depositAmount') || 50000)
+  const reservationPayload = {
+    guestName,
+    phone: data.get('phone'),
+    email: data.get('email') || '',
+    roomName: data.get('roomName') || '',
+    checkIn: cin,
+    checkOut: cout,
+    guests: Number(guests),
+    notes: data.get('notes') || ''
+  }
 
   setButtonLoading(submit, true, paymentMode === 'pay' ? 'Opening Pesapal...' : 'Sending...')
   try {
     const reservationResult = await apiFetch('/api/reservations', {
       method: 'POST',
-      body: JSON.stringify({
-        guestName,
-        phone: data.get('phone'),
-        email: data.get('email') || '',
-        roomName: data.get('roomName') || '',
-        checkIn: cin,
-        checkOut: cout,
-        guests: Number(guests),
-        notes: data.get('notes') || ''
-      })
+      body: JSON.stringify(reservationPayload)
     })
 
     if (paymentMode === 'pay') {
@@ -474,7 +476,26 @@ async function handleReservation(e) {
       : 'Reservation received. We will contact you within 24 hours.')
     form.reset()
   } catch (error) {
-    showToast(`Could not send online. Please call or WhatsApp us: ${error.message}`)
+    try {
+      await submitBookingToSupabase({
+        guest_name: guestName,
+        first_name: data.get('firstName') || '',
+        last_name: data.get('lastName') || '',
+        phone: data.get('phone') || '',
+        email: data.get('email') || '',
+        room_name: data.get('roomName') || '',
+        check_in: cin,
+        check_out: cout,
+        guests: Number(guests),
+        notes: data.get('notes') || '',
+        deposit_amount: paymentMode === 'pay' ? Math.max(1000, depositAmount || 50000) : 0,
+        payment_status: paymentMode === 'pay' ? 'Pending' : 'Unpaid'
+      })
+      showToast('Reservation saved. Reception will contact you to complete payment.')
+      form.reset()
+    } catch (supabaseError) {
+      showToast(`Could not send online. Please call or WhatsApp us: ${error.message}`)
+    }
   } finally {
     setButtonLoading(submit, false)
   }

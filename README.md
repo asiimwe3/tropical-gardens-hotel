@@ -23,6 +23,8 @@ The site is designed to feel calm, polished, and booking-first. It presents the 
 - `script.js` - interactions, booking modal, forms, gallery filtering, menu rendering, and API integration.
 - `admin.html` - admin interface.
 - `backend/` - API, authentication, reservations, rooms, menu, offers, notifications, messages, and payments.
+- `supabase/create_all_tables.sql` - one-click Supabase SQL setup for all hotel tables, RLS policies, indexes, triggers, and starter rows.
+- `supabase-config.js` - public Supabase URL and publishable key used by the website.
 
 ## Brand Direction
 
