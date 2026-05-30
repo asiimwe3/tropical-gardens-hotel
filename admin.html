@@ -547,10 +547,10 @@
       </div>
       <div class="widget">
         <h3>&#128273; Admin Security</h3>
-        <div class="form-group" style="margin-top:14px;"><label>Admin Username</label><input type="text" value="admin"/></div>
-        <div class="form-group"><label>New Password</label><input type="password" placeholder="Leave blank to keep current"/></div>
-        <div class="form-group"><label>Confirm Password</label><input type="password" placeholder="Repeat new password"/></div>
-        <button class="btn btn-red btn-sm" onclick="clearToken()" style="margin-top:8px;">&#128274; Logout</button>
+        <div class="form-group" style="margin-top:14px;"><label>Backend API URL</label><input type="text" id="login-api" placeholder="https://tropical-gardens-hotel-api.onrender.com"/></div>
+        <div class="form-group"><label>Admin Email</label><input type="email" id="login-email" placeholder="admin@hotel.com"/></div>
+        <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()"/></div>
+        <div class="modal-btns" style="margin-top:8px;"><button class="btn btn-green btn-sm" onclick="adminLogin()">Login</button><button class="btn btn-red btn-sm" onclick="clearToken()">Logout</button></div>
       </div>
       <div class="widget">
         <h3>&#128279; Social Media</h3>
@@ -576,13 +576,13 @@
       <div class="stat-card red"><h3 id="pay-failed">0</h3><p>Failed</p></div>
     </div>
     <div class="section-header"><h2>Payment Transactions</h2><input type="text" class="search-input" id="pay-search" placeholder="Search guest..." oninput="renderPaymentsTable()"/></div>
-    <div style="background:linear-gradient(135deg,rgba(201,162,39,0.15),rgba(201,162,39,0.05));border:1px solid rgba(201,162,39,0.3);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:14px;">
-      <div style="font-size:2rem;">💛</div>
+    <div style="background:linear-gradient(135deg,rgba(46,139,46,0.15),rgba(201,162,39,0.05));border:1px solid rgba(201,162,39,0.3);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:14px;">
+      <div style="font-size:2rem;">&#128179;</div>
       <div>
-        <div style="font-weight:700;color:var(--gold2);margin-bottom:6px;font-size:0.95rem;">Western Union Payments Accepted</div>
+        <div style="font-weight:700;color:var(--gold2);margin-bottom:6px;font-size:0.95rem;">Pesapal Payments Active</div>
         <div style="font-size:0.82rem;color:var(--text2);line-height:1.6;">
-          Guests can send payment via Western Union to: <strong style="color:#fff;">Tropical Gardens Hotel — Kyenjojo, Uganda</strong><br>
-          Reference: <strong style="color:var(--gold2);">Booking ID</strong> &nbsp;|&nbsp; Contact: <strong style="color:#fff;">0782460683</strong> to confirm receipt
+          Guests can pay booking deposits by Mobile Money or card through secure Pesapal checkout.<br>
+          Use the payment reference or Pesapal confirmation code when reconciling a booking.
         </div>
       </div>
     </div>
@@ -837,11 +837,12 @@
     <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" style="height:52px;border-radius:8px;margin-bottom:18px;" alt="Logo"/>
     <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:4px;color:#fff;font-family:'Playfair Display',serif;">Admin Dashboard</h2>
     <p style="font-size:0.82rem;color:var(--text2);margin-bottom:24px;">Tropical Gardens Hotel &mdash; Kyenjojo</p>
-    <div class="form-group" style="text-align:left;"><label>Username</label><input type="text" id="login-user" placeholder="admin" autocomplete="username"/></div>
-    <div class="form-group" style="text-align:left;"><label>Password</label><input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <div id="login-err" style="color:#ef9a9a;font-size:0.82rem;margin-bottom:12px;display:none;">Incorrect username or password.</div>
+    <div class="form-group" style="text-align:left;"><label>Backend API URL</label><input type="text" id="gate-api" placeholder="https://tropical-gardens-hotel-api.onrender.com"/></div>
+    <div class="form-group" style="text-align:left;"><label>Admin Email</label><input type="email" id="gate-email" placeholder="admin@hotel.com" autocomplete="username"/></div>
+    <div class="form-group" style="text-align:left;"><label>Password</label><input type="password" id="gate-pass" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div id="login-err" style="color:#ef9a9a;font-size:0.82rem;margin-bottom:12px;display:none;">Login failed. Check API URL, email, and password.</div>
     <button class="btn btn-green" style="width:100%;justify-content:center;margin-top:4px;" onclick="doLogin()">&#128273; Sign In</button>
-    <p style="font-size:0.72rem;color:var(--text3);margin-top:16px;">Default: admin / admin123</p>
+    <p style="font-size:0.72rem;color:var(--text3);margin-top:16px;">Use the admin account created in Render or your backend environment.</p>
   </div>
 </div>
 
@@ -873,6 +874,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="app-config.js"></script>
 <script>
 var menuItems=[
   {id:"m1",name:"Rolex (Egg Roll)",description:"Fresh chapati rolled with fried eggs, veggies and spices - a Ugandan street classic.",category:"Breakfast",price:8000,is_available:true,is_featured:true},
@@ -944,6 +946,40 @@ var messages=[
   ]}
 ];
 var menuFilter="All",resFilter="All",delType="",delId="",activeThread=null;
+var API_BASE=(window.TGH_API_BASE||localStorage.getItem("tgh_api_base")||"").replace(/\/$/,"");
+
+function apiUrl(path){return API_BASE+path;}
+async function apiFetch(path,options){
+  options=options||{};
+  var response=await fetch(apiUrl(path),Object.assign({headers:Object.assign({"Content-Type":"application/json"},options.headers||{})},options));
+  var data=await response.json().catch(function(){return {};});
+  if(!response.ok)throw new Error(data.error||data.message||"Request failed");
+  return data;
+}
+function authHeaders(){
+  var token=localStorage.getItem("tgh_admin_token");
+  return token?{Authorization:"Bearer "+token}:{};
+}
+function hasAdminSession(){return !!localStorage.getItem("tgh_admin_token");}
+function syncLoginFields(){
+  ["login-api","gate-api"].forEach(function(id){var el=document.getElementById(id);if(el)el.value=API_BASE;});
+  ["login-email","gate-email"].forEach(function(id){var el=document.getElementById(id);if(el)el.value=localStorage.getItem("tgh_admin_email")||"";});
+}
+async function adminLogin(email,password,api){
+  api=(api||document.getElementById("login-api")?.value||document.getElementById("gate-api")?.value||"").trim().replace(/\/$/,"");
+  email=(email||document.getElementById("login-email")?.value||document.getElementById("gate-email")?.value||"").trim();
+  password=password||document.getElementById("login-password")?.value||document.getElementById("gate-pass")?.value||"";
+  if(!api||!email||!password){showToast("API URL, email and password required","error");return false;}
+  API_BASE=api;localStorage.setItem("tgh_api_base",api);
+  var data=await apiFetch("/api/auth/login",{method:"POST",body:JSON.stringify({email:email,password:password})});
+  localStorage.setItem("tgh_admin_token",data.token);
+  localStorage.setItem("tgh_admin_email",email);
+  ["login-password","gate-pass"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
+  syncLoginFields();
+  await loadBackendData();
+  showToast("Connected to live hotel system");
+  return true;
+}
 
 function showPage(name,el){
   document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
@@ -989,8 +1025,8 @@ function renderMenuTable(){
     "<button class=\"btn btn-red btn-sm\" onclick=\"openDel('menu','"+item.id+"','"+item.name.replace(/'/g,"\\'")+"')\">Del</button></div></td></tr>";
   }).join("");
 }
-function menuToggleAvail(id,val){var i=menuItems.find(function(m){return m.id===id;});if(i)i.is_available=val;renderMenuPage();showToast(val?"Available":"Hidden from menu");}
-function menuToggleFeatured(id){var i=menuItems.find(function(m){return m.id===id;});if(i)i.is_featured=!i.is_featured;renderMenuPage();showToast(i&&i.is_featured?"Marked featured":"Removed from featured");}
+async function menuToggleAvail(id,val){var i=menuItems.find(function(m){return m.id===id;});if(i)i.is_available=val;if(hasAdminSession()&&i){try{await backendWrite("/api/admin/menu/"+id,{method:"PUT",body:JSON.stringify(menuPayload(i))});}catch(error){showToast("Menu update failed: "+error.message,"error");}}renderMenuPage();showToast(val?"Available":"Hidden from menu");}
+async function menuToggleFeatured(id){var i=menuItems.find(function(m){return m.id===id;});if(i)i.is_featured=!i.is_featured;if(hasAdminSession()&&i){try{await backendWrite("/api/admin/menu/"+id,{method:"PUT",body:JSON.stringify(menuPayload(i))});}catch(error){showToast("Menu update failed: "+error.message,"error");}}renderMenuPage();showToast(i&&i.is_featured?"Marked featured":"Removed from featured");}
 function openMenuModal(id){
   var item=id?menuItems.find(function(m){return m.id===id;}):null;
   document.getElementById("menu-modal-title").textContent=item?"Edit Menu Item":"Add Menu Item";
@@ -1004,13 +1040,19 @@ function openMenuModal(id){
   document.getElementById("menu-modal-overlay").classList.add("show");
 }
 function closeMenuModal(){document.getElementById("menu-modal-overlay").classList.remove("show");}
-function saveMenuItem(){
+async function saveMenuItem(){
   var name=document.getElementById("mi-name").value.trim(),price=document.getElementById("mi-price").value;
   if(!name||!price){showToast("Name and price required","error");return;}
   var id=document.getElementById("menu-item-id").value;
   var data={name:name,description:document.getElementById("mi-desc").value.trim(),category:document.getElementById("mi-cat").value,price:Number(price),is_available:document.getElementById("mi-available").checked,is_featured:document.getElementById("mi-featured").checked};
-  if(id){var idx=menuItems.findIndex(function(m){return m.id===id;});if(idx>-1)menuItems[idx]=Object.assign({},menuItems[idx],data);showToast("Item updated");}
-  else{data.id="m"+Date.now();menuItems.push(data);showToast("Item added");}
+  try{
+    if(hasAdminSession()){
+      var saved=await backendWrite(id?"/api/admin/menu/"+id:"/api/admin/menu",{method:id?"PUT":"POST",body:JSON.stringify(menuPayload(data))});
+      if(saved&&saved.menuItem)data=Object.assign({},data,{id:saved.menuItem.id,image:saved.menuItem.image_url||saved.menuItem.imageUrl||""});
+    }
+    if(id){var idx=menuItems.findIndex(function(m){return m.id===id;});if(idx>-1)menuItems[idx]=Object.assign({},menuItems[idx],data);showToast("Item updated");}
+    else{data.id=data.id||"m"+Date.now();menuItems.push(data);showToast("Item added");}
+  }catch(error){showToast("Menu save failed: "+error.message,"error");return;}
   closeMenuModal();renderMenuPage();
 }
 
@@ -1042,13 +1084,19 @@ function openRoomModal(id){
   document.getElementById("room-modal-overlay").classList.add("show");
 }
 function closeRoomModal(){document.getElementById("room-modal-overlay").classList.remove("show");}
-function saveRoom(){
+async function saveRoom(){
   var name=document.getElementById("ri-name").value.trim(),price=document.getElementById("ri-price").value;
   if(!name||!price){showToast("Name and price required","error");return;}
   var id=document.getElementById("room-item-id").value;
   var data={name:name,num:document.getElementById("ri-num").value,description:document.getElementById("ri-desc").value.trim(),price:Number(price),capacity:Number(document.getElementById("ri-cap").value)||2,type:document.getElementById("ri-type").value,image:document.getElementById("ri-img").value.trim(),is_available:document.getElementById("ri-available").checked};
-  if(id){var idx=rooms.findIndex(function(x){return x.id===id;});if(idx>-1)rooms[idx]=Object.assign({},rooms[idx],data);showToast("Room updated");}
-  else{data.id="r"+Date.now();rooms.push(data);showToast("Room added");}
+  try{
+    if(hasAdminSession()){
+      var saved=await backendWrite(id?"/api/admin/rooms/"+id:"/api/admin/rooms",{method:id?"PUT":"POST",body:JSON.stringify(roomPayload(data))});
+      if(saved&&saved.room)data=Object.assign({},data,{id:saved.room.id});
+    }
+    if(id){var idx=rooms.findIndex(function(x){return x.id===id;});if(idx>-1)rooms[idx]=Object.assign({},rooms[idx],data);showToast("Room updated");}
+    else{data.id=data.id||"r"+Date.now();rooms.push(data);showToast("Room added");}
+  }catch(error){showToast("Room save failed: "+error.message,"error");return;}
   closeRoomModal();renderRoomsPage();
 }
 
@@ -1092,13 +1140,19 @@ function openResModal(id){
   document.getElementById("res-modal-overlay").classList.add("show");
 }
 function closeResModal(){document.getElementById("res-modal-overlay").classList.remove("show");}
-function saveReservation(){
+async function saveReservation(){
   var name=document.getElementById("resi-name").value.trim(),ci=document.getElementById("resi-checkin").value,co=document.getElementById("resi-checkout").value;
   if(!name||!ci||!co){showToast("Name, check-in and check-out required","error");return;}
   var id=document.getElementById("res-item-id").value;
   var data={guest:name,phone:document.getElementById("resi-phone").value,email:document.getElementById("resi-email").value,room:document.getElementById("resi-room").value,checkin:ci,checkout:co,guests:Number(document.getElementById("resi-guests").value)||1,status:document.getElementById("resi-status").value,notes:document.getElementById("resi-notes").value};
-  if(id){var idx=reservations.findIndex(function(x){return x.id===id;});if(idx>-1)reservations[idx]=Object.assign({},reservations[idx],data);showToast("Reservation updated");}
-  else{data.id="rv"+Date.now();reservations.push(data);showToast("Reservation added");}
+  try{
+    if(hasAdminSession()){
+      var saved=await backendWrite(id?"/api/admin/reservations/"+id:"/api/admin/reservations",{method:id?"PUT":"POST",body:JSON.stringify(reservationPayload(data))});
+      if(saved&&saved.reservation)data=normalizeReservation(saved.reservation);
+    }
+    if(id){var idx=reservations.findIndex(function(x){return x.id===id;});if(idx>-1)reservations[idx]=Object.assign({},reservations[idx],data);showToast("Reservation updated");}
+    else{data.id=data.id||"rv"+Date.now();reservations.push(data);showToast("Reservation added");}
+  }catch(error){showToast("Reservation save failed: "+error.message,"error");return;}
   closeResModal();renderResPage();
 }
 
@@ -1128,30 +1182,50 @@ function openOfferModal(id){
   document.getElementById("offer-modal-overlay").classList.add("show");
 }
 function closeOfferModal(){document.getElementById("offer-modal-overlay").classList.remove("show");}
-function saveOffer(){
+async function saveOffer(){
   var title=document.getElementById("oi-title").value.trim();
   if(!title){showToast("Title required","error");return;}
   var id=document.getElementById("offer-item-id").value;
   var data={title:title,description:document.getElementById("oi-desc").value.trim(),discount:Number(document.getElementById("oi-discount").value)||0,code:document.getElementById("oi-code").value.trim(),from:document.getElementById("oi-from").value,to:document.getElementById("oi-to").value,active:document.getElementById("oi-active").checked};
-  if(id){var idx=offers.findIndex(function(x){return x.id===id;});if(idx>-1)offers[idx]=Object.assign({},offers[idx],data);showToast("Offer updated");}
-  else{data.id="o"+Date.now();offers.push(data);showToast("Offer created");}
+  try{
+    if(hasAdminSession()){
+      var saved=await backendWrite(id?"/api/admin/offers/"+id:"/api/admin/offers",{method:id?"PUT":"POST",body:JSON.stringify(offerPayload(data))});
+      if(saved&&saved.offer)data=Object.assign({},data,{id:saved.offer.id});
+    }
+    if(id){var idx=offers.findIndex(function(x){return x.id===id;});if(idx>-1)offers[idx]=Object.assign({},offers[idx],data);showToast("Offer updated");}
+    else{data.id=data.id||"o"+Date.now();offers.push(data);showToast("Offer created");}
+  }catch(error){showToast("Offer save failed: "+error.message,"error");return;}
   closeOfferModal();renderOffersPage();
 }
-function sendOfferNotif(id){
+async function sendOfferNotif(id){
   var o=offers.find(function(x){return x.id===id;});if(!o)return;
   if(!o.active){o.active=true;showToast("Offer activated");renderOffersPage();return;}
-  notifications.unshift({id:"n"+Date.now(),title:o.title,body:o.description+(o.code?" Code: "+o.code:""),channel:"Website Banner",audience:"All Guests",time:"Just now",type:"promo"});
+  var notif={id:"n"+Date.now(),title:o.title,body:o.description+(o.code?" Code: "+o.code:""),channel:"Website Banner",audience:"All Guests",time:"Just now",type:"promo"};
+  try{
+    if(hasAdminSession()){
+      var saved=await backendWrite("/api/admin/notifications",{method:"POST",body:JSON.stringify({title:notif.title,body:notif.body,channel:notif.channel,audience:notif.audience,type:notif.type,isActive:true})});
+      if(saved&&saved.notification)notif={id:saved.notification.id,title:saved.notification.title,body:saved.notification.body,channel:saved.notification.channel,audience:saved.notification.audience,time:saved.notification.createdAt||"Just now",type:saved.notification.type};
+    }
+  }catch(error){showToast("Notification failed: "+error.message,"error");return;}
+  notifications.unshift(notif);
   showToast("Notification sent!","info");
 }
 
 function toggleChip(el){el.classList.toggle("active");}
 function toggleAud(el){document.querySelectorAll("[data-aud]").forEach(function(c){c.classList.remove("active");});el.classList.add("active");}
-function sendNotification(){
+async function sendNotification(){
   var title=document.getElementById("notif-title").value.trim(),body=document.getElementById("notif-body").value.trim();
   if(!title||!body){showToast("Title and message required","error");return;}
   var channels=[].slice.call(document.querySelectorAll("[data-ch].active")).map(function(c){return c.textContent.trim();}).join(", ");
   var aud=document.querySelector("[data-aud].active");
-  notifications.unshift({id:"n"+Date.now(),title:title,body:body,channel:channels||"Website",audience:aud?aud.textContent.trim():"All Guests",time:"Just now",type:"update"});
+  var notif={id:"n"+Date.now(),title:title,body:body,channel:channels||"Website",audience:aud?aud.textContent.trim():"All Guests",time:"Just now",type:"update"};
+  try{
+    if(hasAdminSession()){
+      var saved=await backendWrite("/api/admin/notifications",{method:"POST",body:JSON.stringify({title:notif.title,body:notif.body,channel:notif.channel,audience:notif.audience,type:notif.type,isActive:true})});
+      if(saved&&saved.notification)notif={id:saved.notification.id,title:saved.notification.title,body:saved.notification.body,channel:saved.notification.channel,audience:saved.notification.audience,time:saved.notification.createdAt||"Just now",type:saved.notification.type};
+    }
+  }catch(error){showToast("Notification failed: "+error.message,"error");return;}
+  notifications.unshift(notif);
   document.getElementById("notif-title").value="";document.getElementById("notif-body").value="";
   showToast("Notification sent!");renderNotifPage();
 }
@@ -1163,7 +1237,11 @@ function renderNotifPage(){
     '<div class="notif-meta">'+n.time+'<br/><button class="btn btn-red btn-sm" style="margin-top:6px;" onclick="deleteNotif(\''+n.id+"')\">Del</button></div></div>";
   }).join("");
 }
-function deleteNotif(id){notifications=notifications.filter(function(n){return n.id!==id;});renderNotifPage();showToast("Deleted");}
+async function deleteNotif(id){
+  try{if(hasAdminSession())await backendWrite("/api/admin/notifications/"+id,{method:"DELETE"});}
+  catch(error){showToast("Delete failed: "+error.message,"error");return;}
+  notifications=notifications.filter(function(n){return n.id!==id;});renderNotifPage();showToast("Deleted");
+}
 
 function renderMessagesPage(){
   var mb=document.getElementById("msg-badge");if(mb)mb.textContent=messages.filter(function(m){return m.unread;}).length||"";
@@ -1211,7 +1289,10 @@ function sendNewMessage(){
 
 function openDel(type,id,name){delType=type;delId=id;var dn=document.getElementById("del-target-name");if(dn)dn.textContent='"'+name+'"';document.getElementById("del-overlay").classList.add("show");}
 function closeDelModal(){document.getElementById("del-overlay").classList.remove("show");}
-function confirmDel(){
+async function confirmDel(){
+  var paths={menu:"/api/admin/menu/",room:"/api/admin/rooms/",res:"/api/admin/reservations/",offer:"/api/admin/offers/"};
+  try{if(hasAdminSession()&&paths[delType])await backendWrite(paths[delType]+delId,{method:"DELETE"});}
+  catch(error){showToast("Delete failed: "+error.message,"error");return;}
   if(delType==="menu")menuItems=menuItems.filter(function(m){return m.id!==delId;});
   if(delType==="room")rooms=rooms.filter(function(r){return r.id!==delId;});
   if(delType==="res")reservations=reservations.filter(function(r){return r.id!==delId;});
@@ -1223,7 +1304,7 @@ function confirmDel(){
   if(delType==="offer")renderOffersPage();
 }
 function saveSettings(){showToast("Settings saved");}
-function clearToken(){localStorage.removeItem("tgh_admin_token");showToast("Logged out","info");}
+function clearToken(){localStorage.removeItem("tgh_admin_token");showToast("Logged out","info");location.reload();}
 
 var toastT;
 function showToast(msg,type){
@@ -1234,12 +1315,9 @@ renderMenuPage();
 
 // ════ SAMPLE DATA — NEW SECTIONS ════
 var payments=[
-  {id:"p1",guest:"John Mukisa",room:"Room 3 (Deluxe)",checkin:"2026-05-25",amount:300000,method:"Western Union",status:"Paid",ref:"TGH-001-2605"},
-  {id:"p2",guest:"Grace Nalwoga",room:"Room 2 (Standard)",checkin:"2026-05-25",amount:80000,method:"Western Union",status:"Pending",ref:"TGH-002-2605"},
-  {id:"p3",guest:"Peter Ssemanda",room:"Suite A",checkin:"2026-05-26",amount:1120000,method:"Western Union",status:"Paid",ref:"TGH-003-2605"},
-  {id:"p4",guest:"Amina Nakato",room:"Family Room",checkin:"2026-05-20",amount:600000,method:"Western Union (Cash Pickup)",status:"Paid",ref:"TGH-004-2005"},
-  {id:"p5",guest:"Sarah Komugisha",room:"Room 4 (Deluxe)",checkin:"2026-05-28",amount:150000,method:"Western Union",status:"Failed",ref:"TGH-005-2605"},
-  {id:"p6",guest:"Robert Byamukama",room:"Room 1 (Standard)",checkin:"2026-05-22",amount:80000,method:"Western Union (Cash Pickup)",status:"Paid",ref:"TGH-006-2205"}
+  {id:"p1",guest:"John Mukisa",room:"Room 3 (Deluxe)",checkin:"2026-05-25",amount:300000,method:"Pesapal Mobile Money",status:"Paid",ref:"TGH-001-2605"},
+  {id:"p2",guest:"Grace Nalwoga",room:"Room 2 (Standard)",checkin:"2026-05-25",amount:80000,method:"Pesapal Card",status:"Pending",ref:"TGH-002-2605"},
+  {id:"p3",guest:"Peter Ssemanda",room:"Suite A",checkin:"2026-05-26",amount:1120000,method:"Pesapal Mobile Money",status:"Paid",ref:"TGH-003-2605"}
 ];
 var reviews=[
   {id:"rv1",guest:"John Mukisa",rating:5,text:"Wonderful stay! The staff were very welcoming and the rooms spotlessly clean. The food was amazing, especially the grilled tilapia. Will definitely come back!",date:"2026-05-27",status:"Published"},
@@ -1267,25 +1345,66 @@ var pageMap={overview:"Overview",menu:"Menu / Food",rooms:"Rooms Management",res
 
 // ════ LOGIN GATE ════
 (function(){
-  var authed = sessionStorage.getItem("tgh_authed");
+  syncLoginFields();
+  var authed = hasAdminSession();
   if(!authed){
     var gate = document.getElementById("login-gate");
     if(gate){ gate.style.display="flex"; document.querySelector(".main").style.display="none"; document.getElementById("sidebar").style.display="none"; }
+  }else{
+    loadBackendData();
   }
 })();
-function doLogin(){
-  var u=document.getElementById("login-user").value.trim();
-  var p=document.getElementById("login-pass").value.trim();
+async function doLogin(){
   var err=document.getElementById("login-err");
-  if((u==="admin"&&p==="admin123")||(u==="admin"&&p==="admin")){
-    sessionStorage.setItem("tgh_authed","1");
+  if(err)err.style.display="none";
+  try{
+    var ok=await adminLogin(document.getElementById("gate-email").value,document.getElementById("gate-pass").value,document.getElementById("gate-api").value);
+    if(!ok)return;
     document.getElementById("login-gate").style.display="none";
     document.querySelector(".main").style.display="";
     document.getElementById("sidebar").style.display="";
-    showToast("Welcome back, Admin!");
-  } else {
-    err.style.display="block";
+  }catch(error){
+    if(err)err.style.display="block";
+    showToast("Login failed: "+error.message,"error");
   }
+}
+
+function normalizeReservation(res){
+  return {id:res.id,guest:res.guestName||res.guest_name||res.guest||"",phone:res.phone||"",email:res.email||"",room:res.roomName||res.room_name||res.room||"",checkin:res.checkIn||res.check_in||res.checkin||"",checkout:res.checkOut||res.check_out||res.checkout||"",guests:Number(res.guests)||1,status:res.status||"Pending",notes:res.notes||""};
+}
+function normalizePayment(payment){
+  return {id:payment.id,guest:payment.guest||"Guest",room:payment.room||"-",checkin:payment.checkin||payment.checkIn||"",amount:Number(payment.amount)||0,method:payment.method||"Pesapal",status:payment.status||"PENDING",ref:payment.ref||payment.merchantReference||payment.providerTrackingId||""};
+}
+function normalizeMessage(msg){
+  return {id:msg.id,name:msg.name,phone:msg.phone||"",unread:msg.status==="Unread",msgs:[{from:"guest",text:msg.message,time:msg.createdAt||msg.created_at||""}]};
+}
+async function backendWrite(path,options){
+  if(!hasAdminSession())return null;
+  return apiFetch(path,Object.assign({},options||{},{headers:Object.assign({},authHeaders(),options&&options.headers?options.headers:{})}));
+}
+function menuPayload(data){return {name:data.name,description:data.description||"",category:data.category,price:Number(data.price)||0,imageUrl:data.image||data.imageUrl||"",isAvailable:data.is_available!==undefined?data.is_available:data.isAvailable,isFeatured:data.is_featured!==undefined?data.is_featured:data.isFeatured};}
+function roomPayload(data){return {name:data.name,roomNumber:data.num||data.roomNumber||"",description:data.description||"",type:data.type||"",price:Number(data.price)||0,capacity:Number(data.capacity)||2,imageUrl:data.image||data.imageUrl||"",isAvailable:data.is_available!==undefined?data.is_available:data.isAvailable};}
+function reservationPayload(data){return {guestName:data.guest||data.guestName,phone:data.phone||"",email:data.email||"",roomId:data.roomId||undefined,roomName:data.room||data.roomName||"",checkIn:data.checkin||data.checkIn,checkOut:data.checkout||data.checkOut,guests:Number(data.guests)||1,status:data.status||"Pending",notes:data.notes||""};}
+function offerPayload(data){return {title:data.title,description:data.description||"",discountPercent:Number(data.discount)||Number(data.discountPercent)||0,code:data.code||"",startsAt:data.from||data.startsAt,endsAt:data.to||data.endsAt,isActive:data.active!==undefined?data.active:data.isActive};}
+async function loadBackendData(){
+  if(!hasAdminSession())return;
+  var results=await Promise.allSettled([
+    apiFetch("/api/admin/reservations",{headers:authHeaders()}),
+    apiFetch("/api/admin/messages",{headers:authHeaders()}),
+    apiFetch("/api/admin/payments",{headers:authHeaders()}),
+    apiFetch("/api/admin/notifications",{headers:authHeaders()}),
+    apiFetch("/api/admin/menu",{headers:authHeaders()}),
+    apiFetch("/api/admin/rooms",{headers:authHeaders()}),
+    apiFetch("/api/admin/offers",{headers:authHeaders()})
+  ]);
+  if(results[0].status==="fulfilled"&&results[0].value.reservations)reservations=results[0].value.reservations.map(normalizeReservation);
+  if(results[1].status==="fulfilled"&&results[1].value.messages)messages=results[1].value.messages.map(normalizeMessage);
+  if(results[2].status==="fulfilled"&&results[2].value.payments)payments=results[2].value.payments.map(normalizePayment);
+  if(results[3].status==="fulfilled"&&results[3].value.notifications)notifications=results[3].value.notifications.map(function(n){return {id:n.id,title:n.title,body:n.body,channel:n.channel,audience:n.audience,time:n.createdAt||"Just now",type:n.type};});
+  if(results[4].status==="fulfilled"&&results[4].value.menuItems)menuItems=results[4].value.menuItems.map(function(i){return {id:i.id,name:i.name,description:i.description,category:i.category,price:Number(i.price)||0,image:i.image_url||i.imageUrl||"",is_available:i.is_available!==undefined?i.is_available:i.isAvailable,is_featured:i.is_featured!==undefined?i.is_featured:i.isFeatured};});
+  if(results[5].status==="fulfilled"&&results[5].value.rooms)rooms=results[5].value.rooms.map(function(r){return {id:r.id,name:r.name,num:r.room_number||r.roomNumber||"",description:r.description,type:r.type,price:Number(r.price)||0,capacity:Number(r.capacity)||2,image:r.image_url||r.imageUrl||"",is_available:r.is_available!==undefined?r.is_available:r.isAvailable};});
+  if(results[6].status==="fulfilled"&&results[6].value.offers)offers=results[6].value.offers.map(function(o){return {id:o.id,title:o.title,description:o.description,discount:o.discount_percent||o.discountPercent||0,code:o.code||"",from:o.starts_at||o.startsAt||"",to:o.ends_at||o.endsAt||"",active:o.is_active!==undefined?o.is_active:o.isActive};});
+  renderMenuPage();renderRoomsPage();renderResPage();renderOffersPage();renderNotifPage();renderMessagesPage();renderPaymentsPage();
 }
 
 // ════ PAYMENTS ════
@@ -1307,7 +1426,7 @@ function renderPaymentsTable(){
     "<td>"+p.method+"</td>"+
     "<td><span class='badge "+(payColors[p.status]||"badge-gray")+"'>"+p.status+"</span></td>"+
     "<td><code style='font-size:0.75rem;'>"+p.ref+"</code></td>"+
-    "<td><button class='btn btn-outline btn-sm' onclick='openInvoice(""+p.id+"")'> Receipt</button></td></tr>";
+    "<td><button class='btn btn-outline btn-sm' onclick=\"openInvoice('"+p.id+"')\">Receipt</button></td></tr>";
   }).join("");
 }
 
@@ -1347,9 +1466,9 @@ function renderReviewsTable(){
     "<td style='max-width:280px;font-size:0.82rem;color:var(--gray);'>"+r.text+"</td>"+
     "<td>"+r.date+"</td><td><span class='badge "+(revColors[r.status]||"badge-gray")+"'>"+r.status+"</span></td>"+
     "<td><div class='action-btns'>"+
-    (r.status==="Pending"?"<button class='btn btn-green btn-sm' onclick='approveReview(""+r.id+"")'>Approve</button>":"")+
-    "<button class='btn btn-outline btn-sm' onclick='openReviewModal(""+r.id+"")'> Edit</button>"+
-    "<button class='btn btn-red btn-sm' onclick='deleteReview(""+r.id+"")'>Del</button>"+
+    (r.status==="Pending"?"<button class='btn btn-green btn-sm' onclick=\"approveReview('"+r.id+"')\">Approve</button>":"")+
+    "<button class='btn btn-outline btn-sm' onclick=\"openReviewModal('"+r.id+"')\">Edit</button>"+
+    "<button class='btn btn-red btn-sm' onclick=\"deleteReview('"+r.id+"')\">Del</button>"+
     "</div></td></tr>";
   }).join("");
 }
@@ -1382,12 +1501,12 @@ function renderGalleryPage(){
   var grid=document.getElementById("gallery-grid");if(!grid)return;
   grid.innerHTML=gallery.map(function(g){
     return "<div style='background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;'>"+
-    "<img src='"+g.url+"' alt='"+g.caption+"' style='width:100%;height:150px;object-fit:cover;' onerror='this.style.background="#eee"'/>"+
+    "<img src='"+g.url+"' alt='"+g.caption+"' style='width:100%;height:150px;object-fit:cover;' onerror=\"this.style.background='#eee'\"/>"+
     "<div style='padding:10px 12px;'>"+
     "<div style='font-size:0.86rem;font-weight:600;'>"+g.caption+"</div>"+
     "<span class='badge badge-green' style='margin-top:4px;display:inline-block;'>"+g.cat+"</span>"+
     "</div><div style='padding:6px 12px 10px;display:flex;gap:6px;'>"+
-    "<button class='btn btn-red btn-sm' onclick='deletePhoto(""+g.id+"")'>Del</button>"+
+    "<button class='btn btn-red btn-sm' onclick=\"deletePhoto('"+g.id+"')\">Del</button>"+
     "</div></div>";
   }).join("");
 }
@@ -1452,8 +1571,8 @@ function renderStaffPage(){
     "<td><div style='display:flex;gap:4px;flex-wrap:wrap;'>"+s.access.map(function(a){return "<span class='badge badge-gray' style='font-size:0.65rem;'>"+a+"</span>";}).join("")+"</div></td>"+
     "<td style='font-size:0.8rem;color:var(--gray);'>"+s.lastLogin+"</td>"+
     "<td><div class='action-btns'>"+
-    "<button class='btn btn-outline btn-sm' onclick='openStaffModal(""+s.id+"")'> Edit</button>"+
-    (s.role!=="Super Admin"?"<button class='btn btn-red btn-sm' onclick='deleteStaff(""+s.id+"")'>Del</button>":"")+
+    "<button class='btn btn-outline btn-sm' onclick=\"openStaffModal('"+s.id+"')\">Edit</button>"+
+    (s.role!=="Super Admin"?"<button class='btn btn-red btn-sm' onclick=\"deleteStaff('"+s.id+"')\">Del</button>":"")+
     "</div></td></tr>";
   }).join("");
 }

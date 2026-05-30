@@ -15,7 +15,7 @@ export const config = {
   adminEmail: process.env.ADMIN_EMAIL,
   adminPassword: process.env.ADMIN_PASSWORD,
   pesapal: {
-    baseUrl: process.env.PESAPAL_BASE_URL || "https://cybqa.pesapal.com/pesapalv3",
+    baseUrl: process.env.PESAPAL_BASE_URL || "https://pay.pesapal.com/v3",
     consumerKey: process.env.PESAPAL_CONSUMER_KEY,
     consumerSecret: process.env.PESAPAL_CONSUMER_SECRET,
     ipnId: process.env.PESAPAL_IPN_ID,

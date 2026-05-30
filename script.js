@@ -144,7 +144,6 @@ function renderPublicNotifications(notifications) {
 
   const websiteNotifications = notifications
     .map(normalizeNotification)
-    .filter(item => String(item.channel || '').toLowerCase().includes('website'))
     .slice(0, 12)
 
   if (!websiteNotifications.length) {

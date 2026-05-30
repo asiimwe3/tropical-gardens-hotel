@@ -113,10 +113,11 @@ Use Pesapal for Uganda-friendly payments. The checkout URL can present available
 Required environment variables:
 
 ```bash
-PESAPAL_BASE_URL=https://cybqa.pesapal.com/pesapalv3
+PESAPAL_BASE_URL=https://pay.pesapal.com/v3
 PESAPAL_CONSUMER_KEY=...
 PESAPAL_CONSUMER_SECRET=...
 PESAPAL_IPN_ID=...
+PESAPAL_IPN_URL=https://your-api-domain.com/api/payments/pesapal/ipn
 PESAPAL_CALLBACK_URL=https://your-api-domain.com/api/payments/pesapal/callback
 PESAPAL_CANCELLATION_URL=https://your-website-domain.com/payment-cancelled.html
 PAYMENT_SUCCESS_URL=https://your-website-domain.com/payment-success.html

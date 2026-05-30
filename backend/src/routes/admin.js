@@ -295,3 +295,25 @@ adminRouter.get("/messages", async (_req, res, next) => {
     next(error);
   }
 });
+
+adminRouter.get("/payments", async (_req, res, next) => {
+  try {
+    const result = await query(
+      `select p.id,
+              coalesce(r.guest_name, 'Guest') as guest,
+              coalesce(r.room_name, '-') as room,
+              r.check_in as checkin,
+              p.amount,
+              coalesce(p.payment_method, p.provider) as method,
+              p.status,
+              coalesce(p.confirmation_code, p.provider_tracking_id, p.merchant_reference) as ref,
+              p.created_at as "createdAt"
+       from payments p
+       left join reservations r on r.id = p.reservation_id
+       order by p.created_at desc`
+    );
+    res.json({ payments: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
