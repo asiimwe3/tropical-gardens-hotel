@@ -24,7 +24,7 @@ async function _sbFetch(resource,action,id,payload){
     url+='?'+q.join('&');
   }else if(action==='create'){
     method='POST';
-    hdrs={'apikey':_c.key,'Authorization':'Bearer '+_c.key,'Content-Type':'application/json','Prefer':'return=representation'};
+    hdrs={'apikey':_c.key,'Authorization':'Bearer '+_c.key,'Content-Type':'application/json','Prefer':'return=minimal'};
     body=JSON.stringify(payload);
   }else if(action==='update'){
     method='PATCH';
