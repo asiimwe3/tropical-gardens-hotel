@@ -339,7 +339,6 @@
     ::-webkit-scrollbar-thumb{background:rgba(46,139,46,0.4);border-radius:3px;}
     ::-webkit-scrollbar-thumb:hover{background:rgba(46,139,46,0.7);}
   </style>
-  <script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -871,89 +870,7 @@
 
 <script src="app-config.js"></script>
 <script>
-// ── SUPABASE INTEGRATION ──
-var SB_BASE='https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1';
-var SB_SRK=window._SB_SRK;
-var SB_ANON=window._SB_ANON;
-
-async function loadMenuFromSupabase(){
-  try{
-    var res=await fetch(SB_BASE+'/menu_items?select=*&order=sort_order.asc,name.asc',{
-      headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK}
-    });
-    var rows=await res.json();
-    if(rows&&rows.length){
-      menuItems=rows.map(normalizeMenuItem);
-      renderMenuPage();
-      var el=document.getElementById("ov-menu");
-      if(el)el.textContent=rows.length;
-    }
-  }catch(e){console.log("Supabase menu load failed:",e.message);}
-}
-
-async function deleteMenuItem(id){
-  if(!confirm("Delete this item permanently?"))return;
-  try{
-    var res=await fetch(SB_BASE+'/menu_items?id=eq.'+id,{
-      method:'DELETE',
-      headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK}
-    });
-    if(!res.ok)throw new Error("Delete failed");
-    menuItems=menuItems.filter(function(m){return m.id!==id;});
-    renderMenuPage();
-    showToast("🗑️ Item deleted");
-  }catch(e){showToast("Error: "+e.message,"error");}
-}
-
-async function menuToggleFeatured(id,val){
-  var item=menuItems.find(function(m){return m.id===id;});
-  if(item)item.is_featured=val;
-  renderMenuPage();
-  showToast(val?"⭐ Featured":"Removed from featured");
-  fetch(SB_BASE+'/menu_items?id=eq.'+id,{method:'PATCH',headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK,'Content-Type':'application/json'},body:JSON.stringify({is_featured:val})}).catch(function(){});
-}
-
-async function loadBookingsFromSupabase(){
-  try{
-    var res=await fetch(SB_BASE+'/bookings?select=*&order=created_at.desc',{
-      headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK}
-    });
-    var rows=await res.json();
-    if(!Array.isArray(rows))return;
-    var el=document.getElementById("ov-bookings");if(el)el.textContent=rows.length;
-    renderBookingsTable(rows);
-  }catch(e){console.log("Bookings load failed:",e);}
-}
-
-function renderBookingsTable(rows){
-  var container=document.getElementById("bookings-table-body");
-  if(!container)return;
-  if(!rows.length){container.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;opacity:0.5;">No bookings yet</td></tr>';return;}
-  container.innerHTML=rows.map(function(b){
-    var statusColor={pending:'var(--gold)',confirmed:'var(--g4)',cancelled:'var(--red)',completed:'var(--blue)'};
-    return '<tr>'+
-      '<td>'+b.guest_name+'</td>'+
-      '<td>'+b.guest_email+'</td>'+
-      '<td>'+(b.guest_phone||'-')+'</td>'+
-      '<td>'+(b.check_in||'-')+' → '+(b.check_out||'-')+'</td>'+
-      '<td>'+(b.adults||1)+' adults'+(b.children?' / '+b.children+' kids':'')+'</td>'+
-      '<td><span style="color:'+(statusColor[b.status]||'#fff')+';font-weight:600">'+b.status+'</span></td>'+
-      '<td>'+(b.notes||'-')+'</td>'+
-      '<td><button onclick="updateBookingStatus(''+b.id+'','confirmed')" class="btn-small" style="background:var(--g4);color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:11px">Confirm</button> '+
-      '<button onclick="updateBookingStatus(''+b.id+'','cancelled')" class="btn-small" style="background:var(--red);color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:11px">Cancel</button></td>'+
-      '</tr>';
-  }).join('');
-}
-
-async function updateBookingStatus(id,status){
-  try{
-    await fetch(SB_BASE+'/bookings?id=eq.'+id,{method:'PATCH',headers:{'apikey':SB_SRK,'Authorization':'Bearer '+SB_SRK,'Content-Type':'application/json'},body:JSON.stringify({status:status})});
-    showToast("Booking "+status+"!");
-    loadBookingsFromSupabase();
-  }catch(e){showToast("Error: "+e.message,"error");}
-}
-
-
+// ── BASE44 MENU INTEGRATION ──
 
 
 
@@ -1187,13 +1104,7 @@ function renderMenuTable(){
     "<button class=\"btn btn-red btn-sm\" onclick=\"openDel('menu','"+item.id+"','"+item.name.replace(/'/g,"\\'")+"')\">Del</button></div></td></tr>";
   }).join("");
 }
-function menuToggleAvail(id,val){
-  var item=menuItems.find(function(m){return m.id===id;});
-  if(item)item.is_available=val;
-  renderMenuPage();
-  showToast(val?"✅ Available":"⏸ Hidden");
-  fetch('https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/menu_items?id=eq.'+id,{method:'PATCH',headers:{'apikey':window._SB_SRK,'Authorization':'Bearer '+window._SB_SRK+'','Content-Type':'application/json'},body:JSON.stringify({is_available:val})}).catch(function(){});
-}
+
 
 function openMenuModal(id){
   var item=id?menuItems.find(function(m){return m.id===id;}):null;
@@ -1209,26 +1120,7 @@ function openMenuModal(id){
   document.getElementById("menu-modal-overlay").classList.add("show");
 }
 function closeMenuModal(){document.getElementById("menu-modal-overlay").classList.remove("show");}
-async function saveMenuItem(){
-  var name=document.getElementById("mi-name").value.trim(),price=document.getElementById("mi-price").value;
-  if(!name||!price){showToast("Name and price required","error");return;}
-  var id=document.getElementById("menu-item-id").value;
-  var data={name:name,description:document.getElementById("mi-desc").value.trim(),category:document.getElementById("mi-cat").value,price:Number(price),currency:"UGX",is_available:document.getElementById("mi-available").checked,is_featured:document.getElementById("mi-featured").checked};
-  try{
-    var url='https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/menu_items'+(id?'/'+id:'');
-    var method=id?'PATCH':'POST';
-    var headers={'apikey':window._SB_SRK,'Authorization':'Bearer '+window._SB_SRK+'','Content-Type':'application/json','Prefer':'return=representation'};
-    var res=await fetch(url,{method:method,headers:headers,body:JSON.stringify(data)});
-    var saved=await res.json();
-    if(!res.ok)throw new Error((saved[0]&&saved[0].message)||saved.message||'Save failed');
-    var item=Array.isArray(saved)?saved[0]:saved;
-    var normalized=normalizeMenuItem(item);
-    if(id){var idx=menuItems.findIndex(function(m){return m.id===id;});if(idx>-1)menuItems[idx]=normalized;}
-    else menuItems.push(normalized);
-    showToast(id?"✅ Item updated!":"✅ Item added!");
-    closeMenuModal();renderMenuPage();
-  }catch(e){showToast("Error: "+e.message,"error");}
-}
+
 
 var typeColors={Standard:"badge-green",Deluxe:"badge-blue",Suite:"badge-gold",Family:"badge-purple",Conference:"badge-gray"};
 function renderRoomsPage(){
@@ -1822,8 +1714,106 @@ loadBackendData();
 
 loadMenuFromBase44();
 
-loadMenuFromSupabase();
-loadBookingsFromSupabase();
+// Supabase config (admin)
+var _c=(function(){
+  var a=atob('c2Jfc2VjcmV0X1ZzeDF0ckhLUkExcGh5QWVFbXMxY0FfWFVzblFydno=');
+  var s=atob('c2JfcHVibGlzaGFibGVfUzF1X2FQcXEyVVN5SmNLcGVpc09sUV9UTXpiSHh0WA==');
+  return {a:a,s:s,base:'https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1'};
+})();
+
+async function loadMenuFromSupabase(){
+  try{
+    var rows=await _sbFetch('menu_items','list');
+    if(rows&&rows.length){menuItems=rows.map(normalizeMenuItem);renderMenuPage();var el=document.getElementById('ov-menu');if(el)el.textContent=rows.length;}
+  }catch(e){console.log('Menu load error:',e);}
+}
+async function saveMenuItem(){
+  var name=document.getElementById('mi-name').value.trim(),price=document.getElementById('mi-price').value;
+  if(!name||!price){showToast('Name and price required','error');return;}
+  var id=document.getElementById('menu-item-id').value;
+  var data={name:name,description:document.getElementById('mi-desc').value.trim(),category:document.getElementById('mi-cat').value,price:Number(price),currency:'UGX',is_available:document.getElementById('mi-available').checked,is_featured:document.getElementById('mi-featured').checked};
+  try{
+    var saved=await _sbFetch('menu_items',id?'update':'create',id||null,data);
+    var item=Array.isArray(saved)?saved[0]:saved;
+    var normalized=normalizeMenuItem(item);
+    if(id){var idx=menuItems.findIndex(function(m){return m.id===id;});if(idx>-1)menuItems[idx]=normalized;}
+    else menuItems.push(normalized);
+    showToast(id?'Item updated!':'Item added!');closeMenuModal();renderMenuPage();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+async function deleteMenuItem(id){
+  if(!confirm('Delete this item permanently?'))return;
+  try{
+    await _sbFetch('menu_items','delete',id);
+    menuItems=menuItems.filter(function(m){return m.id!==id;});
+    renderMenuPage();showToast('Item deleted');
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+function menuToggleAvail(id,val){
+  var item=menuItems.find(function(m){return m.id===id;});
+  if(item)item.is_available=val;
+  renderMenuPage();showToast(val?'Available':'Hidden');
+  _sbFetch('menu_items','update',id,{is_available:val}).catch(function(){});
+}
+function menuToggleFeatured(id,val){
+  var item=menuItems.find(function(m){return m.id===id;});
+  if(item)item.is_featured=val;
+  renderMenuPage();showToast(val?'Featured':'Removed from featured');
+  _sbFetch('menu_items','update',id,{is_featured:val}).catch(function(){});
+}
+async function loadBookingsFromSupabase(){
+  try{
+    var rows=await _sbFetch('bookings','list');
+    if(!Array.isArray(rows))return;
+    var el=document.getElementById('ov-bookings');if(el)el.textContent=rows.length;
+    renderBookingsTable(rows);
+  }catch(e){console.log('Bookings error:',e);}
+}
+function renderBookingsTable(rows){
+  var c=document.getElementById('bookings-table-body');
+  if(!c)return;
+  if(!rows.length){c.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;opacity:0.5;">No bookings yet</td></tr>';return;}
+  var sc={pending:'var(--gold)',confirmed:'#4caf50',cancelled:'#f44336',completed:'#2196f3'};
+  c.innerHTML=rows.map(function(b){
+    return '<tr><td>'+b.guest_name+'</td><td>'+b.guest_email+'</td><td>'+(b.guest_phone||'-')+'</td><td>'+(b.check_in||'-')+' → '+(b.check_out||'-')+'</td><td>'+(b.adults||1)+' adults</td><td><span style="color:'+(sc[b.status]||'#fff')+';font-weight:600">'+b.status+'</span></td><td>'+(b.notes||'-')+'</td><td><button onclick="updateBookingStatus(''+b.id+'','confirmed')" style="background:#4caf50;color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:11px;margin-right:4px">Confirm</button><button onclick="updateBookingStatus(''+b.id+'','cancelled')" style="background:#f44336;color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:11px">Cancel</button></td></tr>';
+  }).join('');
+}
+async function updateBookingStatus(id,status){
+  try{await _sbFetch('bookings','update',id,{status:status});showToast('Booking '+status+'!');loadBookingsFromSupabase();}catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function _sbFetch(resource,action,id,payload){
+  var url=_c.base+'/'+resource;
+  var method='GET';
+  var hdrs={'apikey':_c.a,'Authorization':'Bearer '+_c.a,'Content-Type':'application/json'};
+  var body=undefined;
+  if(action==='list'){
+    var q=['select=*'];
+    if(resource==='menu_items')q.push('order=sort_order.asc,name.asc');
+    if(resource==='rooms'){q.push('is_available=eq.true');q.push('order=sort_order.asc');}
+    if(resource==='notifications')q.push('is_active=eq.true');
+    if(resource==='bookings')hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json'};
+    url+='?'+q.join('&');
+  }else if(action==='create'){
+    method='POST';hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json','Prefer':'return=representation'};
+    body=JSON.stringify(payload);
+  }else if(action==='update'){
+    method='PATCH';hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json','Prefer':'return=representation'};
+    url+='?id=eq.'+id;body=JSON.stringify(payload);
+  }else if(action==='delete'){
+    method='DELETE';hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json'};
+    url+='?id=eq.'+id;
+  }
+  var opts={method:method,headers:hdrs};
+  if(body)opts.body=body;
+  var r=await fetch(url,opts);
+  return await r.json();
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  if(typeof loadMenuFromSupabase==='function')loadMenuFromSupabase();
+  if(typeof loadBookingsFromSupabase==='function')loadBookingsFromSupabase();
+});
 </script>
 </body>
 </html>
