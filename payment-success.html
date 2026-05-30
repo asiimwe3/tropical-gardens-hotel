@@ -3,17 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Payment Status | Tropical Gardens Hotel</title>
+  <title>Payment Receipt | Tropical Gardens Hotel</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .receipt-panel{display:none;margin-top:22px;text-align:left;border:1px solid rgba(10,61,10,0.16);border-radius:16px;background:#fff;padding:22px;box-shadow:0 16px 40px rgba(0,0,0,0.08);}
+    .receipt-panel.show{display:block;}
+    .receipt-top{display:flex;justify-content:space-between;gap:18px;border-bottom:1px solid #e5e7eb;padding-bottom:16px;margin-bottom:16px;}
+    .receipt-top h2{font-size:1.05rem;margin:0;color:#0a3d0a;}
+    .receipt-top p,.receipt-row p{margin:3px 0;color:#4b5563;font-size:0.9rem;}
+    .receipt-number{text-align:right;font-weight:800;color:#0a3d0a;}
+    .receipt-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    .receipt-row{border:1px solid #edf2ed;border-radius:12px;padding:14px;background:#fbfdfb;}
+    .receipt-row h3{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin:0 0 8px;}
+    .receipt-total{display:flex;justify-content:space-between;align-items:center;background:#0a3d0a;color:#fff;border-radius:12px;padding:16px 18px;font-weight:800;font-size:1.05rem;}
+    .receipt-note{font-size:0.82rem;color:#6b7280;margin-top:14px;}
+    @media(max-width:640px){.receipt-top,.receipt-grid{grid-template-columns:1fr;display:grid;text-align:left}.receipt-number{text-align:left}}
+    @media print{body{background:#fff}.payment-status-actions,.section-tag,#payment-message{display:none}.payment-status-card{box-shadow:none;max-width:100%;padding:0}.receipt-panel{display:block;box-shadow:none;border-color:#ddd}}
+  </style>
 </head>
 <body>
   <main class="payment-status-page">
     <section class="payment-status-card">
       <p class="section-tag">Pesapal checkout</p>
-      <h1>Payment Status Received</h1>
+      <h1>Payment Receipt</h1>
       <p id="payment-message">Thank you. We are confirming your payment with Pesapal.</p>
+      <div class="receipt-panel" id="receipt-panel">
+        <div class="receipt-top">
+          <div>
+            <h2 id="receipt-hotel">Tropical Gardens Hotel Kyenjojo</h2>
+            <p>Hoima Road, Kyenjojo, Uganda</p>
+            <p>0782460683 | tropicalgardenshotel@gmail.com</p>
+          </div>
+          <div class="receipt-number">
+            <div id="receipt-number">Receipt</div>
+            <p id="receipt-date"></p>
+          </div>
+        </div>
+        <div class="receipt-grid">
+          <div class="receipt-row">
+            <h3>Customer</h3>
+            <p id="receipt-customer"></p>
+            <p id="receipt-contact"></p>
+          </div>
+          <div class="receipt-row">
+            <h3>Reservation</h3>
+            <p id="receipt-room"></p>
+            <p id="receipt-stay"></p>
+          </div>
+          <div class="receipt-row">
+            <h3>Payment</h3>
+            <p id="receipt-method"></p>
+            <p id="receipt-reference"></p>
+          </div>
+          <div class="receipt-row">
+            <h3>Status</h3>
+            <p id="receipt-status"></p>
+            <p id="receipt-code"></p>
+          </div>
+        </div>
+        <div class="receipt-total">
+          <span>Total Paid</span>
+          <span id="receipt-total"></span>
+        </div>
+        <p class="receipt-note">This receipt was generated automatically after Pesapal payment confirmation. Please keep the reference number for reception.</p>
+      </div>
       <div class="payment-status-actions">
         <a class="btn btn-primary" href="index.html#reservation">Make another booking</a>
+        <button class="btn btn-outline-dark" type="button" id="print-receipt">Print / Save receipt</button>
         <a class="btn btn-outline-dark" href="index.html#contact">Contact reception</a>
       </div>
     </section>
@@ -22,8 +78,43 @@
     const params = new URLSearchParams(window.location.search);
     const status = params.get("status") || "UNKNOWN";
     const reference = params.get("reference") || "";
+    const trackingId = params.get("trackingId") || "";
     const message = document.getElementById("payment-message");
-    message.textContent = `Pesapal status: ${status}${reference ? `. Reference: ${reference}` : ""}. Reception will confirm your reservation shortly.`;
+    const money = (currency, amount) => `${currency || "UGX"} ${Number(amount || 0).toLocaleString()}`;
+    const clean = value => value || "-";
+    const formatDate = value => value ? new Date(value).toLocaleString("en-UG", { dateStyle: "medium", timeStyle: "short" }) : "-";
+    const formatDay = value => value ? new Date(value).toLocaleDateString("en-UG", { dateStyle: "medium" }) : "-";
+
+    async function loadReceipt() {
+      message.textContent = `Pesapal status: ${status}${reference ? `. Reference: ${reference}` : ""}. Preparing your receipt...`;
+      try {
+        const qs = new URLSearchParams();
+        if (reference) qs.set("reference", reference);
+        if (trackingId) qs.set("trackingId", trackingId);
+        const response = await fetch(`/api/payments/receipt?${qs.toString()}`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Receipt is not ready yet");
+        const receipt = data.receipt;
+        document.getElementById("receipt-number").textContent = receipt.number;
+        document.getElementById("receipt-date").textContent = formatDate(receipt.issuedAt);
+        document.getElementById("receipt-customer").textContent = clean(receipt.customer.name);
+        document.getElementById("receipt-contact").textContent = [receipt.customer.phone, receipt.customer.email].filter(Boolean).join(" | ") || "-";
+        document.getElementById("receipt-room").textContent = clean(receipt.reservation.room);
+        document.getElementById("receipt-stay").textContent = `${formatDay(receipt.reservation.checkIn)} to ${formatDay(receipt.reservation.checkOut)} | Guests: ${receipt.reservation.guests || 1}`;
+        document.getElementById("receipt-method").textContent = `${clean(receipt.payment.method)}${receipt.payment.account ? ` | ${receipt.payment.account}` : ""}`;
+        document.getElementById("receipt-reference").textContent = `Reference: ${clean(receipt.payment.merchantReference)}`;
+        document.getElementById("receipt-status").textContent = clean(receipt.payment.status);
+        document.getElementById("receipt-code").textContent = `Confirmation: ${clean(receipt.payment.confirmationCode || receipt.payment.trackingId)}`;
+        document.getElementById("receipt-total").textContent = money(receipt.payment.currency, receipt.payment.amount);
+        document.getElementById("receipt-panel").classList.add("show");
+        message.textContent = "Payment received. Your official receipt is ready below.";
+      } catch (error) {
+        message.textContent = `Pesapal status: ${status}${reference ? `. Reference: ${reference}` : ""}. Receipt is being prepared; reception can confirm it with this reference.`;
+      }
+    }
+
+    document.getElementById("print-receipt").addEventListener("click", () => window.print());
+    loadReceipt();
   </script>
 </body>
 </html>

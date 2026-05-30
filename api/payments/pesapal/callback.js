@@ -13,6 +13,7 @@ module.exports = async (req, res) => {
     const url = new URL(config.paymentSuccessUrl);
     url.searchParams.set("status", synced.status.payment_status_description || synced.status.status || "UNKNOWN");
     url.searchParams.set("reference", merchantReference || "");
+    url.searchParams.set("trackingId", orderTrackingId);
     res.statusCode = 302;
     res.setHeader("Location", url.toString());
     res.end();
