@@ -185,6 +185,138 @@ create table if not exists public.hotel_settings (
   updated_at timestamptz not null default now()
 );
 
+-- Upgrade older installs. `create table if not exists` does not add columns
+-- when a table already exists, so these statements make the script rerunnable.
+alter table public.rooms add column if not exists room_number text;
+alter table public.rooms add column if not exists name text;
+alter table public.rooms add column if not exists description text not null default '';
+alter table public.rooms add column if not exists type text not null default 'Standard';
+alter table public.rooms add column if not exists price integer not null default 0;
+alter table public.rooms add column if not exists capacity integer not null default 1;
+alter table public.rooms add column if not exists image_url text;
+alter table public.rooms add column if not exists amenities jsonb not null default '[]'::jsonb;
+alter table public.rooms add column if not exists is_available boolean not null default true;
+alter table public.rooms add column if not exists sort_order integer not null default 100;
+alter table public.rooms add column if not exists created_at timestamptz not null default now();
+alter table public.rooms add column if not exists updated_at timestamptz not null default now();
+
+alter table public.menu_items add column if not exists description text not null default '';
+alter table public.menu_items add column if not exists name text;
+alter table public.menu_items add column if not exists category text not null default 'Lunch';
+alter table public.menu_items add column if not exists price integer not null default 0;
+alter table public.menu_items add column if not exists image_url text;
+alter table public.menu_items add column if not exists is_available boolean not null default true;
+alter table public.menu_items add column if not exists is_featured boolean not null default false;
+alter table public.menu_items add column if not exists sort_order integer not null default 100;
+alter table public.menu_items add column if not exists created_at timestamptz not null default now();
+alter table public.menu_items add column if not exists updated_at timestamptz not null default now();
+
+alter table public.offers add column if not exists description text not null default '';
+alter table public.offers add column if not exists title text;
+alter table public.offers add column if not exists discount_percent integer not null default 0;
+alter table public.offers add column if not exists code text;
+alter table public.offers add column if not exists starts_at date not null default current_date;
+alter table public.offers add column if not exists ends_at date not null default (current_date + 30);
+alter table public.offers add column if not exists is_active boolean not null default true;
+alter table public.offers add column if not exists sort_order integer not null default 100;
+alter table public.offers add column if not exists created_at timestamptz not null default now();
+alter table public.offers add column if not exists updated_at timestamptz not null default now();
+
+alter table public.notifications add column if not exists body text not null default '';
+alter table public.notifications add column if not exists title text;
+alter table public.notifications add column if not exists channel text not null default 'Website';
+alter table public.notifications add column if not exists audience text not null default 'All Guests';
+alter table public.notifications add column if not exists type text not null default 'update';
+alter table public.notifications add column if not exists is_active boolean not null default true;
+alter table public.notifications add column if not exists created_at timestamptz not null default now();
+alter table public.notifications add column if not exists updated_at timestamptz not null default now();
+
+alter table public.bookings add column if not exists first_name text;
+alter table public.bookings add column if not exists guest_name text;
+alter table public.bookings add column if not exists phone text;
+alter table public.bookings add column if not exists last_name text;
+alter table public.bookings add column if not exists email text;
+alter table public.bookings add column if not exists room_id uuid references public.rooms(id) on delete set null;
+alter table public.bookings add column if not exists room_name text;
+alter table public.bookings add column if not exists check_in date;
+alter table public.bookings add column if not exists check_out date;
+alter table public.bookings add column if not exists guests integer not null default 1;
+alter table public.bookings add column if not exists notes text not null default '';
+alter table public.bookings add column if not exists status text not null default 'Pending';
+alter table public.bookings add column if not exists payment_status text not null default 'Unpaid';
+alter table public.bookings add column if not exists deposit_amount integer not null default 0;
+alter table public.bookings add column if not exists source text not null default 'Website';
+alter table public.bookings add column if not exists created_at timestamptz not null default now();
+alter table public.bookings add column if not exists updated_at timestamptz not null default now();
+
+alter table public.reservations add column if not exists email text;
+alter table public.reservations add column if not exists guest_name text;
+alter table public.reservations add column if not exists phone text;
+alter table public.reservations add column if not exists room_id uuid references public.rooms(id) on delete set null;
+alter table public.reservations add column if not exists room_name text;
+alter table public.reservations add column if not exists check_in date;
+alter table public.reservations add column if not exists check_out date;
+alter table public.reservations add column if not exists guests integer not null default 1;
+alter table public.reservations add column if not exists status text not null default 'Pending';
+alter table public.reservations add column if not exists payment_status text not null default 'Unpaid';
+alter table public.reservations add column if not exists amount_paid integer not null default 0;
+alter table public.reservations add column if not exists payment_reference text;
+alter table public.reservations add column if not exists notes text not null default '';
+alter table public.reservations add column if not exists created_at timestamptz not null default now();
+alter table public.reservations add column if not exists updated_at timestamptz not null default now();
+
+alter table public.payments add column if not exists booking_id uuid references public.bookings(id) on delete set null;
+alter table public.payments add column if not exists reservation_id uuid references public.reservations(id) on delete set null;
+alter table public.payments add column if not exists merchant_reference text;
+alter table public.payments add column if not exists provider text not null default 'pesapal';
+alter table public.payments add column if not exists provider_tracking_id text;
+alter table public.payments add column if not exists amount numeric(12,2);
+alter table public.payments add column if not exists currency text not null default 'UGX';
+alter table public.payments add column if not exists status text not null default 'PENDING';
+alter table public.payments add column if not exists payment_method text;
+alter table public.payments add column if not exists payment_account text;
+alter table public.payments add column if not exists confirmation_code text;
+alter table public.payments add column if not exists checkout_url text;
+alter table public.payments add column if not exists raw_status jsonb;
+alter table public.payments add column if not exists paid_at timestamptz;
+alter table public.payments add column if not exists created_at timestamptz not null default now();
+alter table public.payments add column if not exists updated_at timestamptz not null default now();
+
+alter table public.guest_messages add column if not exists phone text;
+alter table public.guest_messages add column if not exists name text;
+alter table public.guest_messages add column if not exists message text;
+alter table public.guest_messages add column if not exists email text;
+alter table public.guest_messages add column if not exists subject text;
+alter table public.guest_messages add column if not exists status text not null default 'Unread';
+alter table public.guest_messages add column if not exists created_at timestamptz not null default now();
+alter table public.guest_messages add column if not exists updated_at timestamptz not null default now();
+
+alter table public.reviews add column if not exists review_date date not null default current_date;
+alter table public.reviews add column if not exists guest text;
+alter table public.reviews add column if not exists rating integer;
+alter table public.reviews add column if not exists text text;
+alter table public.reviews add column if not exists status text not null default 'Pending';
+alter table public.reviews add column if not exists created_at timestamptz not null default now();
+alter table public.reviews add column if not exists updated_at timestamptz not null default now();
+
+alter table public.gallery add column if not exists caption text not null default 'Hotel photo';
+alter table public.gallery add column if not exists url text;
+alter table public.gallery add column if not exists category text not null default 'Facilities';
+alter table public.gallery add column if not exists is_active boolean not null default true;
+alter table public.gallery add column if not exists sort_order integer not null default 100;
+alter table public.gallery add column if not exists created_at timestamptz not null default now();
+alter table public.gallery add column if not exists updated_at timestamptz not null default now();
+
+alter table public.staff_profiles add column if not exists phone text;
+alter table public.staff_profiles add column if not exists name text;
+alter table public.staff_profiles add column if not exists email text;
+alter table public.staff_profiles add column if not exists role text not null default 'Receptionist';
+alter table public.staff_profiles add column if not exists access text[] not null default '{}';
+alter table public.staff_profiles add column if not exists last_login timestamptz;
+alter table public.staff_profiles add column if not exists is_active boolean not null default true;
+alter table public.staff_profiles add column if not exists created_at timestamptz not null default now();
+alter table public.staff_profiles add column if not exists updated_at timestamptz not null default now();
+
 create index if not exists idx_rooms_available_sort on public.rooms(is_available, sort_order);
 create index if not exists idx_menu_category_sort on public.menu_items(category, sort_order);
 create index if not exists idx_notifications_active_created on public.notifications(is_active, created_at desc);
