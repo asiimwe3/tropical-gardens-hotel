@@ -870,26 +870,44 @@
 
 <script src="app-config.js"></script>
 <script>
-var menuItems=[
-  {id:"m1",name:"Rolex (Egg Roll)",description:"Fresh chapati rolled with fried eggs, veggies and spices - a Ugandan street classic.",category:"Breakfast",price:8000,is_available:true,is_featured:true},
-  {id:"m2",name:"Katogo (Offals & Matooke)",description:"Traditional Ugandan morning stew with banana and offals.",category:"Breakfast",price:12000,is_available:true,is_featured:false},
-  {id:"m3",name:"Omelette & Toast",description:"Fluffy omelette with toasted bread, butter and fresh juice.",category:"Breakfast",price:15000,is_available:true,is_featured:false},
-  {id:"m4",name:"Matooke & Groundnut Stew",description:"Steamed green bananas served with rich groundnut sauce.",category:"Lunch",price:18000,is_available:true,is_featured:true},
-  {id:"m5",name:"Rice & Beans",description:"Soft white rice with well-seasoned beans.",category:"Lunch",price:12000,is_available:true,is_featured:false},
-  {id:"m6",name:"Chicken Stew & Posho",description:"Tender chicken in tomato and onion stew with ugali.",category:"Lunch",price:22000,is_available:true,is_featured:false},
-  {id:"m7",name:"Grilled Tilapia",description:"Fresh Lake tilapia marinated in herbs, grilled to perfection. Served with chips or rice.",category:"Dinner",price:35000,is_available:true,is_featured:true},
-  {id:"m8",name:"Beef Rolex",description:"Large chapati wrap with seasoned beef strips, lettuce and tomato.",category:"Dinner",price:28000,is_available:true,is_featured:false},
-  {id:"m9",name:"Mixed Grill Platter",description:"Assorted grilled meats - chicken, beef and goat - with kachumbari.",category:"Dinner",price:55000,is_available:false,is_featured:false},
-  {id:"m10",name:"Nyama Choma (Goat)",description:"Slow-roasted goat meat served with ugali and kachumbari.",category:"Dinner",price:45000,is_available:true,is_featured:true},
-  {id:"m11",name:"Fresh Passion Juice",description:"Freshly squeezed passion fruit juice, chilled and naturally sweet.",category:"Drinks",price:5000,is_available:true,is_featured:true},
-  {id:"m12",name:"Mango Smoothie",description:"Blended fresh mango with milk and honey.",category:"Drinks",price:7000,is_available:true,is_featured:false},
-  {id:"m13",name:"Tropical Cocktail",description:"Signature hotel mix of pineapple, passion, mint and ginger.",category:"Drinks",price:12000,is_available:true,is_featured:true},
-  {id:"m14",name:"Soda / Water",description:"Assorted soft drinks and mineral water.",category:"Drinks",price:3000,is_available:true,is_featured:false},
-  {id:"m15",name:"Banana Cake",description:"Moist homemade cake with fresh bananas and vanilla cream.",category:"Desserts",price:10000,is_available:true,is_featured:false},
-  {id:"m16",name:"Mandazi",description:"Deep-fried East African doughnuts, lightly sweetened with coconut.",category:"Snacks",price:4000,is_available:true,is_featured:false},
-  {id:"m17",name:"Samosa (3 pcs)",description:"Crispy pastry filled with spiced meat or vegetables.",category:"Snacks",price:6000,is_available:true,is_featured:false},
-  {id:"m18",name:"Chips (French Fries)",description:"Golden crispy fries served with chilli sauce.",category:"Snacks",price:8000,is_available:true,is_featured:false}
-];
+// ── BASE44 MENU INTEGRATION ──
+async function loadMenuFromBase44(){
+  try{
+    var res=await fetch("https://6a06dff0946d9cf169ac63e2.base44.app/functions/getMenuItems");
+    var data=await res.json();
+    if(data.items&&data.items.length){
+      menuItems=data.items.map(normalizeMenuItem);
+      renderMenuPage();
+    }
+  }catch(e){
+    console.log("Base44 menu load failed:",e.message);
+  }
+}
+
+async function deleteMenuItem(id){
+  if(!confirm("Delete this item permanently?"))return;
+  var token=localStorage.getItem("tgh_admin_token");
+  if(!token){showToast("Enter your admin token first","error");return;}
+  try{
+    var res=await fetch("https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem/"+id,{method:"DELETE",headers:{"Authorization":"Bearer "+token}});
+    if(!res.ok)throw new Error("Delete failed");
+    menuItems=menuItems.filter(function(m){return m.id!==id;});
+    renderMenuPage();
+    showToast("🗑️ Item deleted");
+  }catch(e){showToast("Error: "+e.message,"error");}
+}
+
+async function menuToggleFeatured(id,val){
+  var item=menuItems.find(function(m){return m.id===id;});
+  if(item)item.is_featured=val;
+  renderMenuPage();
+  showToast(val?"⭐ Featured":"Removed from featured");
+  var token=localStorage.getItem("tgh_admin_token");
+  if(!token)return;
+  fetch("https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem/"+id,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({is_featured:val})}).catch(function(){});
+}
+
+var menuItems=[];
 var rooms=[
   {id:"r1",name:"Standard Room",num:"101",description:"Cosy room with queen bed, fan, en-suite bathroom, and garden view.",type:"Standard",price:80000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",is_available:true},
   {id:"r2",name:"Standard Room",num:"102",description:"Cosy room with twin beds, fan, and en-suite bathroom.",type:"Standard",price:80000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",is_available:true},
@@ -1019,7 +1037,16 @@ async function adminLogin(){
   }
 }
 function normalizeMenuItem(item){
-  return {id:item.id,name:item.name,description:item.description||"",category:item.category,price:Number(item.price)||0,image:item.imageUrl||item.image_url||item.image||"",is_available:item.isAvailable!==undefined?item.isAvailable:item.is_available,is_featured:item.isFeatured!==undefined?item.isFeatured:item.is_featured};
+  return {
+    id:item.id,
+    name:item.name,
+    description:item.description||"",
+    category:item.category,
+    price:Number(item.price)||0,
+    image:item.imageUrl||item.image_url||item.image||"",
+    is_available:item.is_available!==undefined?item.is_available:(item.isAvailable!==undefined?item.isAvailable:true),
+    is_featured:item.is_featured!==undefined?item.is_featured:(item.isFeatured!==undefined?item.isFeatured:false)
+  };
 }
 function normalizeRoom(room){
   return {id:room.id,name:room.name,num:room.roomNumber||room.room_number||room.num||"",description:room.description||"",type:room.type||"Standard",price:Number(room.price)||0,capacity:Number(room.capacity)||2,image:room.imageUrl||room.image_url||room.image||"",is_available:room.isAvailable!==undefined?room.isAvailable:room.is_available};
@@ -1107,8 +1134,16 @@ function renderMenuTable(){
     "<button class=\"btn btn-red btn-sm\" onclick=\"openDel('menu','"+item.id+"','"+item.name.replace(/'/g,"\\'")+"')\">Del</button></div></td></tr>";
   }).join("");
 }
-function menuToggleAvail(id,val){var i=menuItems.find(function(m){return m.id===id;});if(i)i.is_available=val;renderMenuPage();showToast(val?"Available":"Hidden from menu");}
-function menuToggleFeatured(id){var i=menuItems.find(function(m){return m.id===id;});if(i)i.is_featured=!i.is_featured;renderMenuPage();showToast(i&&i.is_featured?"Marked featured":"Removed from featured");}
+function menuToggleAvail(id,val){
+  var item=menuItems.find(function(m){return m.id===id;});
+  if(item)item.is_available=val;
+  renderMenuPage();
+  showToast(val?"✅ Available":"⏸ Hidden from menu");
+  var token=localStorage.getItem("tgh_admin_token");
+  if(!token)return;
+  fetch("https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem/"+id,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({is_available:val})}).catch(function(){});
+}
+
 function openMenuModal(id){
   var item=id?menuItems.find(function(m){return m.id===id;}):null;
   document.getElementById("menu-modal-title").textContent=item?"Edit Menu Item":"Add Menu Item";
@@ -1127,21 +1162,29 @@ async function saveMenuItem(){
   var name=document.getElementById("mi-name").value.trim(),price=document.getElementById("mi-price").value;
   if(!name||!price){showToast("Name and price required","error");return;}
   var id=document.getElementById("menu-item-id").value;
-  var data={name:name,description:document.getElementById("mi-desc").value.trim(),category:document.getElementById("mi-cat").value,price:Number(price),image:document.getElementById("mi-img").value.trim(),is_available:document.getElementById("mi-available").checked,is_featured:document.getElementById("mi-featured").checked};
-  if(hasAdminSession()){
-    try{
-      var payload={name:data.name,description:data.description,category:data.category,price:data.price,imageUrl:data.image,isAvailable:data.is_available,isFeatured:data.is_featured};
-      var saved=await apiFetch(id?"/api/admin/menu/"+id:"/api/admin/menu",{method:id?"PUT":"POST",headers:authHeaders(),body:JSON.stringify(payload)});
-      var normalized=normalizeMenuItem(saved.menuItem);
-      if(id){var apiIdx=menuItems.findIndex(function(m){return m.id===id;});if(apiIdx>-1)menuItems[apiIdx]=normalized;}
-      else menuItems.push(normalized);
-      showToast(id?"Item saved to database":"Item added to database");
-      closeMenuModal();renderMenuPage();return;
-    }catch(error){showToast("Database save failed: "+error.message,"error");return;}
-  }
-  if(id){var idx=menuItems.findIndex(function(m){return m.id===id;});if(idx>-1)menuItems[idx]=Object.assign({},menuItems[idx],data);showToast("Item updated locally");}
-  else{data.id="m"+Date.now();menuItems.push(data);showToast("Item added locally");}
-  closeMenuModal();renderMenuPage();
+  var data={
+    name:name,
+    description:document.getElementById("mi-desc").value.trim(),
+    category:document.getElementById("mi-cat").value,
+    price:Number(price),
+    currency:"UGX",
+    is_available:document.getElementById("mi-available").checked,
+    is_featured:document.getElementById("mi-featured").checked
+  };
+  var token=localStorage.getItem("tgh_admin_token");
+  if(!token){showToast("Enter your admin token first","error");return;}
+  try{
+    var url=id?("https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem/"+id):"https://api.base44.com/api/apps/6a06dff0946d9cf169ac63e2/entities/MenuItem";
+    var method=id?"PUT":"POST";
+    var res=await fetch(url,{method:method,headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify(data)});
+    var saved=await res.json();
+    if(!res.ok)throw new Error(saved.error||saved.message||"Save failed");
+    var normalized=normalizeMenuItem(saved);
+    if(id){var idx=menuItems.findIndex(function(m){return m.id===id;});if(idx>-1)menuItems[idx]=normalized;}
+    else menuItems.push(normalized);
+    showToast(id?"✅ Item updated!":"✅ Item added!");
+    closeMenuModal();renderMenuPage();
+  }catch(e){showToast("Error: "+e.message,"error");}
 }
 
 var typeColors={Standard:"badge-green",Deluxe:"badge-blue",Suite:"badge-gold",Family:"badge-purple",Conference:"badge-gray"};
@@ -1733,6 +1776,8 @@ showPage = function(name, el) {
 
 updateConnectionStatus();
 loadBackendData();
+
+loadMenuFromBase44();
 </script>
 </body>
 </html>
