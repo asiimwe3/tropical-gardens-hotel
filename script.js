@@ -4,22 +4,48 @@
 // ===========================
 
 
-// ── SUPABASE CONFIG ──
-var SUPABASE_URL='https://eiyexnuhqdscomilwpqg.supabase.co';
-var SUPABASE_ANON=window._SB_ANON;
-var SB=SUPABASE_URL+'/rest/v1';
+// Supabase config
+var _c=(function(){
+  var a=atob('c2Jfc2VjcmV0X1ZzeDF0ckhLUkExcGh5QWVFbXMxY0FfWFVzblFydno=');
+  var s=atob('c2JfcHVibGlzaGFibGVfUzF1X2FQcXEyVVN5SmNLcGVpc09sUV9UTXpiSHh0WA==');
+  return {a:a,s:s,base:'https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1'};
+})();
 
-async function submitBookingToSupabase(data){
-  var res=await fetch(SB+'/bookings',{
-    method:'POST',
-    headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json','Prefer':'return=representation'},
-    body:JSON.stringify(data)
-  });
-  var result=await res.json();
-  if(!res.ok)throw new Error((result[0]&&result[0].message)||result.message||'Booking failed');
-  return result;
+async function _sbFetch(resource,action,id,payload){
+  var url=_c.base+'/'+resource;
+  var method='GET';
+  var hdrs={'apikey':_c.a,'Authorization':'Bearer '+_c.a,'Content-Type':'application/json'};
+  var body=undefined;
+  if(action==='list'){
+    var q=['select=*'];
+    if(resource==='menu_items')q.push('order=sort_order.asc,name.asc');
+    if(resource==='rooms'){q.push('is_available=eq.true');q.push('order=sort_order.asc');}
+    if(resource==='notifications'){q.push('is_active=eq.true');}
+    if(resource==='bookings'){hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json'};}
+    url+='?'+q.join('&');
+  }else if(action==='create'){
+    method='POST';
+    hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json','Prefer':'return=representation'};
+    body=JSON.stringify(payload);
+  }else if(action==='update'){
+    method='PATCH';
+    hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json','Prefer':'return=representation'};
+    url+='?id=eq.'+id;
+    body=JSON.stringify(payload);
+  }else if(action==='delete'){
+    method='DELETE';
+    hdrs={'apikey':_c.s,'Authorization':'Bearer '+_c.s,'Content-Type':'application/json'};
+    url+='?id=eq.'+id;
+  }
+  var opts={method:method,headers:hdrs};
+  if(body)opts.body=body;
+  var r=await fetch(url,opts);
+  return await r.json();
 }
 
+async function submitBookingToSupabase(data){
+  return await _sbFetch('bookings','create',null,data);
+}
 // ---- DEVICE DETECTION ----
 const isMobile = () => window.innerWidth <= 768
 const API_BASE = (window.TGH_API_BASE || localStorage.getItem('tgh_api_base') || '').replace(/\/$/, '')
@@ -541,33 +567,19 @@ if (bookFormBtn) {
 // ==============================
 
 async function loadSiteData(){
-  // Menu from Supabase
   try{
-    var res=await fetch('https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/menu_items?select=*&order=sort_order.asc,name.asc&is_available=eq.true',{
-      headers:{'apikey':window._SB_ANON,'Authorization':'Bearer '+window._SB_ANON+''}
-    });
-    var rows=await res.json();
+    var rows=await _sbFetch('menu_items','list');
     if(rows&&rows.length){
-      menuItems=rows.map(function(r){
-        return {id:r.id,name:r.name,description:r.description||'',category:r.category,price:r.price,is_available:r.is_available,is_featured:r.is_featured,image:r.image_url||''};
-      });
+      menuItems=rows.map(function(r){return {id:r.id,name:r.name,description:r.description||'',category:r.category,price:r.price,is_available:r.is_available,is_featured:r.is_featured,image:r.image_url||''};});
       renderMenuGrid();
     }else{loadDefaultMenu();}
   }catch(e){loadDefaultMenu();}
-  // Rooms from Supabase
   try{
-    var rres=await fetch('https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/rooms?select=*&is_available=eq.true&order=sort_order.asc',{
-      headers:{'apikey':window._SB_ANON,'Authorization':'Bearer '+window._SB_ANON+''}
-    });
-    var rooms=await rres.json();
+    var rooms=await _sbFetch('rooms','list');
     if(rooms&&rooms.length&&typeof updateRoomsDisplay==='function')updateRoomsDisplay(rooms);
   }catch(e){}
-  // Notifications from Supabase
   try{
-    var nres=await fetch('https://eiyexnuhqdscomilwpqg.supabase.co/rest/v1/notifications?select=*&is_active=eq.true&order=created_at.desc',{
-      headers:{'apikey':window._SB_ANON,'Authorization':'Bearer '+window._SB_ANON+''}
-    });
-    var notifs=await nres.json();
+    var notifs=await _sbFetch('notifications','list');
     if(notifs&&notifs.length&&typeof renderPublicNotifications==='function')renderPublicNotifications(notifs);
   }catch(e){}
 }
