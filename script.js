@@ -693,6 +693,29 @@ const FOOD_IMAGE_LIBRARY = {
 };
 
 const MENU_FALLBACK_IMAGE = 'https://commons.wikimedia.org/wiki/Special:FilePath/Ugandan%20Food..JPG?width=900';
+const ROOM_FALLBACK_IMAGES = [
+  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg',
+  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg',
+  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg',
+  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-min.jpg',
+  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/6-min.jpg'
+];
+
+function isFoodImageUrl(url) {
+  return /wikimedia\.org|Special:FilePath|Ugandan%20Food|Rolex|Tilapia|chicken|passion|mango|soda|cake|matooke|beans|nyama/i.test(String(url || ''));
+}
+
+function roomFallbackImage(room, idx) {
+  const name = String(room?.name || room?.type || '').toLowerCase();
+  if (name.includes('deluxe')) return ROOM_FALLBACK_IMAGES[1];
+  if (name.includes('suite') || name.includes('family')) return ROOM_FALLBACK_IMAGES[2];
+  return ROOM_FALLBACK_IMAGES[idx % ROOM_FALLBACK_IMAGES.length];
+}
+
+function roomImageUrl(room, idx) {
+  const image = room.imageUrl || room.image_url || room.image || room.img || '';
+  return image && !isFoodImageUrl(image) ? image : roomFallbackImage(room, idx);
+}
 
 // Food category colors for fallback images
 const categoryEmojis = {
@@ -881,13 +904,13 @@ function updateRoomsDisplay(rooms) {
 
   roomsGrid.innerHTML = rooms.map((room, idx) => {
     const roomType = room.type || 'Standard';
-    const imageUrl = room.imageUrl || room.image || generateFoodImage(room.name, roomType);
+    const imageUrl = roomImageUrl(room, idx);
     const isAvailable = room.isAvailable ?? room.is_available ?? true;
     return `
       <div class="room-card ${idx === 1 ? 'featured' : ''}">
         ${idx === 1 ? '<div class="room-featured-tag">Popular Choice</div>' : ''}
         <div class="room-img">
-          <img src="${imageUrl}" alt="${room.name}" style="width:100%;height:160px;object-fit:cover;" onerror="this.src='${generateFoodImage(room.name, roomType)}'"/>
+          <img src="${imageUrl}" alt="${room.name}" style="width:100%;height:160px;object-fit:cover;" onerror="this.src='${roomFallbackImage(room, idx)}'"/>
           <div class="room-badge">${room.name}</div>
         </div>
         <div class="room-body">

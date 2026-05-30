@@ -1071,10 +1071,21 @@ async function saveMenuItem(){
 }
 
 var typeColors={Standard:"badge-green",Deluxe:"badge-blue",Suite:"badge-gold",Family:"badge-purple",Conference:"badge-gray"};
+var roomFallbackImages=[
+  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",
+  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",
+  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",
+  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-min.jpg",
+  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/6-min.jpg"
+];
+function isFoodImageUrl(url){return /wikimedia\.org|Special:FilePath|Ugandan%20Food|Rolex|Tilapia|chicken|passion|mango|soda|cake|matooke|beans|nyama/i.test(String(url||""));}
+function roomFallbackImage(r,idx){var n=String((r&&r.name)||"").toLowerCase();if(n.indexOf("deluxe")>-1)return roomFallbackImages[1];if(n.indexOf("suite")>-1||n.indexOf("family")>-1)return roomFallbackImages[2];return roomFallbackImages[idx%roomFallbackImages.length];}
+function roomImageUrl(r,idx){var img=(r&&(r.image||r.image_url||r.imageUrl||r.img))||"";return img&&!isFoodImageUrl(img)?img:roomFallbackImage(r,idx);}
 function renderRoomsPage(){
   var grid=document.getElementById("rooms-grid");if(!grid)return;
-  grid.innerHTML=rooms.map(function(r){
-    return '<div class="room-card"><img src="'+r.image+'" alt="'+r.name+'" onerror="this.style.display=\'none\'"/>'+
+  grid.innerHTML=rooms.map(function(r,idx){
+    var img=roomImageUrl(r,idx);
+    return '<div class="room-card"><img src="'+img+'" alt="'+r.name+'" onerror="this.src=\''+roomFallbackImage(r,idx)+'\'"/>'+
     '<div class="room-card-body"><h4>'+r.name+' <small style="font-weight:400;color:var(--gray);">#'+r.num+'</small></h4><p>'+r.description+'</p>'+
     '<span class="badge '+(typeColors[r.type]||"badge-gray")+'">'+r.type+'</span> '+
     '<span class="badge '+(r.is_available?"badge-green":"badge-red")+'">'+(r.is_available?"Available":"Unavailable")+'</span></div>'+
@@ -1106,7 +1117,7 @@ async function saveRoom(){
   try{
     if(hasAdminSession()){
       var saved=await backendWrite(id?"/api/admin/rooms/"+id:"/api/admin/rooms",{method:id?"PUT":"POST",body:JSON.stringify(roomPayload(data))});
-      if(saved&&saved.room)data=Object.assign({},data,{id:saved.room.id});
+      if(saved&&saved.room)data=Object.assign({},data,{id:saved.room.id,image:saved.room.image_url||saved.room.imageUrl||data.image});
     }
     if(id){var idx=rooms.findIndex(function(x){return x.id===id;});if(idx>-1)rooms[idx]=Object.assign({},rooms[idx],data);showToast("Room updated");}
     else{data.id=data.id||"r"+Date.now();rooms.push(data);showToast("Room added");}
