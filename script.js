@@ -449,7 +449,7 @@ async function handleReservation(e) {
   const guests = String(data.get('guests') || '1').replace(/\D/g, '') || '1'
 
   const paymentMode = data.get('paymentMode') || 'later'
-  const depositAmount = Number(data.get('depositAmount') || 50000)
+  const depositAmount = Number(data.get('depositAmount') || 1000)
   const reservationPayload = {
     guestName,
     phone: data.get('phone'),
@@ -473,7 +473,7 @@ async function handleReservation(e) {
         method: 'POST',
         body: JSON.stringify({
           reservationId: reservationResult.reservation?.id,
-          amount: Math.max(1000, depositAmount || 50000),
+          amount: Math.max(1000, depositAmount || 1000),
           currency: 'UGX',
           description: 'Tropical Gardens Hotel booking deposit',
           customer: {
@@ -509,7 +509,7 @@ async function handleReservation(e) {
         check_out: cout,
         guests: Number(guests),
         notes: data.get('notes') || '',
-        deposit_amount: paymentMode === 'pay' ? Math.max(1000, depositAmount || 50000) : 0,
+        deposit_amount: paymentMode === 'pay' ? Math.max(1000, depositAmount || 1000) : 0,
         payment_status: paymentMode === 'pay' ? 'Pending' : 'Unpaid'
       })
       showToast(paymentMode === 'pay'
