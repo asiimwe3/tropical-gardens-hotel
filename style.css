@@ -1150,6 +1150,61 @@ h4,
 }
 
 /* ==============================
+   FAQ
+   ============================== */
+.faq {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.88), rgba(250,246,236,0.96)),
+    var(--cream);
+}
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.faq-item {
+  background: var(--white);
+  border: 1px solid rgba(13,51,24,0.12);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  padding: 0;
+  overflow: hidden;
+}
+.faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  color: var(--dark);
+  font-weight: 800;
+  line-height: 1.35;
+  padding: 20px 50px 20px 22px;
+  position: relative;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "+";
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  color: var(--green);
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+.faq-item[open] summary::after { content: "-"; }
+.faq-item p {
+  color: var(--gray);
+  font-weight: 600;
+  line-height: 1.7;
+  padding: 0 22px 22px;
+}
+.contact-note {
+  color: var(--gray);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.55;
+  margin-top: 12px;
+}
+
+/* ==============================
    FOOTER
    ============================== */
 .footer { background: #0d3318; color: rgba(255,255,255,0.72); padding: 60px 0 0; }
@@ -1206,7 +1261,7 @@ h4,
   .services-grid, .rooms-grid, .proof-grid, .signature-grid, .notifications-grid, .journey-grid { grid-template-columns: 1fr 1fr; }
   .booking-card { grid-template-columns: repeat(2, 1fr); }
   .booking-submit { grid-column: 1 / -1; }
-  .experience-grid, .tourism-layout, .proof-layout { grid-template-columns: 1fr; gap: 34px; }
+  .experience-grid, .tourism-layout, .proof-layout, .faq-grid { grid-template-columns: 1fr; gap: 34px; }
   .review-grid { grid-template-columns: 1fr 1fr; }
   .contact-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }

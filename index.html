@@ -33,50 +33,102 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Hotel",
-    "@id": "https://tropicalgardenshotelkyenjojo.com/#hotel",
-    "name": "Tropical Gardens Hotel Kyenjojo",
-    "url": "https://tropicalgardenshotelkyenjojo.com/",
-    "logo": "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg",
-    "image": [
-      "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",
-      "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",
-      "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg"
-    ],
-    "description": "Tropical Gardens Hotel Kyenjojo offers comfortable rooms, restaurant and bar service, gardens, events, conference space, secure online booking, and hospitality on Hoima Road in Kyenjojo, Uganda.",
-    "telephone": "+256782460683",
-    "email": "tropicalgardenshotel@gmail.com",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Hoima Road",
-      "addressLocality": "Kyenjojo",
-      "addressCountry": "UG"
-    },
-    "areaServed": ["Kyenjojo", "Western Uganda", "Fort Portal route", "Hoima Road"],
-    "priceRange": "UGX 80,000 - UGX 280,000",
-    "amenityFeature": [
-      {"@type": "LocationFeatureSpecification", "name": "Comfortable rooms", "value": true},
-      {"@type": "LocationFeatureSpecification", "name": "Restaurant and bar", "value": true},
-      {"@type": "LocationFeatureSpecification", "name": "Conference hall", "value": true},
-      {"@type": "LocationFeatureSpecification", "name": "Garden events", "value": true},
-      {"@type": "LocationFeatureSpecification", "name": "Secure online payments", "value": true},
-      {"@type": "LocationFeatureSpecification", "name": "Free parking", "value": true}
-    ],
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Hotel services",
-      "itemListElement": [
-        {"@type": "Offer", "itemOffered": {"@type": "HotelRoom", "name": "Standard Room"}},
-        {"@type": "Offer", "itemOffered": {"@type": "HotelRoom", "name": "Deluxe Room"}},
-        {"@type": "Offer", "itemOffered": {"@type": "HotelRoom", "name": "Family Suite"}},
-        {"@type": "Offer", "itemOffered": {"@type": "FoodService", "name": "Restaurant and drinks menu"}},
-        {"@type": "Offer", "itemOffered": {"@type": "EventVenue", "name": "Conference and events space"}}
-      ]
-    },
-    "sameAs": [
-      "https://tropicalgardenshotelkyenjojo.com/"
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://tropicalgardenshotelkyenjojo.com/#website",
+        "url": "https://tropicalgardenshotelkyenjojo.com/",
+        "name": "Tropical Gardens Hotel Kyenjojo",
+        "publisher": {"@id": "https://tropicalgardenshotelkyenjojo.com/#hotel"},
+        "inLanguage": "en"
+      },
+      {
+        "@type": "Hotel",
+        "@id": "https://tropicalgardenshotelkyenjojo.com/#hotel",
+        "name": "Tropical Gardens Hotel Kyenjojo",
+        "alternateName": "Tropical Gardens Hotel",
+        "url": "https://tropicalgardenshotelkyenjojo.com/",
+        "logo": "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg",
+        "image": [
+          "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",
+          "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",
+          "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",
+          "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery1.jpg"
+        ],
+        "description": "Tropical Gardens Hotel Kyenjojo offers comfortable rooms, restaurant and bar service, gardens, events, conference space, secure online booking, and hospitality on Hoima Road in Kyenjojo, Uganda.",
+        "telephone": ["+256782460683", "+256701437896", "+256789531470"],
+        "email": "tropicalgardenshotel@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "JJ9V+2V6, Hoima Road",
+          "addressLocality": "Kyenjojo",
+          "addressRegion": "Western Region",
+          "addressCountry": "UG"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "0.6187",
+          "longitude": "30.6447"
+        },
+        "hasMap": "https://maps.google.com/?q=Tropical+Gardens+Hotel+Kyenjojo",
+        "areaServed": ["Kyenjojo", "Western Uganda", "Fort Portal route", "Hoima Road", "Uganda"],
+        "priceRange": "UGX 80,000 - UGX 280,000",
+        "paymentAccepted": "Cash, Mobile Money, Card, Pesapal",
+        "currenciesAccepted": "UGX",
+        "checkinTime": "14:00",
+        "checkoutTime": "10:00",
+        "amenityFeature": [
+          {"@type": "LocationFeatureSpecification", "name": "Comfortable rooms", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "Restaurant and bar", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "Conference hall", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "Garden events", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "Secure online payments", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "Free parking", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "24-hour reception", "value": true}
+        ],
+        "containsPlace": [
+          {"@type": "Restaurant", "name": "Tropical Gardens Hotel Restaurant", "servesCuisine": ["Ugandan", "African", "Continental"]},
+          {"@type": "EventVenue", "name": "Tropical Gardens Hotel Conference and Events Space"}
+        ],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Hotel services",
+          "itemListElement": [
+            {"@type": "Offer", "itemOffered": {"@type": "HotelRoom", "name": "Standard Room"}},
+            {"@type": "Offer", "itemOffered": {"@type": "HotelRoom", "name": "Deluxe Room"}},
+            {"@type": "Offer", "itemOffered": {"@type": "HotelRoom", "name": "Family Suite"}},
+            {"@type": "Offer", "itemOffered": {"@type": "FoodService", "name": "Restaurant and drinks menu"}},
+            {"@type": "Offer", "itemOffered": {"@type": "EventVenue", "name": "Conference and events space"}}
+          ]
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://tropicalgardenshotelkyenjojo.com/#faq",
+        "mainEntity": [
+          {"@type": "Question", "name": "Where is Tropical Gardens Hotel located?", "acceptedAnswer": {"@type": "Answer", "text": "Tropical Gardens Hotel is located at JJ9V+2V6 on Hoima Road in Kyenjojo, Uganda."}},
+          {"@type": "Question", "name": "How can I book a room?", "acceptedAnswer": {"@type": "Answer", "text": "Guests can book using the online reservation form, call reception, or contact the hotel on WhatsApp for availability and confirmation."}},
+          {"@type": "Question", "name": "Can I pay online?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The website supports secure booking deposit payments through Pesapal for Mobile Money and card checkout."}},
+          {"@type": "Question", "name": "Does the hotel have a restaurant and bar?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Tropical Gardens Hotel offers restaurant, drinks, bar service, and table reservations."}},
+          {"@type": "Question", "name": "Can I host meetings or events at the hotel?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The hotel has conference and events spaces suitable for meetings, family functions, weddings, and garden events."}}
+        ]
+      }
     ]
   }
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.loadHotelAnalytics = function(measurementId) {
+      if (!measurementId || document.querySelector('[data-tgh-analytics]')) return;
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(measurementId);
+      script.dataset.tghAnalytics = 'true';
+      document.head.appendChild(script);
+      gtag('js', new Date());
+      gtag('config', measurementId, { send_page_view: true });
+    };
   </script>
 </head>
 <body>
@@ -114,6 +166,7 @@
         <li><a href="#notifications">Notifications</a></li>
         <li><a href="#menu">Menu</a></li>
         <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#faq">FAQ</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="#reservation" class="nav-cta">Make Reservation</a></li>
         <li><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme"><span data-theme-icon>☾</span><span data-theme-label>Dark</span></button></li>
@@ -704,14 +757,51 @@
       <div class="review-grid">
         <div class="review-card highlight">
           <p class="section-tag">Guest confidence</p>
-          <h2 class="section-title">Built for comfortable stays and easy booking</h2>
+          <h2 class="section-title">Clear reasons to book with confidence</h2>
           <p>Guests can contact reception directly, reserve rooms quickly, and pay deposits online by Mobile Money or card through Pesapal checkout.</p>
           <a href="#reservation" class="btn btn-primary">Reserve Now</a>
         </div>
-        <div class="review-card"><span>Clean rooms</span><p>Comfortable accommodation for couples, families, and business travellers.</p></div>
-        <div class="review-card"><span>Warm service</span><p>Friendly hospitality and practical support throughout your stay.</p></div>
+        <div class="review-card"><span>Verified contact</span><p>Phone, WhatsApp, email, and map links are visible for quick confirmation before arrival.</p></div>
+        <div class="review-card"><span>Guest-ready services</span><p>Rooms, restaurant, bar, gardens, parking, and conference spaces are presented clearly.</p></div>
         <div class="review-card"><span>Secure payments</span><p>Mobile Money and card collection runs through Pesapal checkout on the live backend.</p></div>
-        <div class="review-card"><span>Concierge support</span><p>Guests can ask about transport, room setup, meals, family needs, and event planning before arrival.</p></div>
+        <div class="review-card"><span>Admin managed</span><p>Rooms, menu items, bookings, messages, payments, and notifications connect to the hotel system.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq section bg-cream">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Guest Questions</p>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-sub">Fast answers for guests searching for hotels in Kyenjojo, western Uganda accommodation, restaurant service, events, and secure booking.</p>
+      </div>
+      <div class="faq-grid">
+        <details class="faq-item" open>
+          <summary>Where is Tropical Gardens Hotel located?</summary>
+          <p>Tropical Gardens Hotel is located at JJ9V+2V6 on Hoima Road in Kyenjojo, Uganda, with easy access for guests travelling through western Uganda.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do I book a room?</summary>
+          <p>Use the reservation form on this website, call reception, or send a WhatsApp message. The hotel team can confirm availability, room type, and arrival details.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I pay by Mobile Money or card?</summary>
+          <p>Yes. Booking deposits can be paid through Pesapal checkout, which supports Mobile Money and card payment options where available.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Does the hotel have food, drinks, and events?</summary>
+          <p>Yes. Tropical Gardens Hotel offers rooms, restaurant service, bar and drinks, gardens, conference space, weddings, meetings, and private functions.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is reception available at night?</summary>
+          <p>Reception support is available 24 hours. Guests can also use the direct call and WhatsApp links for arrival support, directions, and booking questions.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is the hotel good for guests travelling from Kampala?</summary>
+          <p>Yes. Tropical Gardens Hotel is suitable for guests travelling from Kampala to Kyenjojo, Fort Portal routes, Hoima Road trips, family visits, and business travel in western Uganda.</p>
+        </details>
       </div>
     </div>
   </section>
@@ -729,6 +819,7 @@
           <h4>Our Address</h4>
           <p>JJ9V+2V6, Hoima Road<br/>Kyenjojo, Uganda</p>
           <a href="https://maps.google.com/?q=Tropical+Gardens+Hotel+Kyenjojo" target="_blank" class="c-link">View on Map →</a>
+          <p class="contact-note">Use the same name, address, phone, website, and photos on Google Business Profile for stronger local SEO.</p>
         </div>
         <div class="contact-card">
           <span class="c-icon">📞</span>
@@ -786,6 +877,7 @@
             <li><a href="#rooms">Rooms</a></li>
             <li><a href="#menu">Menu</a></li>
             <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#faq">FAQ</a></li>
             <li><a href="locations.html">Hotels in Kyenjojo</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
@@ -903,5 +995,8 @@
   <script src="app-config.js"></script>
   <script src="supabase-config.js"></script>
   <script src="script.js"></script>
+  <script>
+    window.loadHotelAnalytics(window.TGH_GA_MEASUREMENT_ID);
+  </script>
 </body>
 </html>
