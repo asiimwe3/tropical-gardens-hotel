@@ -547,7 +547,7 @@
       </div>
       <div class="widget">
         <h3>&#128273; Admin Security</h3>
-        <div class="form-group" style="margin-top:14px;"><label>Backend API URL</label><input type="text" id="login-api" placeholder="https://tropical-gardens-hotel-api.onrender.com"/></div>
+        <div class="form-group" style="margin-top:14px;"><label>Backend API URL</label><input type="text" id="login-api" placeholder="Leave blank for this website"/></div>
         <div class="form-group"><label>Admin Email</label><input type="email" id="login-email" placeholder="admin@hotel.com"/></div>
         <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()"/></div>
         <div class="modal-btns" style="margin-top:8px;"><button class="btn btn-green btn-sm" onclick="adminLogin()">Login</button><button class="btn btn-red btn-sm" onclick="clearToken()">Logout</button></div>
@@ -837,12 +837,12 @@
     <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" style="height:52px;border-radius:8px;margin-bottom:18px;" alt="Logo"/>
     <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:4px;color:#fff;font-family:'Playfair Display',serif;">Admin Dashboard</h2>
     <p style="font-size:0.82rem;color:var(--text2);margin-bottom:24px;">Tropical Gardens Hotel &mdash; Kyenjojo</p>
-    <div class="form-group" style="text-align:left;"><label>Backend API URL</label><input type="text" id="gate-api" placeholder="https://tropical-gardens-hotel-api.onrender.com"/></div>
+    <div class="form-group" style="text-align:left;"><label>Backend API URL</label><input type="text" id="gate-api" placeholder="Leave blank for this website"/></div>
     <div class="form-group" style="text-align:left;"><label>Admin Email</label><input type="email" id="gate-email" placeholder="admin@hotel.com" autocomplete="username"/></div>
     <div class="form-group" style="text-align:left;"><label>Password</label><input type="password" id="gate-pass" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <div id="login-err" style="color:#ef9a9a;font-size:0.82rem;margin-bottom:12px;display:none;">Login failed. Check API URL, email, and password.</div>
+    <div id="login-err" style="color:#ef9a9a;font-size:0.82rem;margin-bottom:12px;display:none;">Login failed. Check email and password.</div>
     <button class="btn btn-green" style="width:100%;justify-content:center;margin-top:4px;" onclick="doLogin()">&#128273; Sign In</button>
-    <p style="font-size:0.72rem;color:var(--text3);margin-top:16px;">Use the admin account created in Render or your backend environment.</p>
+    <p style="font-size:0.72rem;color:var(--text3);margin-top:16px;">Use the hotel admin account connected to Supabase.</p>
   </div>
 </div>
 
@@ -973,7 +973,7 @@ async function adminLogin(email,password,api){
   api=(api||document.getElementById("login-api")?.value||document.getElementById("gate-api")?.value||"").trim().replace(/\/$/,"");
   email=(email||document.getElementById("login-email")?.value||document.getElementById("gate-email")?.value||"").trim();
   password=password||document.getElementById("login-password")?.value||document.getElementById("gate-pass")?.value||"";
-  if(!api||!email||!password){showToast("API URL, email and password required","error");return false;}
+  if(!email||!password){showToast("Email and password required","error");return false;}
   API_BASE=api;localStorage.setItem("tgh_api_base",api);
   var data=null;
   try{
