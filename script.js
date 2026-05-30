@@ -92,6 +92,23 @@ async function apiFetch(path, options = {}) {
   return data
 }
 
+async function updatePaymentAvailability() {
+  const payChoice = document.querySelector('input[name="paymentMode"][value="pay"]')
+  const laterChoice = document.querySelector('input[name="paymentMode"][value="later"]')
+  const note = document.querySelector('.form-note')
+  if (!payChoice || !laterChoice) return
+  try {
+    await apiFetch('/health')
+    payChoice.disabled = false
+    if (note) note.textContent = 'Secure Pesapal checkout opens after your reservation is saved.'
+  } catch (error) {
+    payChoice.checked = false
+    payChoice.disabled = true
+    laterChoice.checked = true
+    if (note) note.textContent = 'Online payment is temporarily unavailable. Reserve now and reception will confirm payment by phone or WhatsApp.'
+  }
+}
+
 function setButtonLoading(button, loading, text) {
   if (!button) return
   if (loading) {
@@ -344,6 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial active state
   updateBottomNav()
   applyTheme(preferredTheme())
+  updatePaymentAvailability()
 
   document.querySelectorAll('[data-theme-toggle]').forEach(button => {
     button.addEventListener('click', () => {

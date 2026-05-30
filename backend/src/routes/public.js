@@ -49,7 +49,7 @@ publicRouter.get("/notifications", async (_req, res, next) => {
     const result = await query(
       `select id, title, body, channel, audience, type, created_at as "createdAt"
        from notifications
-       where is_active = true and channel ilike '%website%'
+       where is_active = true
        order by created_at desc
        limit 20`
     );
