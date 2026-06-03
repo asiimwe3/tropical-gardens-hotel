@@ -1516,6 +1516,45 @@ h4,
    ============================== */
 .menu-section { background: var(--white); }
 
+.menu-pdf-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: -18px 0 32px;
+  padding: 22px;
+  background: var(--white);
+  border: 1px solid rgba(13,51,24,0.12);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+}
+.menu-pdf-kicker {
+  display: inline-flex;
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.menu-pdf-card h3 {
+  color: var(--dark);
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+.menu-pdf-card p {
+  color: var(--gray);
+  font-size: 0.9rem;
+  max-width: 680px;
+}
+.menu-pdf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 .menu-tabs {
   display: flex; gap: 8px; justify-content: center;
   flex-wrap: wrap; margin-bottom: 36px;
@@ -1585,6 +1624,9 @@ h4,
 @media (max-width: 1024px) { .menu-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) {
   .menu-grid { grid-template-columns: 1fr; gap: 12px; }
+  .menu-pdf-card { align-items: stretch; flex-direction: column; margin-top: -8px; }
+  .menu-pdf-actions { justify-content: flex-start; }
+  .menu-pdf-actions .btn { width: 100%; }
   .menu-tabs { gap: 6px; }
   .menu-tab { padding: 7px 14px; font-size: 0.78rem; }
   .menu-card { padding: 16px; }
