@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Tropical Gardens Hotel Kyenjojo | Rooms, Restaurant, Events & Secure Booking</title>
-  <meta name="description" content="Book Tropical Gardens Hotel Kyenjojo on Hoima Road, Uganda. Comfortable rooms, restaurant and bar, conference hall, gardens, events, secure online payments, and warm western Uganda hospitality." />
+  <meta name="description" content="Book Tropical Gardens Hotel Kyenjojo on Hoima Road, Uganda. Comfortable rooms, restaurant and bar, conference hall, gardens, events, secure Pesapal payments, and warm western Uganda hospitality." />
   <meta name="keywords" content="Tropical Gardens Hotel Kyenjojo, hotel in Kyenjojo, Kyenjojo accommodation, Hoima Road hotel, Uganda hotel, Kyenjojo restaurant, Kyenjojo conference hall, western Uganda hotel" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="msvalidate.01" content="B0C05530BB25666E37098895F4668BB4" />
@@ -73,7 +73,7 @@
         "hasMap": "https://maps.google.com/?q=Tropical+Gardens+Hotel+Kyenjojo",
         "areaServed": ["Kyenjojo", "Western Uganda", "Fort Portal route", "Hoima Road", "Uganda"],
         "priceRange": "UGX 80,000 - UGX 280,000",
-        "paymentAccepted": "Cash, MTN Mobile Money, Airtel Money, Visa, Mastercard",
+        "paymentAccepted": "Cash, Mobile Money, Card, Pesapal",
         "currenciesAccepted": "UGX",
         "checkinTime": "14:00",
         "checkoutTime": "10:00",
@@ -728,18 +728,18 @@
             <div class="form-group"><label>Special Requests</label><textarea name="notes" placeholder="Any special requests..." rows="3"></textarea></div>
             <div class="payment-box">
               <div class="payment-box-head">
-                <strong>Secure Online Payment</strong>
+                <strong>Secure Pesapal payment</strong>
                 <span>Mobile Money or card</span>
               </div>
-              <label class="payment-choice"><input type="radio" name="paymentMode" value="pay" checked /> Pay deposit now (MTN MoMo / Airtel / Card)</label>
-              <label class="payment-choice"><input type="radio" name="paymentMode" value="later" /> Reserve now, pay later at the hotel</label>
+              <label class="payment-choice"><input type="radio" name="paymentMode" value="pay" checked /> Pay booking deposit now</label>
+              <label class="payment-choice"><input type="radio" name="paymentMode" value="later" /> Reserve now, pay after hotel confirmation</label>
               <div class="form-group payment-amount">
                 <label>Deposit Amount (UGX)</label>
                 <input type="number" name="depositAmount" min="1000" step="1000" value="1000" />
               </div>
             </div>
             <button type="submit" class="btn btn-primary full-btn">Reserve & Continue</button>
-            <p class="form-note">Flutterwave checkout opens — pay by MTN MoMo, Airtel Money, Visa, or Mastercard.</p>
+            <p class="form-note">Secure Pesapal checkout opens after your reservation is saved.</p>
           </form>
         </div>
       </div>
@@ -1005,8 +1005,6 @@
   <div class="toast" id="toast"></div>
 
   
-  <!-- Flutterwave Payment SDK -->
-  <script src="https://checkout.flutterwave.com/v3.js"></script>
   <script src="app-config.js"></script>
   <script src="supabase-config.js"></script>
   <script src="script.js"></script>
