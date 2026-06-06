@@ -445,108 +445,83 @@ async function handleReservation(e) {
   const cout = document.getElementById('checkout')?.value
   const nights = cin && cout ? Math.round((new Date(cout) - new Date(cin)) / 86400000) : 0
   const data = new FormData(form)
-  const firstName = data.get('firstName') || ''
-  const lastName = data.get('lastName') || ''
-  const guestName = `${firstName} ${lastName}`.trim()
+  const guestName = `${data.get('firstName') || ''} ${data.get('lastName') || ''}`.trim()
   const guests = String(data.get('guests') || '1').replace(/\D/g, '') || '1'
+
   const paymentMode = data.get('paymentMode') || 'later'
-  const depositAmount = Math.max(50000, Number(data.get('depositAmount') || 50000))
-  const phone = (data.get('phone') || '').replace(/\D/g, '')
-  const email = data.get('email') || 'guest@tropicalgardens.ug'
-  const roomName = data.get('roomName') || 'Room'
-  const txRef = 'TGH-' + Date.now() + '-' + Math.random().toString(36).substring(2,7).toUpperCase()
-
+  const depositAmount = Number(data.get('depositAmount') || 1000)
   const reservationPayload = {
-    guestName, phone: data.get('phone'), email,
-    roomName, checkIn: cin, checkOut: cout,
-    guests: Number(guests), notes: data.get('notes') || ''
+    guestName,
+    phone: data.get('phone'),
+    email: data.get('email') || '',
+    roomName: data.get('roomName') || '',
+    checkIn: cin,
+    checkOut: cout,
+    guests: Number(guests),
+    notes: data.get('notes') || ''
   }
 
-  // Save reservation first
-  const saveReservation = async () => {
-    try {
-      await apiFetch('/api/reservations', { method: 'POST', body: JSON.stringify(reservationPayload) })
-    } catch (_) {
-      try {
-        await submitBookingToSupabase({
-          guest_name: guestName, first_name: firstName, last_name: lastName,
-          phone: data.get('phone') || '', email, room_name: roomName,
-          check_in: cin, check_out: cout, guests: Number(guests),
-          notes: data.get('notes') || '',
-          deposit_amount: paymentMode === 'pay' ? depositAmount : 0,
-          payment_status: paymentMode === 'pay' ? 'Pending' : 'Unpaid',
-          tx_ref: txRef
+  setButtonLoading(submit, true, paymentMode === 'pay' ? 'Opening Pesapal...' : 'Sending...')
+  try {
+    const reservationResult = await apiFetch('/api/reservations', {
+      method: 'POST',
+      body: JSON.stringify(reservationPayload)
+    })
+
+    if (paymentMode === 'pay') {
+      const checkout = await apiFetch('/api/payments/pesapal/checkout', {
+        method: 'POST',
+        body: JSON.stringify({
+          reservationId: reservationResult.reservation?.id,
+          amount: Math.max(1000, depositAmount || 1000),
+          currency: 'UGX',
+          description: 'Tropical Gardens Hotel booking deposit',
+          customer: {
+            firstName: data.get('firstName') || guestName || 'Guest',
+            lastName: data.get('lastName') || '',
+            phone: data.get('phone') || '',
+            email: data.get('email') || ''
+          }
         })
-      } catch (_2) { /* silent fallback */ }
+      })
+      if (checkout.redirectUrl) {
+        showToast('Redirecting to secure Pesapal checkout...')
+        window.location.href = checkout.redirectUrl
+        return
+      }
+      throw new Error('Pesapal checkout link was not returned')
     }
-  }
 
-  if (paymentMode !== 'pay') {
-    setButtonLoading(submit, true, 'Sending...')
-    await saveReservation()
-    setButtonLoading(submit, false)
     showToast(nights > 0
-      ? `Reservation received for ${nights} night${nights > 1 ? 's' : ''}. We will confirm within 24 hours.`
+      ? `Reservation received. ${nights} night${nights > 1 ? 's' : ''}. We'll confirm shortly.`
       : 'Reservation received. We will contact you within 24 hours.')
     form.reset()
-    return
-  }
-
-  // ---- FLUTTERWAVE LIVE PAYMENT ----
-  setButtonLoading(submit, true, 'Loading payment...')
-  await saveReservation()
-  setButtonLoading(submit, false)
-
-  // Load Flutterwave script if not already loaded
-  if (!window.FlutterwaveCheckout) {
-    await new Promise((resolve, reject) => {
-      const s = document.createElement('script')
-      s.src = 'https://checkout.flutterwave.com/v3.js'
-      s.onload = resolve
-      s.onerror = reject
-      document.head.appendChild(s)
-    })
-  }
-
-  FlutterwaveCheckout({
-    public_key: 'FLWPUBK_TEST-XXXX-X', // Replace with your Flutterwave public key from dashboard.flutterwave.com
-    tx_ref: txRef,
-    amount: depositAmount,
-    currency: 'UGX',
-    payment_options: 'mobilemoneyrwanda,mobilemoneyuganda,card,ussd',
-    customer: {
-      email: email,
-      phone_number: phone.startsWith('256') ? phone : '256' + phone.replace(/^0/, ''),
-      name: guestName || 'Guest'
-    },
-    customizations: {
-      title: 'Tropical Gardens Hotel',
-      description: `Booking deposit — ${roomName} (${nights} night${nights !== 1 ? 's' : ''})`,
-      logo: 'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg'
-    },
-    callback: function(response) {
-      if (response.status === 'successful' || response.status === 'completed') {
-        showToast('Payment successful! Booking confirmed. Reference: ' + response.transaction_id)
-        try {
-          submitBookingToSupabase({
-            guest_name: guestName, phone: data.get('phone') || '', email,
-            room_name: roomName, check_in: cin, check_out: cout,
-            guests: Number(guests), notes: data.get('notes') || '',
-            deposit_amount: depositAmount, payment_status: 'Paid',
-            tx_ref: txRef, flw_ref: response.flw_ref,
-            transaction_id: String(response.transaction_id)
-          })
-        } catch(_) {}
-        form.reset()
-        setTimeout(() => { window.location.href = 'payment-success.html' }, 2000)
-      } else {
-        showToast('Payment not completed. Your reservation is saved — reception will follow up.')
-      }
-    },
-    onclose: function() {
-      showToast('Payment window closed. Your reservation is saved — we will contact you.')
+  } catch (error) {
+    try {
+      await submitBookingToSupabase({
+        guest_name: guestName,
+        first_name: data.get('firstName') || '',
+        last_name: data.get('lastName') || '',
+        phone: data.get('phone') || '',
+        email: data.get('email') || '',
+        room_name: data.get('roomName') || '',
+        check_in: cin,
+        check_out: cout,
+        guests: Number(guests),
+        notes: data.get('notes') || '',
+        deposit_amount: paymentMode === 'pay' ? Math.max(1000, depositAmount || 1000) : 0,
+        payment_status: paymentMode === 'pay' ? 'Pending' : 'Unpaid'
+      })
+      showToast(paymentMode === 'pay'
+        ? 'Reservation saved. Online payment is temporarily unavailable; reception will contact you to complete payment.'
+        : 'Reservation saved. Reception will contact you to complete payment.')
+      form.reset()
+    } catch (supabaseError) {
+      showToast(`Could not send online. Please call or WhatsApp us: ${error.message}`)
     }
-  })
+  } finally {
+    setButtonLoading(submit, false)
+  }
 }
 
 // ---- CONTACT FORM ----
