@@ -28,8 +28,13 @@
   <meta name="geo.placename" content="Kyenjojo, Uganda" />
   <link rel="icon" href="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/cropped-WhatsApp-Image-2023-06-12-at-09.09.16-e1686554190814-32x32.jpeg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media=\'all\'" /><noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
   <link rel="stylesheet" href="style.css" />
+  <!-- Preload hero images for instant slide display -->
+  <link rel="preload" as="image" href="https://media.base44.com/images/public/6a314ab6377f233148a338ef/94c17eebf_0c9aa0be-ed9d-4e19-8559-b7ce48e4378d.jpg" fetchpriority="high" />
+  <link rel="preload" as="image" href="https://media.base44.com/images/public/6a314ab6377f233148a338ef/04f825c30_2e3642be-1da2-4ff5-91b2-ddd5676a6806.jpg" fetchpriority="high" />
+  <link rel="preload" as="image" href="https://media.base44.com/images/public/6a314ab6377f233148a338ef/7846cd111_48efcd97-fbc2-4dc0-a824-913bf212da9a.jpg" fetchpriority="high" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -130,6 +135,11 @@
       gtag('config', measurementId, { send_page_view: true });
     };
   </script>
+  <script>
+    // Eagerly connect to image CDN for hero background images
+    var l=document.createElement('link');l.rel='dns-prefetch';
+    l.href='https://media.base44.com';document.head.appendChild(l);
+  </script>
 </head>
 <body>
 
@@ -152,7 +162,7 @@
   <nav id="navbar">
     <div class="nav-container">
       <a href="#home" class="logo">
-        <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Tropical Gardens Hotel Logo" class="logo-img" />
+        <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Tropical Gardens Hotel Logo" class="logo-img" />
       </a>
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -177,7 +187,7 @@
   <!-- MOBILE HEADER (mobile only) -->
   <div class="mobile-header" id="mobile-header">
     <a href="#home" class="mobile-logo">
-      <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Tropical Gardens Hotel" />
+      <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Tropical Gardens Hotel" />
     </a>
     <div class="mobile-actions">
       <button class="theme-toggle theme-toggle-mobile" type="button" data-theme-toggle aria-label="Switch to dark theme"><span data-theme-icon>☾</span></button>
@@ -312,8 +322,8 @@
     <div class="container">
       <div class="about-grid">
         <div class="about-imgs">
-          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/1-1.jpg" alt="Tropical Gardens Hotel exterior" class="about-img-main" />
-          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-1.jpg" alt="Hotel entrance" class="about-img-secondary" />
+          <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/1-1.jpg" alt="Tropical Gardens Hotel exterior" class="about-img-main" />
+          <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-1.jpg" alt="Hotel entrance" class="about-img-secondary" />
           <div class="about-badge">
             <span class="badge-icon">🌿</span>
             <span class="badge-label">Where Affordability<br/>Meets A Class</span>
@@ -354,7 +364,7 @@
       </div>
       <div class="services-grid">
         <div class="service-card">
-          <div class="service-img"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery1.jpg" alt="Conference Hall" /></div>
+          <div class="service-img"><img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery1.jpg" alt="Conference Hall" /></div>
           <div class="service-body">
             <div class="service-icon">🤝</div>
             <h3>Conference Hall</h3>
@@ -364,7 +374,7 @@
         </div>
         <div class="service-card featured">
           <div class="service-featured-tag">Most Booked</div>
-          <div class="service-img"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-min.jpg" alt="Accommodation" /></div>
+          <div class="service-img"><img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-min.jpg" alt="Accommodation" /></div>
           <div class="service-body">
             <div class="service-icon">🏨</div>
             <h3>Accommodation</h3>
@@ -373,7 +383,7 @@
           </div>
         </div>
         <div class="service-card">
-          <div class="service-img"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/13.jpg" alt="Restaurant" /></div>
+          <div class="service-img"><img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/13.jpg" alt="Restaurant" /></div>
           <div class="service-body">
             <div class="service-icon">🍽️</div>
             <h3>Restaurant</h3>
@@ -382,7 +392,7 @@
           </div>
         </div>
         <div class="service-card">
-          <div class="service-img"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-1.jpg" alt="Gardens & Play" /></div>
+          <div class="service-img"><img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-1.jpg" alt="Gardens & Play" /></div>
           <div class="service-body">
             <div class="service-icon">🌿</div>
             <h3>Gardens &amp; Play</h3>
@@ -391,7 +401,7 @@
           </div>
         </div>
         <div class="service-card">
-          <div class="service-img"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/12.jpg" alt="Bar" /></div>
+          <div class="service-img"><img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/12.jpg" alt="Bar" /></div>
           <div class="service-body">
             <div class="service-icon">🍹</div>
             <h3>Bar</h3>
@@ -400,7 +410,7 @@
           </div>
         </div>
         <div class="service-card">
-          <div class="service-img"><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-1.jpg" alt="Events & Weddings" /></div>
+          <div class="service-img"><img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-1.jpg" alt="Events & Weddings" /></div>
           <div class="service-body">
             <div class="service-icon">💍</div>
             <h3>Events &amp; Weddings</h3>
@@ -427,8 +437,8 @@
           </div>
         </div>
         <div class="experience-media">
-          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-1.jpg" alt="Serene gardens at Tropical Gardens Hotel" />
-          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/13.jpg" alt="Restaurant dining at Tropical Gardens Hotel" />
+          <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-1.jpg" alt="Serene gardens at Tropical Gardens Hotel" />
+          <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/13.jpg" alt="Restaurant dining at Tropical Gardens Hotel" />
         </div>
       </div>
     </div>
@@ -480,7 +490,7 @@
       <div class="rooms-grid">
         <div class="room-card">
           <div class="room-img">
-            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/4-min.jpg" alt="Standard Room" />
+            <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/4-min.jpg" alt="Standard Room" />
             <div class="room-badge">Standard Room</div>
           </div>
           <div class="room-body">
@@ -496,7 +506,7 @@
         <div class="room-card featured">
           <div class="room-featured-tag">Popular Choice</div>
           <div class="room-img">
-            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3.jpg" alt="Deluxe Room" />
+            <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3.jpg" alt="Deluxe Room" />
             <div class="room-badge">Deluxe Room</div>
           </div>
           <div class="room-body">
@@ -511,7 +521,7 @@
         </div>
         <div class="room-card">
           <div class="room-img">
-            <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/11.jpg" alt="Family Suite" />
+            <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/11.jpg" alt="Family Suite" />
             <div class="room-badge">Family Suite</div>
           </div>
           <div class="room-body">
@@ -538,7 +548,7 @@
       </div>
       <div class="signature-grid">
         <article class="signature-card signature-featured">
-          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg" alt="Romantic garden dining" />
+          <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg" alt="Romantic garden dining" />
           <div>
             <span>Couples</span>
             <h3>Garden Escape</h3>
@@ -547,7 +557,7 @@
           </div>
         </article>
         <article class="signature-card">
-          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery1.jpg" alt="Conference setup" />
+          <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery1.jpg" alt="Conference setup" />
           <div>
             <span>Business</span>
             <h3>Conference Ready</h3>
@@ -556,7 +566,7 @@
           </div>
         </article>
         <article class="signature-card">
-          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/11.jpg" alt="Family suite" />
+          <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/11.jpg" alt="Family suite" />
           <div>
             <span>Families</span>
             <h3>Family Weekend</h3>
@@ -652,15 +662,15 @@
         <button class="filter-btn" data-filter="interior">Interior</button>
       </div>
       <div class="gallery-grid" id="gallery-grid">
-        <div class="gallery-item" data-category="exterior"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/101c04fe5_generated_image.png" alt="Hotel Corridor" /></div>
-        <div class="gallery-item" data-category="rooms"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/084adbf8f_generated_image.png" alt="Hotel Bedroom" /></div>
-        <div class="gallery-item" data-category="exterior"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/0e738eaa4_generated_image.png" alt="Hotel Signboard" /></div>
-        <div class="gallery-item" data-category="interior"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/f1e836870_generated_image.png" alt="Reception Front View" /></div>
-        <div class="gallery-item" data-category="exterior"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/d50336af5_generated_image.png" alt="Main Building Exterior" /></div>
-        <div class="gallery-item" data-category="interior"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/431d05037_generated_image.png" alt="Hotel Hallway" /></div>
-        <div class="gallery-item" data-category="interior"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/0eeaddd4c_generated_image.png" alt="Hotel Hallway Night" /></div>
-        <div class="gallery-item" data-category="interior"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/bef36010f_generated_image.png" alt="Reception Side View" /></div>
-        <div class="gallery-item" data-category="interior"><img src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/22ec71b80_generated_image.png" alt="Corridor Ambience" /></div>
+        <div class="gallery-item" data-category="exterior"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/101c04fe5_generated_image.png" alt="Hotel Corridor" /></div>
+        <div class="gallery-item" data-category="rooms"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/084adbf8f_generated_image.png" alt="Hotel Bedroom" /></div>
+        <div class="gallery-item" data-category="exterior"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/0e738eaa4_generated_image.png" alt="Hotel Signboard" /></div>
+        <div class="gallery-item" data-category="interior"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/f1e836870_generated_image.png" alt="Reception Front View" /></div>
+        <div class="gallery-item" data-category="exterior"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/d50336af5_generated_image.png" alt="Main Building Exterior" /></div>
+        <div class="gallery-item" data-category="interior"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/431d05037_generated_image.png" alt="Hotel Hallway" /></div>
+        <div class="gallery-item" data-category="interior"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/0eeaddd4c_generated_image.png" alt="Hotel Hallway Night" /></div>
+        <div class="gallery-item" data-category="interior"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/bef36010f_generated_image.png" alt="Reception Side View" /></div>
+        <div class="gallery-item" data-category="interior"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/22ec71b80_generated_image.png" alt="Corridor Ambience" /></div>
       </div>
       </div>
   </section>
@@ -866,7 +876,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Tropical Gardens Hotel" class="footer-logo-img" />
+          <img loading="lazy" decoding="async" src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Tropical Gardens Hotel" class="footer-logo-img" />
           <p>At Tropical Gardens Hotel, we pride ourselves on being a serene oasis nestled in the heart of Kyenjojo. Warm hospitality, exceptional service, unforgettable experiences.</p>
           <div class="footer-social">
             <a href="#">f</a><a href="#">t</a><a href="#">ig</a><a href="#">yt</a>
@@ -997,9 +1007,9 @@
   <div class="toast" id="toast"></div>
 
   
-  <script src="app-config.js"></script>
-  <script src="supabase-config.js"></script>
-  <script src="script.js"></script>
+  <script src="app-config.js" defer></script>
+  <script src="supabase-config.js" defer></script>
+  <script src="script.js" defer></script>
   <script>
     window.loadHotelAnalytics(window.TGH_GA_MEASUREMENT_ID);
   </script>
