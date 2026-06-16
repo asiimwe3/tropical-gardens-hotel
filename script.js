@@ -207,10 +207,31 @@ let currentSlide = 0
 const slides = document.querySelectorAll('.hero-slide')
 const dotsContainer = document.getElementById('slide-dots')
 let autoplayInterval
+const SLIDE_DURATION = 6000 // ms per slide
+
+// Inject progress bar into hero
+const heroEl2 = document.querySelector('.hero')
+let progressBar = null
+if (heroEl2) {
+  progressBar = document.createElement('div')
+  progressBar.className = 'hero-progress'
+  heroEl2.appendChild(progressBar)
+}
+
+function startProgress() {
+  if (!progressBar) return
+  progressBar.style.transition = 'none'
+  progressBar.style.width = '0%'
+  // Force reflow so transition resets
+  void progressBar.offsetWidth
+  progressBar.style.transition = `width ${SLIDE_DURATION}ms linear`
+  progressBar.style.width = '100%'
+}
 
 slides.forEach((_, i) => {
   const dot = document.createElement('button')
   dot.className = 'slide-dot' + (i === 0 ? ' active' : '')
+  dot.setAttribute('aria-label', 'Go to slide ' + (i + 1))
   dot.addEventListener('click', () => { goToSlide(i); resetAutoplay() })
   dotsContainer.appendChild(dot)
 })
@@ -221,6 +242,7 @@ function goToSlide(n) {
   currentSlide = (n + slides.length) % slides.length
   slides[currentSlide].classList.add('active')
   dotsContainer.children[currentSlide].classList.add('active')
+  startProgress()
 }
 
 function changeSlide(dir) {
@@ -230,10 +252,21 @@ function changeSlide(dir) {
 
 function resetAutoplay() {
   clearInterval(autoplayInterval)
-  autoplayInterval = setInterval(() => goToSlide(currentSlide + 1), 5000)
+  startProgress()
+  autoplayInterval = setInterval(() => goToSlide(currentSlide + 1), SLIDE_DURATION)
 }
 
-autoplayInterval = setInterval(() => goToSlide(currentSlide + 1), 5000)
+// Pause on hover for desktop
+if (heroEl2) {
+  heroEl2.addEventListener('mouseenter', () => {
+    clearInterval(autoplayInterval)
+    if (progressBar) progressBar.style.animationPlayState = 'paused'
+  })
+  heroEl2.addEventListener('mouseleave', () => resetAutoplay())
+}
+
+startProgress()
+autoplayInterval = setInterval(() => goToSlide(currentSlide + 1), SLIDE_DURATION)
 
 // Touch swipe support for hero slider
 let touchStartX = 0
