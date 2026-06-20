@@ -948,11 +948,12 @@ function updateRoomsDisplay(rooms) {
     const imgs = roomImages(room, idx);
     const isAvailable = room.isAvailable ?? room.is_available ?? true;
     const multiImg = imgs.length > 1;
+    const fallback = roomFallbackImage(room, idx);
     const slidesHtml = imgs.map((src, i) => `
       <div class="rg-slide ${i === 0 ? 'active' : ''}" data-slide="${i}">
         <img src="${src}" alt="${room.name} photo ${i+1}" loading="lazy"
              style="width:100%;height:220px;object-fit:cover;display:block;"
-             onerror="this.src='${roomFallbackImage(room, idx)}'"/>
+             onerror="this.src='${fallback}'"/>
       </div>`).join('');
     const dotsHtml = multiImg ? `<div class="rg-dots">${imgs.map((_,i) => `<span class="rg-dot ${i===0?'active':''}" data-dot="${i}"></span>`).join('')}</div>` : '';
     const arrowsHtml = multiImg ? `
