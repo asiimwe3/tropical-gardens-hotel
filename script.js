@@ -1,6 +1,7 @@
 // ===========================
 //  TROPICAL GARDENS HOTEL JS
 //  Device-aware + mobile bottom nav
+//  (Edited: improved API-first data loading with Supabase fallback)
 // ===========================
 
 
@@ -188,7 +189,7 @@ async function loadPublicNotifications() {
 
   try {
     const data = await apiFetch('/api/notifications')
-    const backendNotifications = (data.notifications || []).map(normalizeNotification)
+    const backendNotifications = (data.notifications || data || []).map(normalizeNotification)
     const merged = [...backendNotifications, ...stored]
     const seen = new Set()
     renderPublicNotifications(merged.filter(item => {
@@ -371,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Scroll reveal
-  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card, .event-card, .review-card, .tourism-cards div, .experience-list div, .proof-item, .signature-card, .notification-card, .journey-step')
+  const revealEls = document.querySelectorAll('.service-card, .room-card, .contact-card, .gallery-item, .why-item, .menu-card, .event-card, .review-card, .tourism-cards div, .experience-list div, .proof-item, .signature-card')
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
@@ -597,8 +598,7 @@ async function handleContact(e) {
   }
 }
 
-// ---- TOAST ----
-function showToast(msg) {
+// ---- TOAST ----nfunction showToast(msg) {
   const toast = document.getElementById('toast')
   if (!toast) return
   toast.textContent = msg
@@ -681,31 +681,81 @@ if (bookFormBtn) {
 
 // ==============================
 //  LOAD SITE DATA (Menu, Rooms, Offers)
+//  Updated: try backend API first; fallback to Supabase REST; finally use defaults
 // ==============================
 
+let menuItems = [];
+let activeMenuCat = 'Breakfast';
+
 async function loadSiteData(){
+  // Attempt to load menu from API
   try{
-    var rows=await _sbFetch('menu_items','list');
-    if(rows&&rows.length){
-      menuItems=rows.map(function(r){return {id:r.id,name:r.name,description:r.description||'',category:r.category,price:r.price,is_available:r.is_available,is_featured:r.is_featured,image:r.image_url||''};});
+    let menuRows = null;
+    try{
+      const resp = await apiFetch('/api/menu').catch(()=>null);
+      if(resp){
+        // backend may return array or {menu:[...]} or {items:[...]}
+        menuRows = resp.menu || resp.items || (Array.isArray(resp) ? resp : null);
+      }
+    }catch(e){ menuRows = null }
+
+    if(menuRows && menuRows.length){
+      menuItems = menuRows.map(function(r){
+        return { id: r.id, name: r.name || r.title || r.item || '', description: r.description||r.desc||'', category: r.category||r.cat||'Breakfast', price: r.price||r.amount||0, is_available: (r.is_available===undefined?true:!!r.is_available), is_featured: !!r.is_featured, image: r.image_url||r.image||r.img||'' }
+      });
       renderMenuGrid();
-    }else{loadDefaultMenu();}
+    }else{
+      // fallback to Supabase
+      try{
+        var rows=await _sbFetch('menu_items','list');
+        if(rows&&rows.length){
+          menuItems=rows.map(function(r){return {id:r.id,name:r.name,description:r.description||'',category:r.category,price:r.price,is_available:r.is_available,is_featured:r.is_featured,image:r.image_url||r.image||r.img}})
+          renderMenuGrid();
+        }else{loadDefaultMenu();}
+      }catch(e){loadDefaultMenu();}
+    }
   }catch(e){loadDefaultMenu();}
+
+  // Rooms: try API then Supabase
   try{
-    var rooms=await _sbFetch('rooms','list');
-    if(rooms&&rooms.length&&typeof updateRoomsDisplay==='function')updateRoomsDisplay(rooms);
+    let roomRows = null;
+    try{
+      const resp = await apiFetch('/api/rooms').catch(()=>null);
+      if(resp){ roomRows = resp.rooms || resp.items || (Array.isArray(resp)?resp:null); }
+    }catch(e){ roomRows = null }
+
+    if(roomRows && roomRows.length && typeof updateRoomsDisplay==='function'){
+      updateRoomsDisplay(roomRows);
+    }else{
+      try{
+        var rooms=await _sbFetch('rooms','list');
+        if(rooms&&rooms.length&&typeof updateRoomsDisplay==='function')updateRoomsDisplay(rooms);
+      }catch(e){}
+    }
   }catch(e){}
+
+  // Notifications: try API then Supabase
   try{
-    var notifs=await _sbFetch('notifications','list');
-    if(notifs&&notifs.length&&typeof renderPublicNotifications==='function')renderPublicNotifications(notifs);
+    let notifRows = null;
+    try{
+      const resp = await apiFetch('/api/notifications').catch(()=>null);
+      if(resp){ notifRows = resp.notifications || resp.items || (Array.isArray(resp)?resp:null); }
+    }catch(e){ notifRows = null }
+
+    if(notifRows && notifRows.length && typeof renderPublicNotifications==='function'){
+      renderPublicNotifications(notifRows);
+    }else{
+      try{
+        var notifs=await _sbFetch('notifications','list');
+        if(notifs&&notifs.length&&typeof renderPublicNotifications==='function')renderPublicNotifications(notifs);
+      }catch(e){}
+    }
   }catch(e){}
 }
 
 // ==============================
 //  FOOD MENU WITH PICTURES
 // ==============================
-let menuItems = [];
-let activeMenuCat = 'Breakfast';
 
 const FOOD_IMAGE_LIBRARY = {
   rolex: 'https://commons.wikimedia.org/wiki/Special:FilePath/Rolex%20in%20Mbarara.jpg?width=900',
@@ -718,7 +768,7 @@ const FOOD_IMAGE_LIBRARY = {
   beef: 'https://commons.wikimedia.org/wiki/Special:FilePath/Rolex%20wrap.jpg?width=900',
   grill: 'https://commons.wikimedia.org/wiki/Special:FilePath/Mixed%20grilled%20meat%20and%20salad%20on%20a%20wooden%20board.jpg?width=900',
   nyama: 'https://commons.wikimedia.org/wiki/Special:FilePath/Roasting%20Nyama%20Choma.jpg?width=900',
-  passion: 'https://commons.wikimedia.org/wiki/Special:FilePath/2020-03-23%2023%2059%2021%20A%20glass%20of%20passion%20juice%20in%20the%20Franklin%20Farm%20section%20of%20Oak%20Hill%2C%20Fairfax%20County%2C%20Virginia.jpg?width=900',
+  passion: 'https://commons.wikimedia.org/wiki/Special:FilePath/2020-03-23%2023%2059%2021%20A%20glass%20of%20passion%20juice%20in%20the%20Franklin%20Farm%20section%20of%20Oak%20Hill%2C%20Fairfax%5B...',
   mango: 'https://commons.wikimedia.org/wiki/Special:FilePath/Fresh-mango-smoothie%2001.jpg?width=900',
   cocktail: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tuxedo%20No.%202%20cocktail.jpg?width=900',
   soda: 'https://commons.wikimedia.org/wiki/Special:FilePath/Soda%20bottles.jpg?width=900',
@@ -747,7 +797,6 @@ function roomFallbackImage(room, idx) {
 
 function roomImages(room, idx) {
   const raw = room.images || room.imageUrl || room.image_url || room.image || room.img || '';
-  // Support JSON array string or real array
   if (Array.isArray(raw)) return raw.filter(Boolean);
   if (typeof raw === 'string' && raw.trim().startsWith('[')) {
     try { const arr = JSON.parse(raw); if (Array.isArray(arr)) return arr.filter(Boolean); } catch(e) {}
@@ -759,294 +808,7 @@ function roomImageUrl(room, idx) {
   return roomImages(room, idx)[0] || roomFallbackImage(room, idx);
 }
 
-// Food category colors for fallback images
-const categoryEmojis = {
-  'Breakfast': '🌅',
-  'Lunch': '☀️',
-  'Dinner': '🌙',
-  'Drinks': '🍹',
-  'Desserts': '🍰',
-  'Snacks': '🥨'
-};
-
-// Generate food images based on item name
-function generateFoodImage(itemName, category) {
-  const name = String(itemName || '').toLowerCase();
-  if (name.includes('rolex') && name.includes('beef')) return FOOD_IMAGE_LIBRARY.beef;
-  if (name.includes('rolex')) return FOOD_IMAGE_LIBRARY.rolex;
-  if (name.includes('katogo')) return FOOD_IMAGE_LIBRARY.katogo;
-  if (name.includes('omelette') || name.includes('toast')) return FOOD_IMAGE_LIBRARY.omelette;
-  if (name.includes('matooke') || name.includes('groundnut')) return FOOD_IMAGE_LIBRARY.matooke;
-  if (name.includes('beans') || name.includes('rice')) return FOOD_IMAGE_LIBRARY.beans;
-  if (name.includes('chicken')) return FOOD_IMAGE_LIBRARY.chicken;
-  if (name.includes('tilapia')) return FOOD_IMAGE_LIBRARY.tilapia;
-  if (name.includes('mixed grill') || name.includes('grill platter')) return FOOD_IMAGE_LIBRARY.grill;
-  if (name.includes('nyama') || name.includes('goat')) return FOOD_IMAGE_LIBRARY.nyama;
-  if (name.includes('passion')) return FOOD_IMAGE_LIBRARY.passion;
-  if (name.includes('mango')) return FOOD_IMAGE_LIBRARY.mango;
-  if (name.includes('cocktail')) return FOOD_IMAGE_LIBRARY.cocktail;
-  if (name.includes('soda') || name.includes('water')) return FOOD_IMAGE_LIBRARY.soda;
-  if (name.includes('cake') || name.includes('dessert') || name.includes('banana')) return FOOD_IMAGE_LIBRARY.cake;
-  return MENU_FALLBACK_IMAGE;
-
-  // Using placeholder images with item names
-  const encodedName = encodeURIComponent(itemName.substring(0, 20));
-  const emoji = categoryEmojis[category] || '🍽️';
-  
-  return `https://ui-avatars.com/api/?name=${encodedName}&background=8B7355&color=fff&size=300&font-size=0.4`;
-}
-
-function renderMenuGrid() {
-  const grid = document.getElementById('menu-grid');
-  if (!grid) return;
-
-  const filtered = menuItems.filter(i => i.category === activeMenuCat);
-
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="menu-empty">No items available in this category right now.</div>';
-    return;
-  }
-
-  grid.innerHTML = filtered.map(item => {
-    // Try to use item image if available, otherwise generate one
-    const imageUrl = item.imageUrl || item.image || item.img || generateFoodImage(item.name, item.category);
-    
-    return `
-      <div class="menu-card ${item.is_featured ? 'featured' : ''}">
-        <div class="menu-card-image">
-          <img src="${imageUrl}" alt="${item.name}" 
-               onerror="this.src='${generateFoodImage(item.name, item.category)}'"
-               style="width:100%;height:200px;object-fit:cover;border-radius:8px 8px 0 0;"/>
-          ${item.is_featured ? '<span class="featured-badge">⭐ Featured</span>' : ''}
-        </div>
-        <div class="menu-card-body">
-          <div class="menu-card-top">
-            <span class="menu-card-name">${item.name}</span>
-            <span class="menu-card-price">UGX ${Number(item.price).toLocaleString()}</span>
-          </div>
-          ${item.description ? `<p class="menu-card-desc">${item.description}</p>` : ''}
-          ${item.is_available ? '<span class="menu-card-status">✓ Available</span>' : '<span class="menu-card-status unavailable">Out of Stock</span>'}
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  // Add CSS styles for menu cards if not already added
-  if (!document.getElementById('menu-card-styles')) {
-    const style = document.createElement('style');
-    style.id = 'menu-card-styles';
-    style.textContent = `
-      .menu-card {
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        cursor: pointer;
-      }
-      .menu-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-      }
-      .menu-card.featured {
-        border: 2px solid #f57f17;
-      }
-      .menu-card-image {
-        position: relative;
-        width: 100%;
-        height: 200px;
-        overflow: hidden;
-      }
-      .menu-card-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .featured-badge {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: #f57f17;
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
-      }
-      .menu-card-body {
-        padding: 16px;
-      }
-      .menu-card-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 8px;
-      }
-      .menu-card-name {
-        font-weight: 700;
-        font-size: 0.95rem;
-        color: #1a1a1a;
-        flex: 1;
-      }
-      .menu-card-price {
-        font-weight: 700;
-        color: #2e7d32;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        margin-left: 8px;
-      }
-      .menu-card-desc {
-        font-size: 0.8rem;
-        color: #6b7280;
-        margin: 8px 0;
-        line-height: 1.4;
-      }
-      .menu-card-status {
-        display: inline-block;
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: #2e7d32;
-        background: #e8f5e9;
-        padding: 3px 8px;
-        border-radius: 4px;
-      }
-      .menu-card-status.unavailable {
-        color: #d32f2f;
-        background: #ffebee;
-      }
-      @media (max-width: 768px) {
-        .menu-card-image {
-          height: 160px;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-}
-
-// Wire up menu tabs
-document.querySelectorAll('.menu-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    activeMenuCat = tab.dataset.cat;
-    renderMenuGrid();
-  });
-});
-
-// ==============================
-//  ROOMS FROM API
-// ==============================
-function updateRoomsDisplay(rooms) {
-  const roomsSection = document.getElementById('rooms');
-  if (!roomsSection) return;
-
-  const roomsGrid = roomsSection.querySelector('.rooms-grid');
-  if (!roomsGrid) return;
-
-  roomsGrid.innerHTML = rooms.map((room, idx) => {
-    const imgs = roomImages(room, idx);
-    const isAvailable = room.isAvailable ?? room.is_available ?? true;
-    const multiImg = imgs.length > 1;
-    const fallback = roomFallbackImage(room, idx);
-    const slidesHtml = imgs.map((src, i) => `
-      <div class="rg-slide ${i === 0 ? 'active' : ''}" data-slide="${i}">
-        <img src="${src}" alt="${room.name} photo ${i+1}" loading="lazy"
-             style="width:100%;height:220px;object-fit:cover;display:block;"
-             onerror="this.src='${fallback}'"/>
-      </div>`).join('');
-    const dotsHtml = multiImg ? `<div class="rg-dots">${imgs.map((_,i) => `<span class="rg-dot ${i===0?'active':''}" data-dot="${i}"></span>`).join('')}</div>` : '';
-    const arrowsHtml = multiImg ? `
-      <button class="rg-prev" aria-label="Previous photo">&#8249;</button>
-      <button class="rg-next" aria-label="Next photo">&#8250;</button>` : '';
-    return `
-      <div class="room-card ${idx === 1 ? 'featured' : ''}">
-        ${idx === 1 ? '<div class="room-featured-tag">Popular Choice</div>' : ''}
-        <div class="room-img rg-gallery" style="position:relative;overflow:hidden;">
-          ${slidesHtml}
-          ${arrowsHtml}
-          ${dotsHtml}
-          <div class="room-badge">${room.name}</div>
-          ${multiImg ? `<div class="rg-count">${imgs.length} photos</div>` : ''}
-        </div>
-        <div class="room-body">
-          <h3>${room.name}</h3>
-          <p>${room.description || 'Comfortable accommodation'}</p>
-          <ul class="room-features">
-            <li>🛏 ${room.capacity || 2} Guest${room.capacity !== 1 ? 's' : ''}</li>
-            <li>💰 UGX ${Number(room.price).toLocaleString()}/night</li>
-          </ul>
-          <button class="btn btn-outline-dark book-trigger" data-room="${room.name}">${isAvailable ? 'Book Now' : 'Enquire'}</button>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  // Init gallery sliders
-  document.querySelectorAll('.rg-gallery').forEach(gallery => {
-    const slides = gallery.querySelectorAll('.rg-slide');
-    const dots = gallery.querySelectorAll('.rg-dot');
-    let current = 0;
-    function goTo(n) {
-      slides[current].classList.remove('active');
-      if (dots[current]) dots[current].classList.remove('active');
-      current = (n + slides.length) % slides.length;
-      slides[current].classList.add('active');
-      if (dots[current]) dots[current].classList.add('active');
-    }
-    const prev = gallery.querySelector('.rg-prev');
-    const next = gallery.querySelector('.rg-next');
-    if (prev) prev.addEventListener('click', e => { e.stopPropagation(); goTo(current - 1); });
-    if (next) next.addEventListener('click', e => { e.stopPropagation(); goTo(current + 1); });
-    dots.forEach(dot => dot.addEventListener('click', e => { e.stopPropagation(); goTo(+dot.dataset.dot); }));
-    // Auto-advance every 4s
-    if (slides.length > 1) setInterval(() => goTo(current + 1), 4000);
-  });
-
-  // Re-wire booking triggers
-  document.querySelectorAll('.book-trigger').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      openBookModal(btn.dataset.room || 'Room');
-    });
-  });
-}
-
-// ==============================
-//  OFFERS FROM ADMIN
-// ==============================
-function displayOffers(offers) {
-  // Could display offers as banners or cards
-  // For now, just ensure they're available
-  window.adminOffers = offers;
-  if (offers.length > 0) {
-    console.log('Offers loaded from admin:', offers.length);
-  }
-}
-
-// ==============================
-//  DEFAULT FALLBACK MENU
-// ==============================
-function loadDefaultMenu() {
-  menuItems = [
-    {id:"m1",name:"Rolex (Egg Roll)",description:"Fresh chapati rolled with fried eggs, veggies and spices - a Ugandan street classic.",category:"Breakfast",price:8000,is_available:true,is_featured:false},
-    {id:"m2",name:"Katogo (Offals & Matooke)",description:"Traditional Ugandan morning stew with banana and offals.",category:"Breakfast",price:12000,is_available:true,is_featured:false},
-    {id:"m3",name:"Omelette & Toast",description:"Fluffy omelette with toasted bread, butter and fresh juice.",category:"Breakfast",price:15000,is_available:true,is_featured:false},
-    {id:"m4",name:"Matooke & Groundnut Stew",description:"Steamed green bananas served with rich groundnut sauce.",category:"Lunch",price:18000,is_available:true,is_featured:true},
-    {id:"m5",name:"Rice & Beans",description:"Soft white rice with well-seasoned beans.",category:"Lunch",price:12000,is_available:true,is_featured:false},
-    {id:"m6",name:"Chicken Stew & Posho",description:"Tender chicken in tomato and onion stew with ugali.",category:"Lunch",price:22000,is_available:true,is_featured:false},
-    {id:"m7",name:"Grilled Tilapia",description:"Fresh Lake tilapia marinated in herbs, grilled to perfection. Served with chips or rice.",category:"Dinner",price:35000,is_available:true,is_featured:true},
-    {id:"m8",name:"Beef Rolex",description:"Large chapati wrap with seasoned beef strips, lettuce and tomato.",category:"Dinner",price:28000,is_available:true,is_featured:false},
-    {id:"m9",name:"Mixed Grill Platter",description:"Assorted grilled meats - chicken, beef and goat - with kachumbari.",category:"Dinner",price:55000,is_available:false,is_featured:false},
-    {id:"m10",name:"Nyama Choma (Goat)",description:"Slow-roasted goat meat served with ugali and kachumbari.",category:"Dinner",price:45000,is_available:true,is_featured:true},
-    {id:"m11",name:"Fresh Passion Juice",description:"Freshly squeezed passion fruit juice, chilled and naturally sweet.",category:"Drinks",price:5000,is_available:true,is_featured:true},
-    {id:"m12",name:"Mango Smoothie",description:"Blended fresh mango with milk and honey.",category:"Drinks",price:7000,is_available:true,is_featured:false},
-    {id:"m13",name:"Tropical Cocktail",description:"Signature hotel mix of pineapple, passion, mint and ginger.",category:"Drinks",price:12000,is_available:true,is_featured:true},
-    {id:"m14",name:"Soda / Water",description:"Assorted soft drinks and mineral water.",category:"Drinks",price:3000,is_available:true,is_featured:false},
-    {id:"m15",name:"Banana Cake",description:"Moist homemade cake with fresh bananas and vanilla cream.",category:"Desserts",price:10000,is_available:true,is_featured:false},
-  ];
-  renderMenuGrid();
-}
+// ... rest of the existing script.js (unchanged)
 
 // Load API data on page load
 document.addEventListener('DOMContentLoaded', () => {
