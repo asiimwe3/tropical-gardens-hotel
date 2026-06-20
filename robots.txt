@@ -1,9 +1,10 @@
+# robots.txt
 User-agent: *
+Disallow: /admin.html
+Disallow: /backend/
+Disallow: /admin/
+
+# Allow everything else
 Allow: /
 
 Sitemap: https://tropicalgardenshotelkyenjojo.com/sitemap.xml
-Sitemap: https://tropicalgardenshotelkyenjojo.com/sitemap-pages.xml
-Sitemap: https://tropicalgardenshotelkyenjojo.com/sitemap-sections.xml
-Sitemap: https://tropicalgardenshotelkyenjojo.com/sitemap-legal.xml
-Sitemap: https://tropicalgardenshotelkyenjojo.com/sitemap-images.xml
-Sitemap: https://tropicalgardenshotelkyenjojo.com/sitemap-discovery.xml

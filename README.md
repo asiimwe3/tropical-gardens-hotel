@@ -2,32 +2,31 @@
 
 Official website for Tropical Gardens Hotel, a premium garden hotel in Kyenjojo, Uganda.
 
-The site is designed to feel calm, polished, and booking-first. It presents the hotel through real photography, rooms and suites, restaurant dining, conferences and events, signature stay packages, gallery filters, WhatsApp booking, contact forms, and backend-ready reservation/payment flows.
+(Updated security & deployment notes)
 
-## Key Features
+## Quick security & admin checklist (added)
 
-- Premium hero experience with direct booking, WhatsApp, rooms, and trust actions.
-- Fast booking panel with check-in, check-out, guests, and room selection.
-- Sticky action bar for calls, WhatsApp concierge, reservations, and directions.
-- Hotel facilities, events, tourism gateway, rooms, signature packages, menu, gallery, contact, and guest journey sections.
-- Public notifications section that shows website notices sent from the admin dashboard.
-- Responsive mobile layout with bottom navigation and quick booking access.
-- Dark mode support.
-- Backend-ready forms for reservations and contact messages.
-- Pesapal-ready payment flow for future Mobile Money and card deposits.
+1. Protect the admin dashboard
+   - Remove or unlink `admin.html` from public navigation. Consider serving admin from a protected subdomain or behind authentication.
+   - Add `meta name="robots" content="noindex,nofollow"` to any admin HTML to request search engines not to index it.
+   - For production, enable authentication on admin routes and don't host admin pages on the same public domain without auth.
 
-## Main Files
+2. Configure your API base URL
+   - Set `window.TGH_API_BASE` to your deployed backend before loading the frontend. The repository `app-config.js` now defaults to:
+     `https://tropical-gardens-hotel-api.onrender.com`
+   - To override at deploy time, inject a small script or replace `app-config.js` during your build/deploy step.
 
-- `index.html` - public hotel website.
-- `style.css` - responsive premium visual design.
-- `script.js` - interactions, booking modal, forms, gallery filtering, menu rendering, and API integration.
-- `admin.html` - admin interface.
-- `backend/` - API, authentication, reservations, rooms, menu, offers, notifications, messages, and payments.
-- `supabase/create_all_tables.sql` - one-click Supabase SQL setup for all hotel tables, RLS policies, indexes, triggers, and starter rows.
-- `supabase-config.js` - public Supabase URL and publishable key used by the website.
-- `vercel.json` - Vercel hosting security headers and CORS policy.
-- `DEPLOYMENT.md` - Supabase, Vercel, domain, and backend deployment notes.
+3. Pesapal & payment keys
+   - Keep Pesapal keys and any payment secrets in backend environment variables (Render/Heroku/Render/Netlify env) and never commit them.
+   - Configure `PESAPAL_*` variables securely where the backend will read them.
 
-## Brand Direction
+4. Supabase keys
+   - The frontend uses an anon Supabase key (publishable). This is acceptable for client reads/writes controlled by RLS.
+   - Never commit service-role keys. If you find any, rotate immediately.
 
-Tropical Gardens Hotel should feel like a peaceful boutique escape: nature-focused, warm, clear, trustworthy, and easy to book.
+5. Scan for secrets
+   - Use tools like `git-secrets`, `truffleHog`, or the provided `scripts/scan-secrets.sh` to find accidental commits of secrets.
+
+---
+
+See `DEPLOYMENT.md` and `backend/README.md` for backend deployment and Pesapal instructions.
