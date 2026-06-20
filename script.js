@@ -745,9 +745,18 @@ function roomFallbackImage(room, idx) {
   return ROOM_FALLBACK_IMAGES[idx % ROOM_FALLBACK_IMAGES.length];
 }
 
+function roomImages(room, idx) {
+  const raw = room.images || room.imageUrl || room.image_url || room.image || room.img || '';
+  // Support JSON array string or real array
+  if (Array.isArray(raw)) return raw.filter(Boolean);
+  if (typeof raw === 'string' && raw.trim().startsWith('[')) {
+    try { const arr = JSON.parse(raw); if (Array.isArray(arr)) return arr.filter(Boolean); } catch(e) {}
+  }
+  if (raw && !isFoodImageUrl(raw)) return [raw];
+  return [roomFallbackImage(room, idx)];
+}
 function roomImageUrl(room, idx) {
-  const image = room.imageUrl || room.image_url || room.image || room.img || '';
-  return image && !isFoodImageUrl(image) ? image : roomFallbackImage(room, idx);
+  return roomImages(room, idx)[0] || roomFallbackImage(room, idx);
 }
 
 // Food category colors for fallback images
@@ -936,15 +945,28 @@ function updateRoomsDisplay(rooms) {
   if (!roomsGrid) return;
 
   roomsGrid.innerHTML = rooms.map((room, idx) => {
-    const roomType = room.type || 'Standard';
-    const imageUrl = roomImageUrl(room, idx);
+    const imgs = roomImages(room, idx);
     const isAvailable = room.isAvailable ?? room.is_available ?? true;
+    const multiImg = imgs.length > 1;
+    const slidesHtml = imgs.map((src, i) => `
+      <div class="rg-slide ${i === 0 ? 'active' : ''}" data-slide="${i}">
+        <img src="${src}" alt="${room.name} photo ${i+1}" loading="lazy"
+             style="width:100%;height:220px;object-fit:cover;display:block;"
+             onerror="this.src='${roomFallbackImage(room, idx)}'"/>
+      </div>`).join('');
+    const dotsHtml = multiImg ? `<div class="rg-dots">${imgs.map((_,i) => `<span class="rg-dot ${i===0?'active':''}" data-dot="${i}"></span>`).join('')}</div>` : '';
+    const arrowsHtml = multiImg ? `
+      <button class="rg-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="rg-next" aria-label="Next photo">&#8250;</button>` : '';
     return `
       <div class="room-card ${idx === 1 ? 'featured' : ''}">
         ${idx === 1 ? '<div class="room-featured-tag">Popular Choice</div>' : ''}
-        <div class="room-img">
-          <img src="${imageUrl}" alt="${room.name}" style="width:100%;height:160px;object-fit:cover;" onerror="this.src='${roomFallbackImage(room, idx)}'"/>
+        <div class="room-img rg-gallery" style="position:relative;overflow:hidden;">
+          ${slidesHtml}
+          ${arrowsHtml}
+          ${dotsHtml}
           <div class="room-badge">${room.name}</div>
+          ${multiImg ? `<div class="rg-count">${imgs.length} photos</div>` : ''}
         </div>
         <div class="room-body">
           <h3>${room.name}</h3>
@@ -958,6 +980,27 @@ function updateRoomsDisplay(rooms) {
       </div>
     `;
   }).join('');
+
+  // Init gallery sliders
+  document.querySelectorAll('.rg-gallery').forEach(gallery => {
+    const slides = gallery.querySelectorAll('.rg-slide');
+    const dots = gallery.querySelectorAll('.rg-dot');
+    let current = 0;
+    function goTo(n) {
+      slides[current].classList.remove('active');
+      if (dots[current]) dots[current].classList.remove('active');
+      current = (n + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      if (dots[current]) dots[current].classList.add('active');
+    }
+    const prev = gallery.querySelector('.rg-prev');
+    const next = gallery.querySelector('.rg-next');
+    if (prev) prev.addEventListener('click', e => { e.stopPropagation(); goTo(current - 1); });
+    if (next) next.addEventListener('click', e => { e.stopPropagation(); goTo(current + 1); });
+    dots.forEach(dot => dot.addEventListener('click', e => { e.stopPropagation(); goTo(+dot.dataset.dot); }));
+    // Auto-advance every 4s
+    if (slides.length > 1) setInterval(() => goTo(current + 1), 4000);
+  });
 
   // Re-wire booking triggers
   document.querySelectorAll('.book-trigger').forEach(btn => {
