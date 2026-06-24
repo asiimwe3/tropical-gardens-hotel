@@ -188,64 +188,84 @@
   <!-- HERO SLIDER -->
   <section id="home" class="hero">
     <div class="hero-slides">
+
+      <!-- Slide 1: Hotel Front View (Day) -->
       <div class="hero-slide active" style="background-image: url('assets/slide1.jpg')">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-          <p class="hero-tag">Luxury comfort in nature</p>
+          <p class="hero-tag">Luxury Comfort in Nature</p>
           <h1>Tropical Gardens Hotel<br /><span>Kyenjojo</span></h1>
-          <p class="hero-sub">A calm boutique escape for business travellers, couples, families, conferences, and weekend getaways in western Uganda.</p>
+          <p class="hero-sub">A calm boutique escape for business travellers, couples, families, and weekend getaways in the heart of western Uganda.</p>
           <div class="hero-btns">
             <button class="btn btn-primary book-trigger" data-room="Room">Book Your Stay</button>
             <a href="https://wa.me/256782460683?text=Hi%2C+I+would+like+to+book+at+Tropical+Gardens+Hotel." target="_blank" class="btn btn-outline">WhatsApp Us</a>
-            <a href="#rooms" class="btn btn-soft">View Rooms</a>
           </div>
           <div class="hero-trust">
-            <span>Secure booking</span>
-            <span>Free parking</span>
-            <span>Restaurant &amp; bar</span>
-            <span>Conference hall</span>
+            <span>&#10003; Secure Booking</span>
+            <span>&#10003; Free Parking</span>
+            <span>&#10003; Restaurant &amp; Bar</span>
+            <span>&#10003; Conference Hall</span>
           </div>
         </div>
       </div>
+
+      <!-- Slide 2: Aerial Drone View -->
       <div class="hero-slide" style="background-image: url('assets/slide2.jpg')">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-          <p class="hero-tag">Dining, events, and hospitality</p>
+          <p class="hero-tag">Dining, Events &amp; Hospitality</p>
           <h1>Warm service for<br /><span>every occasion</span></h1>
-          <p class="hero-sub">Enjoy garden dining, private celebrations, corporate meetings, and friendly Ugandan hospitality from arrival to departure.</p>
+          <p class="hero-sub">Garden dining, private celebrations, and corporate meetings — all with the warm hospitality that western Uganda is known for.</p>
           <div class="hero-btns">
-            <a href="#services" class="btn btn-primary">Our Restaurant</a>
-            <a href="#events" class="btn btn-outline">Plan an Event</a>
+            <a href="#services" class="btn btn-primary">Explore Services</a>
+            <a href="#reservation" class="btn btn-outline">Plan an Event</a>
           </div>
         </div>
       </div>
+
+      <!-- Slide 3: Entrance Gate -->
       <div class="hero-slide" style="background-image: url('assets/slide3.jpg')">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-          <p class="hero-tag">Nature and tourism gateway</p>
+          <p class="hero-tag">Nature &amp; Tourism Gateway</p>
           <h1>Rest, explore,<br /><span>and reconnect</span></h1>
-          <p class="hero-sub">Stay close to Kyenjojo town, Hoima Road, Fort Portal routes, and nature experiences while returning to peaceful gardens each evening.</p>
+          <p class="hero-sub">Ideally located on Hoima Road, Kyenjojo — your perfect base for Fort Portal routes, nature experiences, and peaceful evenings.</p>
           <div class="hero-btns">
             <button class="btn btn-primary book-trigger" data-room="Room">Book Your Stay</button>
-            <a href="#tourism" class="btn btn-outline">Explore Nearby</a>
+            <a href="#rooms" class="btn btn-outline">View Rooms</a>
           </div>
         </div>
+      </div>
+
+      <!-- Slide 4: Night Aerial (Illuminated Hotel) -->
       <div class="hero-slide hero-slide-night" style="background-image: url('assets/slide4.jpg')">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-          <p class="hero-tag">Illuminated nights in Kyenjojo</p>
+          <p class="hero-tag">Kyenjojo&#39;s Shining Landmark</p>
           <h1>Glowing above<br /><span>the city at night</span></h1>
-          <p class="hero-sub">Tropical Gardens Hotel lights up Kyenjojo's skyline — a beacon of comfort, warmth, and hospitality in western Uganda.</p>
+          <p class="hero-sub">Tropical Gardens Hotel lights up Kyenjojo&#39;s skyline — a beacon of warmth, comfort, and world-class hospitality in Uganda.</p>
           <div class="hero-btns">
             <button class="btn btn-primary book-trigger" data-room="Room">Book Your Stay</button>
             <a href="https://wa.me/256782460683?text=Hi%2C+I+would+like+to+book+at+Tropical+Gardens+Hotel." target="_blank" class="btn btn-outline">WhatsApp Us</a>
           </div>
         </div>
       </div>
+
     </div>
-    <button class="slide-prev" onclick="changeSlide(-1)">&#8249;</button>
-    <button class="slide-next" onclick="changeSlide(1)">&#8250;</button>
+
+    <!-- Navigation arrows -->
+    <button class="slide-prev" aria-label="Previous slide" onclick="changeSlide(-1)">&#8249;</button>
+    <button class="slide-next" aria-label="Next slide" onclick="changeSlide(1)">&#8250;</button>
+
+    <!-- Slide dots -->
     <div class="slide-dots" id="slide-dots"></div>
+
+    <!-- Slide counter e.g. 01 / 04 -->
+    <div class="slide-counter" id="slide-counter">01 / 04</div>
+
+    <!-- Gold progress bar -->
+    <div class="hero-progress" id="hero-progress"></div>
+
   </section>
 
   <!-- QUICK BOOKING -->
