@@ -465,9 +465,13 @@ h4,
   will-change: opacity;
   transform: translateZ(0); -webkit-transform: translateZ(0);
   position: absolute; inset: 0;
-  background-size: cover; background-position: center top;
+  background-size: cover; background-position: center center;
   opacity: 0; transition: opacity 1.1s ease;
   display: flex; align-items: center; justify-content: center;
+}
+/* Night slide — keep center so lights are fully visible */
+.hero-slide:nth-child(4) {
+  background-position: center center;
 }
 .hero-slide.active { opacity: 1; }
 
@@ -603,6 +607,20 @@ h4,
   opacity: 0.85;
 }
 
+
+/* ── Night slide — lighter overlay so hotel lights shine through ── */
+.hero-slide-night .hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.45) 0%,
+    rgba(0,0,0,0.10) 30%,
+    rgba(0,0,0,0.35) 65%,
+    rgba(0,0,0,0.65) 100%
+  );
+}
+.hero-slide-night {
+  background-position: center center !important;
+}
 /* ==============================
    QUICK BOOKING PANEL
    ============================== */
