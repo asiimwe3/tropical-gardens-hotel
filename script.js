@@ -242,6 +242,13 @@ function goToSlide(n) {
   currentSlide = (n + slides.length) % slides.length
   slides[currentSlide].classList.add('active')
   dotsContainer.children[currentSlide].classList.add('active')
+  // Update slide counter badge
+  const counter = document.getElementById('slide-counter');
+  if (counter) {
+    const num = String(currentSlide + 1).padStart(2, '0');
+    const total = String(slides.length).padStart(2, '0');
+    counter.textContent = num + ' / ' + total;
+  }
   startProgress()
 }
 
