@@ -794,13 +794,41 @@
 
 <!-- GALLERY MODAL -->
 <div class="overlay" id="gallery-modal-overlay" onclick="if(event.target===this)closeGalleryModal()">
-  <div class="modal">
-    <h3>Add Photo</h3>
-    <div class="form-group"><label>Image URL *</label><input type="text" id="gal-url" placeholder="https://..." oninput="previewGalImg()"/></div>
-    <div class="form-group"><label>Caption</label><input type="text" id="gal-caption" placeholder="e.g. Poolside view"/></div>
-    <div class="form-group"><label>Category</label><select id="gal-cat"><option>Rooms</option><option>Restaurant</option><option>Garden</option><option>Facilities</option><option>Events</option></select></div>
+  <div class="modal" style="max-width:480px;">
+    <h3>📸 Add Photo to Gallery</h3>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="btn btn-green btn-sm" id="gal-tab-file" onclick="switchGalTab('file')" style="flex:1;">Upload File</button>
+      <button class="btn btn-outline btn-sm" id="gal-tab-url" onclick="switchGalTab('url')" style="flex:1;">Use URL</button>
+    </div>
+    <!-- File Upload Tab -->
+    <div id="gal-tab-file-panel">
+      <div class="form-group">
+        <label>Choose Image *</label>
+        <div id="gal-drop-zone" onclick="document.getElementById('gal-file-input').click()" style="border:2px dashed var(--green);border-radius:10px;padding:28px 16px;text-align:center;cursor:pointer;background:var(--green-pale);transition:background 0.2s;" ondragover="event.preventDefault();this.style.background='#c6e6c6'" ondragleave="this.style.background='var(--green-pale)'" ondrop="handleGalDrop(event)">
+          <div style="font-size:2rem;">🖼️</div>
+          <div style="font-weight:600;color:var(--green-dark);margin-top:6px;">Click or drag & drop image here</div>
+          <div style="font-size:0.78rem;color:var(--gray);margin-top:4px;">JPG, PNG, WEBP — max 5MB</div>
+        </div>
+        <input type="file" id="gal-file-input" accept="image/*" style="display:none;" onchange="handleGalFile(this.files[0])"/>
+      </div>
+    </div>
+    <!-- URL Tab -->
+    <div id="gal-tab-url-panel" style="display:none;">
+      <div class="form-group"><label>Image URL *</label><input type="text" id="gal-url" placeholder="https://..." oninput="previewGalImg()"/></div>
+    </div>
+    <div class="form-group"><label>Caption</label><input type="text" id="gal-caption" placeholder="e.g. Garden view at sunset"/></div>
+    <div class="form-group"><label>Category</label><select id="gal-cat"><option>Rooms</option><option>Restaurant</option><option>Garden</option><option>Exterior</option><option>Interior</option><option>Events</option><option>Conference</option></select></div>
     <img id="gal-preview" src="" style="width:100%;border-radius:8px;margin-top:8px;display:none;max-height:180px;object-fit:cover;"/>
-    <div class="modal-btns"><button class="btn btn-outline" onclick="closeGalleryModal()">Cancel</button><button class="btn btn-green" onclick="saveGalleryPhoto()">Add Photo</button></div>
+    <div id="gal-upload-progress" style="display:none;margin-top:8px;">
+      <div style="background:#e5e7eb;border-radius:8px;height:8px;overflow:hidden;">
+        <div id="gal-progress-bar" style="height:100%;background:var(--green);width:0%;transition:width 0.3s;"></div>
+      </div>
+      <div id="gal-upload-status" style="font-size:0.78rem;color:var(--gray);margin-top:4px;text-align:center;">Uploading...</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeGalleryModal()">Cancel</button>
+      <button class="btn btn-green" id="gal-save-btn" onclick="saveGalleryPhoto()">Add Photo</button>
+    </div>
   </div>
 </div>
 
@@ -1355,12 +1383,24 @@ var reviews=[
   {id:"rv5",guest:"Anonymous",rating:3,text:"Good location and friendly staff. Room was okay but AC was not working well. Food took a while to arrive.",date:"2026-05-15",status:"Pending"}
 ];
 var gallery=[
-  {id:"g1",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",caption:"Hotel Exterior",cat:"Facilities"},
-  {id:"g2",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",caption:"Standard Room",cat:"Rooms"},
-  {id:"g3",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",caption:"Garden View",cat:"Garden"},
-  {id:"g4",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",caption:"Dining Area",cat:"Restaurant"},
-  {id:"g5",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",caption:"Executive Suite",cat:"Rooms"},
-  {id:"g6",url:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",caption:"Conference Setup",cat:"Events"}
+  {id:"g1",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/56a7c24ec_08_WhatsApp_Image_2026-06-16_at_122016.jpeg",caption:"Hotel Room Interior",cat:"Rooms"},
+  {id:"g2",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/d9e512bdd_14_WhatsApp_Image_2026-06-16_at_122022.jpeg",caption:"Hotel Bedroom",cat:"Rooms"},
+  {id:"g3",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/484999265_19_WhatsApp_Image_2026-06-16_at_122015.jpeg",caption:"Deluxe Room",cat:"Rooms"},
+  {id:"g4",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/97a908259_32_WhatsApp_Image_2026-06-16_at_121954.jpeg",caption:"Hotel Exterior",cat:"Exterior"},
+  {id:"g5",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/0bf6dc5ca_44_WhatsApp_Image_2026-06-16_at_122008.jpeg",caption:"Hotel Building",cat:"Exterior"},
+  {id:"g6",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/bffed508d_53_WhatsApp_Image_2026-06-16_at_121632_1.jpeg",caption:"Hotel Facade",cat:"Exterior"},
+  {id:"g7",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/a980b273b_55_WhatsApp_Image_2026-06-16_at_121712.jpeg",caption:"Hotel Grounds",cat:"Exterior"},
+  {id:"g8",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/c0051a2db_76_WhatsApp_Image_2026-06-16_at_121642.jpeg",caption:"Hotel Entrance Gate",cat:"Exterior"},
+  {id:"g9",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/4016419cb_80_WhatsApp_Image_2026-06-16_at_121641_1.jpeg",caption:"Main Building",cat:"Exterior"},
+  {id:"g10",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/90b35af56_25_WhatsApp_Image_2026-06-16_at_122007.jpeg",caption:"Hotel Interior",cat:"Interior"},
+  {id:"g11",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/f6b915d31_50_WhatsApp_Image_2026-06-16_at_121706.jpeg",caption:"Hotel Lounge",cat:"Interior"},
+  {id:"g12",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/63fca00af_58_WhatsApp_Image_2026-06-16_at_121649.jpeg",caption:"Hotel Corridor",cat:"Interior"},
+  {id:"g13",url:"https://base44.app/api/apps/6a314ab6377f233148a338ef/files/mp/public/6a314ab6377f233148a338ef/22d1984b1_59_WhatsApp_Image_2026-06-16_at_121733.jpeg",caption:"Hotel Hallway",cat:"Interior"},
+  {id:"g14",url:"https://media.base44.com/images/public/6a314ab6377f233148a338ef/365c303ea_WhatsAppImage2026-06-16at121636.jpg",caption:"Restaurant Dining Area",cat:"Restaurant"},
+  {id:"g15",url:"https://media.base44.com/images/public/6a314ab6377f233148a338ef/9b9d02e7f_WhatsAppImage2026-06-16at1216371.jpg",caption:"Restaurant Interior",cat:"Restaurant"},
+  {id:"g16",url:"https://media.base44.com/images/public/6a314ab6377f233148a338ef/bfc54f0bd_WhatsAppImage2026-06-16at1216351.jpg",caption:"Restaurant Seating",cat:"Restaurant"},
+  {id:"g17",url:"https://media.base44.com/images/public/6a314ab6377f233148a338ef/6865c6f53_WhatsAppImage2026-06-16at121638.jpg",caption:"Restaurant Hall with TV",cat:"Restaurant"},
+  {id:"g18",url:"https://media.base44.com/images/public/6a314ab6377f233148a338ef/13c95232a_WhatsAppImage2026-06-16at121635.jpg",caption:"Restaurant Outdoor Terrace",cat:"Restaurant"}
 ];
 var staff=[
   {id:"s1",name:"Admin User",email:"admin@tropicalgardens.ug",role:"Super Admin",phone:"0782460683",access:["menu","rooms","res","pay","msg","notif"],lastLogin:"Today 08:30"},
@@ -1805,5 +1845,15 @@ showPage = function(name, el) {
 };
 
 </script>
+
+<!-- ADMIN GALLERY LIGHTBOX -->
+<div id="adm-lb-overlay" onclick="if(event.target===this)closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;">
+  <button onclick="closeLightbox()" style="position:absolute;top:18px;right:24px;background:none;border:none;color:#fff;font-size:2rem;cursor:pointer;">✕</button>
+  <button onclick="lbPrev()" style="position:absolute;left:18px;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:2rem;cursor:pointer;padding:8px 16px;border-radius:8px;">‹</button>
+  <img id="adm-lb-img" src="" style="max-width:88vw;max-height:80vh;border-radius:12px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,0.5);" />
+  <div id="adm-lb-caption" style="color:#fff;margin-top:14px;font-size:0.95rem;text-align:center;opacity:0.85;"></div>
+  <button onclick="lbNext()" style="position:absolute;right:18px;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:2rem;cursor:pointer;padding:8px 16px;border-radius:8px;">›</button>
+</div>
+
 </body>
 </html>
