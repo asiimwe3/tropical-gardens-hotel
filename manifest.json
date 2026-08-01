@@ -1,0 +1,26 @@
+{
+  "name": "Tropical Gardens Hotel Kyenjojo",
+  "short_name": "Tropical Gardens",
+  "description": "The best hotel in Kyenjojo, Uganda. Book comfortable rooms, restaurant, conference hall, and events space on Hoima Road.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a3d0a",
+  "theme_color": "#0a3d0a",
+  "orientation": "portrait-primary",
+  "lang": "en-UG",
+  "categories": ["travel", "hospitality", "business"],
+  "icons": [
+    {
+      "src": "assets/hero/slide1_front.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/hero/slide2_aerial.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

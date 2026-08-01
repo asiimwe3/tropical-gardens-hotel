@@ -1,5 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /payment-success.html
+Disallow: /payment-cancelled.html
+
+# Block AI crawlers from admin
+User-agent: GPTBot
+Allow: /
+Disallow: /admin.html
 
 Sitemap: https://tropicalgardenshotelkyenjojo.com/sitemap.xml
 Sitemap: https://tropicalgardenshotelkyenjojo.com/sitemap-pages.xml

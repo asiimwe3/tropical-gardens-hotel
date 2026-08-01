@@ -1,31 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://tropicalgardenshotelkyenjojo.com/</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
     <image:image>
-      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg</image:loc>
-      <image:title>Tropical Gardens Hotel Kyenjojo gardens and rooms</image:title>
+      <image:loc>https://tropicalgardenshotelkyenjojo.com/assets/slide1.jpg</image:loc>
+      <image:title>Tropical Gardens Hotel Kyenjojo front entrance</image:title>
+      <image:caption>Front view of Tropical Gardens Hotel on Hoima Road, Kyenjojo</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/1-1.jpg</image:loc>
-      <image:title>Tropical Gardens Hotel exterior in Kyenjojo</image:title>
+      <image:loc>https://tropicalgardenshotelkyenjojo.com/assets/slide2.jpg</image:loc>
+      <image:title>Tropical Gardens Hotel aerial view</image:title>
+      <image:caption>Aerial view of Tropical Gardens Hotel grounds in Kyenjojo</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/4-min.jpg</image:loc>
-      <image:title>Guest room at Tropical Gardens Hotel</image:title>
+      <image:loc>https://tropicalgardenshotelkyenjojo.com/assets/slide3.jpg</image:loc>
+      <image:title>Tropical Gardens Hotel entrance gate</image:title>
+      <image:caption>Entrance gate of Tropical Gardens Hotel Kyenjojo</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/gallery1.jpg</image:loc>
-      <image:title>Conference hall at Tropical Gardens Hotel</image:title>
+      <image:loc>https://tropicalgardenshotelkyenjojo.com/assets/slide4.jpg</image:loc>
+      <image:title>Tropical Gardens Hotel at night</image:title>
+      <image:caption>Tropical Gardens Hotel illuminated at night in Kyenjojo</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/13.jpg</image:loc>
-      <image:title>Restaurant and dining at Tropical Gardens Hotel</image:title>
+      <image:loc>https://tropicalgardenshotelkyenjojo.com/assets/hero/restaurant.jpg</image:loc>
+      <image:title>Tropical Gardens Hotel restaurant</image:title>
+      <image:caption>Restaurant at Tropical Gardens Hotel Kyenjojo serving Ugandan and continental cuisine</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-1.jpg</image:loc>
-      <image:title>Gardens and outdoor space at Tropical Gardens Hotel</image:title>
+      <image:loc>https://tropicalgardenshotelkyenjojo.com/assets/hero/event-hall.jpg</image:loc>
+      <image:title>Tropical Gardens Hotel conference hall</image:title>
+      <image:caption>Conference and events hall at Tropical Gardens Hotel Kyenjojo</image:caption>
     </image:image>
   </url>
 </urlset>
