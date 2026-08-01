@@ -700,7 +700,26 @@ async function loadSiteData(){
   }catch(e){loadDefaultMenu();}
   try{
     var rooms=await _sbFetch('rooms','list');
-    if(rooms&&rooms.length&&typeof updateRoomsDisplay==='function')updateRoomsDisplay(rooms);
+    if(rooms&&rooms.length){
+      // Ensure Executive Room is shown even if not yet in Supabase
+      var hasExec = rooms.some(function(r){return (r.name||'').toLowerCase().indexOf('executive')>-1 || (r.type||'').toLowerCase().indexOf('executive')>-1;});
+      if(!hasExec){
+        rooms.push({
+          id: 'exec-fallback',
+          name: 'Executive Room',
+          description: 'Premium room with queen bed, dedicated work desk, and priority service for business travellers.',
+          price: 200000,
+          currency: 'UGX',
+          capacity: 2,
+          is_available: true,
+          sort_order: 25,
+          type: 'Executive',
+          room_number: '202',
+          image_url: '["https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3.jpg"]'
+        });
+      }
+      if(typeof updateRoomsDisplay==='function')updateRoomsDisplay(rooms);
+    }
   }catch(e){}
   try{
     var notifs=await _sbFetch('notifications','list');
