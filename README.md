@@ -1,33 +1,25 @@
-# Tropical Gardens Hotel Kyenjojo
+# Tropical Gardens Hotel — Kyenjojo, Uganda
 
-Official website for Tropical Gardens Hotel, a premium garden hotel in Kyenjojo, Uganda.
+> **Live Website:** [tropicalgardenshotel.com](https://tropicalgardenshotel.com)
+> **Developed by:** [DeryCode](https://derycode.publicvm.com) — Software, Blockchain, AI and Web3 Company in Uganda
 
-The site is designed to feel calm, polished, and booking-first. It presents the hotel through real photography, rooms and suites, restaurant dining, conferences and events, signature stay packages, gallery filters, WhatsApp booking, contact forms, and backend-ready reservation/payment flows.
+A luxury hotel in Kyenjojo, Uganda with 25 rooms across 4 categories:
+- Standard (UGX 80,000)
+- Deluxe (UGX 150,000) 
+- Executive (UGX 200,000)
+- Family Suite (UGX 280,000)
 
-## Key Features
+## Features
+- Progressive Web App (PWA) with offline support
+- Custom booking system with Supabase backend
+- Google Maps integration
+- Multi-platform OTA listings (Booking.com, Agoda, TripAdvisor)
 
-- Premium hero experience with direct booking, WhatsApp, rooms, and trust actions.
-- Fast booking panel with check-in, check-out, guests, and room selection.
-- Sticky action bar for calls, WhatsApp concierge, reservations, and directions.
-- Hotel facilities, events, tourism gateway, rooms, signature packages, menu, gallery, contact, and guest journey sections.
-- Public notifications section that shows website notices sent from the admin dashboard.
-- Responsive mobile layout with bottom navigation and quick booking access.
-- Dark mode support.
-- Backend-ready forms for reservations and contact messages.
-- Pesapal-ready payment flow for future Mobile Money and card deposits.
+## Tech Stack
+- HTML/CSS/JS PWA
+- Supabase database
+- Vercel + GitHub Pages hosting
+- Service Worker for offline functionality
 
-## Main Files
-
-- `index.html` - public hotel website.
-- `style.css` - responsive premium visual design.
-- `script.js` - interactions, booking modal, forms, gallery filtering, menu rendering, and API integration.
-- `admin.html` - admin interface.
-- `backend/` - API, authentication, reservations, rooms, menu, offers, notifications, messages, and payments.
-- `supabase/create_all_tables.sql` - one-click Supabase SQL setup for all hotel tables, RLS policies, indexes, triggers, and starter rows.
-- `supabase-config.js` - public Supabase URL and publishable key used by the website.
-- `vercel.json` - Vercel hosting security headers and CORS policy.
-- `DEPLOYMENT.md` - Supabase, Vercel, domain, and backend deployment notes.
-
-## Brand Direction
-
-Tropical Gardens Hotel should feel like a peaceful boutique escape: nature-focused, warm, clear, trustworthy, and easy to book.
+---
+© 2026 Tropical Gardens Hotel. Website by [DeryCode](https://derycode.publicvm.com).
