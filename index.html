@@ -279,6 +279,75 @@
 .hero-heading { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 700; color: white; line-height: 1.1; margin: 0 0 16px; }
 </style>
 
+<style>body{pa
+<!-- DeryCode Ad Banner -->
+<div id="derycode-ad-top" style="position:fixed;top:0;left:0;right:0;z-index:99998;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0d1b0d 100%);border-bottom:1px solid rgba(212,160,23,0.3);padding:0;overflow:hidden;transition:transform 0.4s ease;transform:translateY(-100%);">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;max-width:1200px;margin:0 auto;gap:12px;">
+    <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+      <img src="https://derycode.publicvm.com/logo.webp" alt="DeryCode" style="width:32px;height:32px;border-radius:6px;flex-shrink:0;" loading="lazy">
+      <div style="min-width:0;">
+        <div style="font-family:system-ui,sans-serif;font-weight:800;font-size:15px;letter-spacing:0.5px;white-space:nowrap;">
+          <span style="color:#D4A017;">Dery</span><span style="color:#00FF9D;">Code</span>
+          <span style="color:#555;margin:0 6px;">·</span>
+          <span style="color:#aaa;font-size:12px;font-weight:500;">Uganda's #1 Tech Company</span>
+        </div>
+        <div style="font-family:system-ui,sans-serif;font-size:11px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Software · Blockchain · AI · Web3 · Mobile Apps · Banking Systems</div>
+      </div>
+    </div>
+    <a href="https://derycode.publicvm.com" target="_blank" rel="noopener" style="flex-shrink:0;font-family:system-ui,sans-serif;background:linear-gradient(135deg,#D4A017,#00FF9D);color:#0a0a0a;font-weight:700;font-size:13px;padding:8px 18px;border-radius:20px;text-decoration:none;white-space:nowrap;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 20px rgba(0,255,157,0.3)';" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='none';">Get a Quote →</a>
+    <button onclick="document.getElementById('derycode-ad-top').style.transform='translateY(-100%)';document.getElementById('derycode-ad-float').style.display='flex';" style="flex-shrink:0;background:none;border:none;color:#555;font-size:20px;cursor:pointer;padding:0 4px;line-height:1;" title="Close ad">×</button>
+  </div>
+  <div style="height:2px;background:linear-gradient(90deg,transparent,#D4A017,transparent);animation:derycode-shimmer 3s linear infinite;"></div>
+</div>
+<style>
+@keyframes derycode-shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@keyframes derycode-pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,157,0.4)}50%{box-shadow:0 0 0 8px rgba(0,255,157,0)}}
+@keyframes derycode-float-in{0%{transform:translateX(100%);opacity:0}100%{transform:translateX(0);opacity:1}}
+</style>
+
+<!-- DeryCode Floating Side Ad (shows after top banner is closed) -->
+<div id="derycode-ad-float" style="display:none;position:fixed;bottom:20px;right:20px;z-index:99997;animation:derycode-float-in 0.5s ease;">
+  <div style="background:linear-gradient(135deg,#0a0a0a,#1a1a2e);border:1px solid rgba(212,160,23,0.4);border-radius:16px;padding:16px;max-width:260px;box-shadow:0 8px 32px rgba(0,0,0,0.5);" id="derycode-float-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <img src="https://derycode.publicvm.com/logo.webp" alt="DeryCode" style="width:24px;height:24px;border-radius:4px;" loading="lazy">
+        <span style="font-family:system-ui,sans-serif;font-weight:800;font-size:14px;"><span style="color:#D4A017;">Dery</span><span style="color:#00FF9D;">Code</span></span>
+      </div>
+      <button onclick="document.getElementById('derycode-ad-float').style.display='none';" style="background:none;border:none;color:#444;font-size:16px;cursor:pointer;padding:0;line-height:1;" title="Close">×</button>
+    </div>
+    <div style="font-family:system-ui,sans-serif;font-size:12px;color:#888;margin-bottom:12px;line-height:1.5;">Need software, blockchain, or AI solutions? Uganda's leading tech company is ready to build for you.</div>
+    <a href="https://derycode.publicvm.com" target="_blank" rel="noopener" style="display:block;text-align:center;font-family:system-ui,sans-serif;background:linear-gradient(135deg,#D4A017,#00FF9D);color:#0a0a0a;font-weight:700;font-size:13px;padding:8px;border-radius:20px;text-decoration:none;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Visit DeryCode →</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Show top banner after 2 seconds, auto-hide after 15s and show floating ad
+  setTimeout(function(){
+    var top = document.getElementById('derycode-ad-top');
+    if(top){ top.style.transform = 'translateY(0)'; }
+  }, 2000);
+  
+  // Auto-hide top banner after 15s, show floating
+  setTimeout(function(){
+    var top = document.getElementById('derycode-ad-top');
+    var flt = document.getElementById('derycode-ad-float');
+    if(top){ top.style.transform = 'translateY(-100%)'; }
+    if(flt){ flt.style.display = 'block'; }
+  }, 17000);
+  
+  // Re-show top banner every 60s
+  setInterval(function(){
+    var top = document.getElementById('derycode-ad-top');
+    if(top){ top.style.transform = 'translateY(0)'; }
+    setTimeout(function(){
+      if(top){ top.style.transform = 'translateY(-100%)'; }
+    }, 8000);
+  }, 60000);
+})();
+</script>
+
+dding-top:0;transition:padding-top 0.4s ease;}body.derycode-shifted{padding-top:50px;}</style>
 </head>
 <body>
 
@@ -1455,5 +1524,16 @@
     }
   });
   </script>
+<script>
+(function(){
+  var top=document.getElementById('derycode-ad-top');
+  if(!top)return;
+  function shift(){document.body.classList.add('derycode-shifted');}
+  function unshift(){document.body.classList.remove('derycode-shifted');}
+  var obs=new MutationObserver(function(){if(top.style.transform==='translateY(0)'){shift();}else{unshift();}});
+  obs.observe(top,{attributes:true,attributeFilter:['style']});
+})();
+</script>
+
 </body>
 </html>
