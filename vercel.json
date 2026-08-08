@@ -36,10 +36,5 @@
         }
       ]
     }
-  ],
-  "functions": {
-    "api/admin-notify.js": {
-      "memory": 256
-    }
-  }
+  ]
 }
