@@ -20,3 +20,4 @@ module.exports = async (req, res) => {
     send(res, 500, { error: error.message });
   }
 };
+// v1.0.1

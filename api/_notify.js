@@ -1,3 +1,4 @@
+// Admin notification helper v1.0.1
 // Notification helper — sends instant alerts to the hotel admin
 // Supports: Telegram Bot API (free, instant) and email via Resend (free tier)
 // Configure via Vercel environment variables:
