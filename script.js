@@ -56,7 +56,7 @@ async function submitContactToSupabase(data){
 async function notifyAdminFrontend(type, details){
   try{
     // Try the API notification endpoint first
-    await fetch('https://tropicalgardenshotelkyenjojo.com/api/notify-admin',{
+    await fetch('https://tropicalgardenshotelkyenjojo.com/api/admin-notify',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({type:type,details:details})
