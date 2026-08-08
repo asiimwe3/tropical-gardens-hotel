@@ -1089,6 +1089,12 @@ async function adminLogin(email,password,api){
   ["login-password","gate-pass"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
   syncLoginFields();
   await loadBackendData();
+  // Request browser notification permission
+  if("Notification" in window && Notification.permission === "default"){
+    Notification.requestPermission();
+  }
+  // Start real-time listener for new bookings & messages
+  startRealtimeListener();
   showToast(ADMIN_MODE==="supabase"?"Connected in Supabase active mode":"Connected to live hotel API");
   return true;
 }
@@ -1935,6 +1941,129 @@ showPage = function(name, el) {
   var obs=new MutationObserver(function(){if(top.style.transform==='translateY(0)'){shift();}else{unshift();}});
   obs.observe(top,{attributes:true,attributeFilter:['style']});
 })();
+
+// ==============================
+//  REAL-TIME ADMIN NOTIFICATIONS
+// ==============================
+var NOTIFY_SOUND_URL = "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="; // short beep
+var lastBookingCount = 0;
+var lastMessageCount = 0;
+var realtimeStarted = false;
+
+function playNotifySound(){
+  try{
+    var audio = new Audio(NOTIFY_SOUND_URL);
+    audio.volume = 0.6;
+    audio.play().catch(function(){});
+  }catch(e){}
+}
+
+function sendBrowserNotification(title, body){
+  if(!("Notification" in window)) return;
+  if(Notification.permission === "granted"){
+    var notif = new Notification(title, {
+      body: body,
+      icon: "assets/logo.png",
+      tag: "tgh-admin-notify",
+      requireInteraction: true
+    });
+    notif.onclick = function(){
+      window.focus();
+      this.close();
+    };
+  }
+}
+
+function checkForNewItems(){
+  // Called after each realtime update or data reload
+  var newBookings = reservations.filter(function(r){return r.status === "Pending";}).length;
+  var newMessages = messages.filter(function(m){return m.unread;}).length;
+  
+  if(lastBookingCount > 0 && newBookings > lastBookingCount){
+    var latest = reservations[0];
+    var msg = "New booking from " + (latest.guest || "Guest") + " - " + (latest.room || "Room");
+    playNotifySound();
+    sendBrowserNotification("🔔 New Booking", msg);
+    // Update badge
+    var badge = document.getElementById("res-badge");
+    if(badge) badge.textContent = newBookings;
+  }
+  
+  if(lastMessageCount > 0 && newMessages > lastMessageCount){
+    var latest = messages[0];
+    var msg = "New message from " + (latest.name || "Guest");
+    playNotifySound();
+    sendBrowserNotification("💬 New Message", msg);
+    var msgBadge = document.getElementById("msg-badge");
+    if(msgBadge) msgBadge.textContent = newMessages;
+  }
+  
+  lastBookingCount = newBookings;
+  lastMessageCount = newMessages;
+}
+
+function startRealtimeListener(){
+  if(realtimeStarted) return;
+  if(!SUPABASE_URL || !SUPABASE_KEY) return;
+  realtimeStarted = true;
+  
+  // Initialize counts
+  lastBookingCount = reservations.filter(function(r){return r.status === "Pending";}).length;
+  lastMessageCount = messages.filter(function(m){return m.unread;}).length;
+  
+  // Poll for new data every 15 seconds (lightweight real-time fallback)
+  setInterval(async function(){
+    if(!hasAdminSession()) return;
+    try{
+      // Quick fetch of latest bookings and messages
+      if(ADMIN_MODE === "supabase" && supabaseReady()){
+        var newRes = await supabaseFetch("reservations", "select=id,guest_name,status,room_name,created_at&order=created_at.desc&limit=1");
+        var newMsg = await supabaseFetch("guest_messages", "select=id,name,created_at&order=created_at.desc&limit=1");
+        
+        if(newRes && newRes.length > 0){
+          var latestRes = newRes[0];
+          // Check if this is newer than what we have
+          var existing = reservations.find(function(r){return r.id === latestRes.id;});
+          if(!existing){
+            // New booking! Reload data and notify
+            await loadBackendData();
+            playNotifySound();
+            sendBrowserNotification("🔔 New Booking", "From " + (latestRes.guest_name || "Guest") + " - " + (latestRes.room_name || "Room"));
+            return;
+          }
+        }
+        
+        if(newMsg && newMsg.length > 0){
+          var latestMsg = newMsg[0];
+          var existingMsg = messages.find(function(m){return m.id === latestMsg.id;});
+          if(!existingMsg){
+            // New message! Reload data and notify
+            await loadBackendData();
+            playNotifySound();
+            sendBrowserNotification("💬 New Message", "From " + (latestMsg.name || "Guest"));
+            return;
+          }
+        }
+      } else {
+        // API mode — just reload and check for changes
+        await loadBackendData();
+        checkForNewItems();
+      }
+    }catch(e){
+      // Silent fail — don't interrupt admin
+    }
+  }, 15000); // Check every 15 seconds
+  
+  console.log("[TGH Admin] Real-time listener started — checking every 15s");
+}
+
+// Auto-start realtime if already logged in
+if(hasAdminSession()){
+  setTimeout(function(){
+    startRealtimeListener();
+  }, 2000);
+}
+
 </script>
 
 </body>

@@ -51,6 +51,18 @@ async function submitBookingToSupabase(data){
 async function submitContactToSupabase(data){
   return await _sbFetch('guest_messages','create',null,data);
 }
+
+// Send instant admin notification (Telegram + email) — fires even on Supabase fallback
+async function notifyAdminFrontend(type, details){
+  try{
+    // Try the API notification endpoint first
+    await fetch('https://tropicalgardenshotelkyenjojo.com/api/notify-admin',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:type,details:details})
+    });
+  }catch(e){ /* fail silently — don't block the user */ }
+}
 // ---- DEVICE DETECTION ----
 const isMobile = () => window.innerWidth <= 768
 const API_BASE = (window.TGH_API_BASE || localStorage.getItem('tgh_api_base') || '').replace(/\/$/, '')
@@ -552,6 +564,12 @@ async function handleReservation(e) {
         deposit_amount: paymentMode === 'pay' ? Math.max(1000, depositAmount || 1000) : 0,
         payment_status: paymentMode === 'pay' ? 'Pending' : 'Unpaid'
       })
+      // 🔔 Notify admin instantly
+      notifyAdminFrontend('booking',{
+        guestName:guestName, phone:data.get('phone')||'',
+        email:data.get('email')||'', roomName:data.get('roomName')||'',
+        checkIn:cin, checkOut:cout, guests:Number(guests), notes:data.get('notes')||''
+      });
       showToast(paymentMode === 'pay'
         ? 'Reservation saved. Online payment is temporarily unavailable; reception will contact you to complete payment.'
         : 'Reservation saved. Reception will contact you to complete payment.')
@@ -594,6 +612,12 @@ async function handleContact(e) {
         subject: 'Website contact form',
         message: data.get('message') || ''
       })
+      // 🔔 Notify admin instantly
+      notifyAdminFrontend('contact',{
+        name:name, phone:data.get('phone')||'',
+        email:data.get('email')||'', subject:'Website contact form',
+        message:data.get('message')||''
+      });
       form.reset()
       showToast('Message saved. Tropical Gardens Hotel will reply soon.')
     } catch (supabaseError) {

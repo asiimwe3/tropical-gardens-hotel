@@ -1,4 +1,5 @@
 const { method, query, readBody, send } = require("./_lib");
+const { notifyAdmin } = require("./_notify");
 
 module.exports = async (req, res) => {
   if (!method(req, res, ["POST"])) return;
@@ -16,6 +17,19 @@ module.exports = async (req, res) => {
        returning id, status, created_at as "createdAt"`,
       [guestName, phone, body.email || null, body.roomId || null, body.roomName || null, body.checkIn, body.checkOut, Number(body.guests) || 1, body.notes || ""]
     );
+
+    // 🔔 Send instant notification to admin (Telegram + email)
+    notifyAdmin("booking", {
+      guestName,
+      phone,
+      email: body.email || "",
+      roomName: body.roomName || "",
+      checkIn: body.checkIn,
+      checkOut: body.checkOut,
+      guests: body.guests || 1,
+      notes: body.notes || ""
+    }).catch(e => console.error("[notify] Booking notification failed:", e.message));
+
     send(res, 201, { reservation: result.rows[0] });
   } catch (error) {
     send(res, 500, { error: error.message });

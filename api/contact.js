@@ -1,4 +1,5 @@
 const { method, query, readBody, send } = require("./_lib");
+const { notifyAdmin } = require("./_notify");
 
 module.exports = async (req, res) => {
   if (!method(req, res, ["POST"])) return;
@@ -13,6 +14,16 @@ module.exports = async (req, res) => {
        returning id, created_at as "createdAt"`,
       [name, body.phone || null, body.email || null, body.subject || "Website contact form", message]
     );
+
+    // 🔔 Send instant notification to admin (Telegram + email)
+    notifyAdmin("contact", {
+      name,
+      phone: body.phone || "",
+      email: body.email || "",
+      subject: body.subject || "Website contact form",
+      message
+    }).catch(e => console.error("[notify] Contact notification failed:", e.message));
+
     send(res, 201, { message: result.rows[0] });
   } catch (error) {
     send(res, 500, { error: error.message });
