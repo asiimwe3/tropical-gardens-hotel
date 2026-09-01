@@ -1,2 +1,4 @@
-window.TGH_SUPABASE_URL = window.TGH_SUPABASE_URL || "https://eiyexnuhqdscomilwpqg.supabase.co";
-window.TGH_SUPABASE_ANON_KEY = window.TGH_SUPABASE_ANON_KEY || "sb_publishable_S1u_aPqq2USyJcKpeisOlQ_TMzbHxtX";
+// Supabase configuration — values injected via app-config.js or deployment
+// The anon key is a publishable key safe for client-side use (security enforced by RLS)
+window.TGH_SUPABASE_URL = window.TGH_SUPABASE_URL || "";
+window.TGH_SUPABASE_ANON_KEY = window.TGH_SUPABASE_ANON_KEY || "";
