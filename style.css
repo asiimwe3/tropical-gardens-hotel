@@ -1277,7 +1277,7 @@ h4,
 .trust-payment {
   background:
     linear-gradient(135deg, rgba(13,51,24,0.94), rgba(27,94,32,0.86)),
-    url('https://tropicalgardenshotel.com/wp-content/uploads/2023/06/9.jpg') center/cover;
+    url('assets/wp/9.jpg') center/cover;
   color: var(--white);
 }
 .review-grid {
