@@ -315,7 +315,7 @@
 
     /* ── LOGIN GATE OVERRIDE ── */
     #login-gate{background:linear-gradient(135deg,#050f05 0%,#0a1f0a 40%,#0d2a12 100%) !important;}
-    #login-gate::before{content:"";position:fixed;inset:0;background:url('https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg') center/cover;opacity:0.08;pointer-events:none;}
+    #login-gate::before{content:"";position:fixed;inset:0;background:url('assets/wp/2-min.jpg') center/cover;opacity:0.08;pointer-events:none;}
     #login-gate .modal-inner{
       background:linear-gradient(145deg,rgba(22,36,22,0.96),rgba(10,31,10,0.98)) !important;
       border:1px solid rgba(255,255,255,0.1) !important;
@@ -411,7 +411,7 @@ dding-top:0;transition:padding-top 0.4s ease;}body.derycode-shifted{padding-top:
 
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" alt="Logo"/>
+    <img src="assets/wp/logo-1.jpg" alt="Logo"/>
     <div><span>Tropical Gardens<small>Admin Dashboard</small></span></div>
   </div>
   <div class="nav-section">Main</div>
@@ -932,7 +932,7 @@ dding-top:0;transition:padding-top 0.4s ease;}body.derycode-shifted{padding-top:
 <!-- LOGIN GATE -->
 <div id="login-gate" style="display:none;position:fixed;inset:0;background:var(--green-dark);z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div class="modal-inner" style="width:100%;max-width:420px;text-align:center;">
-    <img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" style="height:52px;border-radius:8px;margin-bottom:18px;" alt="Logo"/>
+    <img src="assets/wp/logo-1.jpg" style="height:52px;border-radius:8px;margin-bottom:18px;" alt="Logo"/>
     <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:4px;color:#fff;font-family:'Playfair Display',serif;">Admin Dashboard</h2>
     <p style="font-size:0.82rem;color:var(--text2);margin-bottom:24px;">Tropical Gardens Hotel &mdash; Kyenjojo</p>
     <div class="form-group" style="text-align:left;"><label>Backend API URL</label><input type="text" id="gate-api" placeholder="Leave blank for this website"/></div>
@@ -948,7 +948,7 @@ dding-top:0;transition:padding-top 0.4s ease;}body.derycode-shifted{padding-top:
 <div class="overlay" id="invoice-overlay" onclick="if(event.target===this)closeInvoice()">
   <div class="modal modal-lg" id="invoice-content">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
-      <div><img src="https://tropicalgardenshotel.com/wp-content/uploads/2023/06/logo-1.jpg" style="height:44px;border-radius:6px;"/><h3 style="margin-top:8px;margin-bottom:2px;">Tropical Gardens Hotel</h3><p style="font-size:0.78rem;color:var(--gray);">Hoima Road, Kyenjojo &bull; 0782460683</p></div>
+      <div><img src="assets/wp/logo-1.jpg" style="height:44px;border-radius:6px;"/><h3 style="margin-top:8px;margin-bottom:2px;">Tropical Gardens Hotel</h3><p style="font-size:0.78rem;color:var(--gray);">Hoima Road, Kyenjojo &bull; 0782460683</p></div>
       <div style="text-align:right;"><div style="font-size:1.4rem;font-weight:700;color:var(--green);">INVOICE</div><div id="inv-ref" style="font-size:0.8rem;color:var(--gray);margin-top:4px;"></div><div id="inv-date" style="font-size:0.8rem;color:var(--gray);"></div></div>
     </div>
     <div style="background:var(--green-pale);border-radius:8px;padding:14px 16px;margin-bottom:18px;">
@@ -996,14 +996,14 @@ var menuItems=[
   {id:"m18",name:"Chips (French Fries)",description:"Golden crispy fries served with chilli sauce.",category:"Snacks",price:8000,is_available:true,is_featured:false}
 ];
 var rooms=[
-  {id:"r1",name:"Standard Room",num:"101",description:"Cosy room with queen bed, fan, en-suite bathroom, and garden view.",type:"Standard",price:80000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",is_available:true},
-  {id:"r2",name:"Standard Room",num:"102",description:"Cosy room with twin beds, fan, and en-suite bathroom.",type:"Standard",price:80000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",is_available:true},
-  {id:"r3",name:"Deluxe Room",num:"201",description:"Spacious room with king bed, AC, flat-screen TV, minibar, and garden view.",type:"Deluxe",price:150000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",is_available:true},
-  {id:"r4",name:"Deluxe Room",num:"202",description:"King bed, AC, flat-screen TV, work desk and en-suite with bathtub.",type:"Deluxe",price:150000,capacity:3,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",is_available:false},
-  {id:"r5",name:"Executive Suite A",num:"301",description:"Luxurious suite with living area, king bed, AC, Jacuzzi, and panoramic garden views.",type:"Suite",price:280000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",is_available:true},
-  {id:"r6",name:"Executive Suite B",num:"302",description:"Premium suite ideal for honeymoons. Private balcony, king bed, and full amenities.",type:"Suite",price:280000,capacity:2,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",is_available:true},
-  {id:"r7",name:"Family Room",num:"401",description:"Large room with 2 double beds, AC, TV, and extra space for kids.",type:"Family",price:200000,capacity:5,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",is_available:true},
-  {id:"r8",name:"Conference Room",num:"C1",description:"Air-conditioned conference room with projector, whiteboard, and seating for 30.",type:"Conference",price:350000,capacity:30,image:"https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",is_available:true}
+  {id:"r1",name:"Standard Room",num:"101",description:"Cosy room with queen bed, fan, en-suite bathroom, and garden view.",type:"Standard",price:80000,capacity:2,image:"assets/wp/2-min.jpg",is_available:true},
+  {id:"r2",name:"Standard Room",num:"102",description:"Cosy room with twin beds, fan, and en-suite bathroom.",type:"Standard",price:80000,capacity:2,image:"assets/wp/3-min.jpg",is_available:true},
+  {id:"r3",name:"Deluxe Room",num:"201",description:"Spacious room with king bed, AC, flat-screen TV, minibar, and garden view.",type:"Deluxe",price:150000,capacity:2,image:"assets/wp/8-min.jpg",is_available:true},
+  {id:"r4",name:"Deluxe Room",num:"202",description:"King bed, AC, flat-screen TV, work desk and en-suite with bathtub.",type:"Deluxe",price:150000,capacity:3,image:"assets/wp/2-min.jpg",is_available:false},
+  {id:"r5",name:"Executive Suite A",num:"301",description:"Luxurious suite with living area, king bed, AC, Jacuzzi, and panoramic garden views.",type:"Suite",price:280000,capacity:2,image:"assets/wp/3-min.jpg",is_available:true},
+  {id:"r6",name:"Executive Suite B",num:"302",description:"Premium suite ideal for honeymoons. Private balcony, king bed, and full amenities.",type:"Suite",price:280000,capacity:2,image:"assets/wp/8-min.jpg",is_available:true},
+  {id:"r7",name:"Family Room",num:"401",description:"Large room with 2 double beds, AC, TV, and extra space for kids.",type:"Family",price:200000,capacity:5,image:"assets/wp/2-min.jpg",is_available:true},
+  {id:"r8",name:"Conference Room",num:"C1",description:"Air-conditioned conference room with projector, whiteboard, and seating for 30.",type:"Conference",price:350000,capacity:30,image:"assets/wp/3-min.jpg",is_available:true}
 ];
 var reservations=[
   {id:"rv1",guest:"John Mukisa",phone:"0782100001",email:"john@gmail.com",room:"Room 3 (Deluxe)",checkin:"2026-05-25",checkout:"2026-05-27",guests:2,status:"Confirmed",notes:"Late check-in expected."},
@@ -1176,11 +1176,11 @@ async function saveMenuItem(){
 
 var typeColors={Standard:"badge-green",Deluxe:"badge-blue",Suite:"badge-gold",Family:"badge-purple",Conference:"badge-gray"};
 var roomFallbackImages=[
-  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg",
-  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg",
-  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg",
-  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-min.jpg",
-  "https://tropicalgardenshotel.com/wp-content/uploads/2023/06/6-min.jpg"
+  "assets/wp/2-min.jpg",
+  "assets/wp/8-min.jpg",
+  "assets/wp/3-min.jpg",
+  "assets/wp/5-min.jpg",
+  "assets/wp/6-min.jpg"
 ];
 function isFoodImageUrl(url){return /wikimedia\.org|Special:FilePath|Ugandan%20Food|Rolex|Tilapia|chicken|passion|mango|soda|cake|matooke|beans|nyama/i.test(String(url||""));}
 function roomFallbackImage(r,idx){var n=String((r&&r.name)||"").toLowerCase();if(n.indexOf("deluxe")>-1)return roomFallbackImages[1];if(n.indexOf("suite")>-1||n.indexOf("family")>-1)return roomFallbackImages[2];return roomFallbackImages[idx%roomFallbackImages.length];}

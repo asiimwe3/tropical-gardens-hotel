@@ -739,7 +739,7 @@ async function loadSiteData(){
           sort_order: 25,
           type: 'Executive',
           room_number: '202',
-          image_url: '["https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3.jpg"]'
+          image_url: '["assets/wp/3.jpg"]'
         });
       }
       if(typeof updateRoomsDisplay==='function')updateRoomsDisplay(rooms);
@@ -777,11 +777,11 @@ const FOOD_IMAGE_LIBRARY = {
 
 const MENU_FALLBACK_IMAGE = 'https://commons.wikimedia.org/wiki/Special:FilePath/Ugandan%20Food..JPG?width=900';
 const ROOM_FALLBACK_IMAGES = [
-  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/2-min.jpg',
-  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/8-min.jpg',
-  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/3-min.jpg',
-  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/5-min.jpg',
-  'https://tropicalgardenshotel.com/wp-content/uploads/2023/06/6-min.jpg'
+  'assets/wp/2-min.jpg',
+  'assets/wp/8-min.jpg',
+  'assets/wp/3-min.jpg',
+  'assets/wp/5-min.jpg',
+  'assets/wp/6-min.jpg'
 ];
 
 function isFoodImageUrl(url) {
