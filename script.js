@@ -742,6 +742,22 @@ async function loadSiteData(){
           image_url: '["assets/wp/3.jpg"]'
         });
       }
+      var hasStd = rooms.some(function(r){return (r.name||'').toLowerCase().indexOf('standard')>-1 || (r.type||'').toLowerCase().indexOf('standard')>-1;});
+      if(!hasStd){
+        rooms.unshift({
+          id: 'std-fallback',
+          name: 'Standard Room',
+          description: 'Comfortable en-suite room with WiFi, perfect for solo travellers and short stays.',
+          price: 80000,
+          currency: 'UGX',
+          capacity: 2,
+          is_available: true,
+          sort_order: 10,
+          type: 'Standard',
+          room_number: '101',
+          image_url: '["assets/wp/1-1.jpg"]'
+        });
+      }
       if(typeof updateRoomsDisplay==='function')updateRoomsDisplay(rooms);
     }
   }catch(e){}
@@ -1024,7 +1040,7 @@ function updateRoomsDisplay(rooms) {
           <p>${room.description || 'Comfortable accommodation'}</p>
           <ul class="room-features">
             <li>🛏 ${room.capacity || 2} Guest${room.capacity !== 1 ? 's' : ''}</li>
-            <li>💰 UGX ${Number(room.price).toLocaleString()}/night</li>
+            <li>💰 UGX ${Number(room.price ?? room.price_per_night ?? ({'Standard Room':80000,'Deluxe Room':150000,'Executive Room':200000,'Family Suite':250000})[room.name] ?? 80000).toLocaleString()}/night</li>
           </ul>
           <button class="btn btn-outline-dark book-trigger" data-room="${room.name}">${isAvailable ? 'Book Now' : 'Enquire'}</button>
         </div>
