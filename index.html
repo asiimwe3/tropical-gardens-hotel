@@ -52,12 +52,13 @@
   <link rel="alternate" hreflang="x-default" href="https://tropicalgardenshotelkyenjojo.com/" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/wp/cropped-WhatsApp-Image-2023-06-12-at-09.09.16-e1686554190814-32x32.jpeg" />
-  <link rel="preload" as="image" href="assets/slide1.jpg" fetchpriority="high" />
-  <link rel="preload" as="image" href="assets/slide2.jpg" />
+  <link rel="preload" as="image" href="assets/slide1.webp" fetchpriority="high" />
+  
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
   <link rel="stylesheet" href="style.css" />
   <script type="application/ld+json">
   {
@@ -366,7 +367,7 @@ body.derycode-shifted{padding-top:50px;}
   <nav id="navbar">
     <div class="nav-container">
       <a href="#home" class="logo">
-        <img src="assets/wp/logo-1.jpg" alt="Tropical Gardens Hotel Logo" class="logo-img" />
+        <img src="assets/wp/logo-1.webp" width="200" height="112" alt="Tropical Gardens Hotel Logo" class="logo-img" />
       </a>
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -394,7 +395,7 @@ body.derycode-shifted{padding-top:50px;}
   <!-- MOBILE HEADER (mobile only) -->
   <div class="mobile-header" id="mobile-header">
     <a href="#home" class="mobile-logo">
-      <img src="assets/wp/logo-1.jpg" alt="Tropical Gardens Hotel" />
+      <img src="assets/wp/logo-1.webp" width="200" height="112" alt="Tropical Gardens Hotel" />
     </a>
     <div class="mobile-actions">
       <button class="theme-toggle theme-toggle-mobile" type="button" data-theme-toggle aria-label="Switch to dark theme"><span data-theme-icon>☾</span></button>
@@ -407,7 +408,7 @@ body.derycode-shifted{padding-top:50px;}
     <div class="hero-slides">
 
       <!-- Slide 1: Hotel Front View (Day) -->
-      <div class="hero-slide active" style="background-image: url('assets/slide1.jpg')">
+      <div class="hero-slide active" style="background-image: url('assets/slide1.webp')">
         <div class="hero-overlay"></div>
         <div class="hero-content">
           <p class="hero-tag">Luxury Comfort in Nature</p>
@@ -427,7 +428,7 @@ body.derycode-shifted{padding-top:50px;}
       </div>
 
       <!-- Slide 2: Aerial Drone View -->
-      <div class="hero-slide" style="background-image: url('assets/slide2.jpg')">
+      <div class="hero-slide" style="background-image: url('assets/slide2.webp')">
         <div class="hero-overlay"></div>
         <div class="hero-content">
           <p class="hero-tag">Dining, Events &amp; Hospitality</p>
@@ -441,7 +442,7 @@ body.derycode-shifted{padding-top:50px;}
       </div>
 
       <!-- Slide 3: Entrance Gate -->
-      <div class="hero-slide" style="background-image: url('assets/slide3.jpg')">
+      <div class="hero-slide" style="background-image: url('assets/slide3.webp')">
         <div class="hero-overlay"></div>
         <div class="hero-content">
           <p class="hero-tag">Nature &amp; Tourism Gateway</p>
@@ -455,7 +456,7 @@ body.derycode-shifted{padding-top:50px;}
       </div>
 
       <!-- Slide 4: Night Aerial (Illuminated Hotel) -->
-      <div class="hero-slide hero-slide-night" style="background-image: url('assets/slide4.jpg')">
+      <div class="hero-slide hero-slide-night" style="background-image: url('assets/slide4.webp')">
         <div class="hero-overlay"></div>
         <div class="hero-content">
           <p class="hero-tag">Kyenjojo&#39;s Shining Landmark</p>
@@ -561,8 +562,8 @@ body.derycode-shifted{padding-top:50px;}
     <div class="container">
       <div class="about-grid">
         <div class="about-imgs">
-          <img src="assets/wp/1-1.jpg" alt="Tropical Gardens Hotel exterior" class="about-img-main" />
-          <img src="assets/wp/2-1.jpg" alt="Hotel entrance" class="about-img-secondary" />
+          <img src="assets/wp/1-1.webp" width="750" height="450" alt="Tropical Gardens Hotel exterior" class="about-img-main" />
+          <img src="assets/wp/2-1.webp" width="750" height="450" alt="Hotel entrance" class="about-img-secondary" />
           <div class="about-badge">
             <span class="badge-icon">🌿</span>
             <span class="badge-label">Where Affordability<br/>Meets A Class</span>
@@ -603,7 +604,7 @@ body.derycode-shifted{padding-top:50px;}
       </div>
       <div class="services-grid">
         <div class="service-card">
-          <div class="service-img"><img src="assets/wp/gallery1.jpg" alt="Conference Hall" /></div>
+          <div class="service-img"><img src="assets/wp/gallery1.webp" width="750" height="450" alt="Conference Hall" /></div>
           <div class="service-body">
             <div class="service-icon">🤝</div>
             <h3>Conference Hall</h3>
@@ -613,7 +614,7 @@ body.derycode-shifted{padding-top:50px;}
         </div>
         <div class="service-card featured">
           <div class="service-featured-tag">Most Booked</div>
-          <div class="service-img"><img src="assets/wp/5-min.jpg" alt="Accommodation" /></div>
+          <div class="service-img"><img src="assets/wp/5-min.webp" width="750" height="450" alt="Accommodation" /></div>
           <div class="service-body">
             <div class="service-icon">🏨</div>
             <h3>Accommodation</h3>
@@ -631,7 +632,7 @@ body.derycode-shifted{padding-top:50px;}
           </div>
         </div>
         <div class="service-card">
-          <div class="service-img"><img src="assets/wp/3-1.jpg" alt="Gardens & Play" /></div>
+          <div class="service-img"><img src="assets/wp/3-1.webp" width="750" height="450" alt="Gardens & Play" /></div>
           <div class="service-body">
             <div class="service-icon">🌿</div>
             <h3>Gardens &amp; Play</h3>
@@ -640,7 +641,7 @@ body.derycode-shifted{padding-top:50px;}
           </div>
         </div>
         <div class="service-card">
-          <div class="service-img"><img src="assets/wp/12.jpg" alt="Bar" /></div>
+          <div class="service-img"><img src="assets/wp/12.webp" width="750" height="450" alt="Bar" /></div>
           <div class="service-body">
             <div class="service-icon">🍹</div>
             <h3>Bar</h3>
@@ -676,7 +677,7 @@ body.derycode-shifted{padding-top:50px;}
           </div>
         </div>
         <div class="experience-media">
-          <img src="assets/wp/3-1.jpg" alt="Serene gardens at Tropical Gardens Hotel" />
+          <img src="assets/wp/3-1.webp" width="750" height="450" alt="Serene gardens at Tropical Gardens Hotel" />
           <img src="https://tropicalgardenshotelkyenjojo.com/assets/hero/restaurant.jpg" alt="Restaurant dining at Tropical Gardens Hotel" />
         </div>
       </div>
@@ -729,7 +730,7 @@ body.derycode-shifted{padding-top:50px;}
       <div class="rooms-grid">
         <div class="room-card">
           <div class="room-img">
-            <img src="assets/wp/4-min.jpg" alt="Standard Room" />
+            <img src="assets/wp/4-min.webp" width="750" height="450" alt="Standard Room" />
             <div class="room-badge">Standard Room</div>
           </div>
           <div class="room-body">
@@ -745,7 +746,7 @@ body.derycode-shifted{padding-top:50px;}
         <div class="room-card featured">
           <div class="room-featured-tag">Popular Choice</div>
           <div class="room-img">
-            <img src="assets/wp/3.jpg" alt="Deluxe Room" />
+            <img src="assets/wp/3.webp" width="750" height="450" alt="Deluxe Room" />
             <div class="room-badge">Deluxe Room</div>
           </div>
           <div class="room-body">
@@ -760,7 +761,7 @@ body.derycode-shifted{padding-top:50px;}
         </div>
         <div class="room-card">
           <div class="room-img">
-            <img src="assets/wp/11.jpg" alt="Family Suite" />
+            <img src="assets/wp/11.webp" width="750" height="450" alt="Family Suite" />
             <div class="room-badge">Family Suite</div>
           </div>
           <div class="room-body">
@@ -775,7 +776,7 @@ body.derycode-shifted{padding-top:50px;}
         </div>
         <div class="room-card">
           <div class="room-img">
-            <img src="assets/wp/3.jpg" alt="Executive Room" />
+            <img src="assets/wp/3.webp" width="750" height="450" alt="Executive Room" />
             <div class="room-badge">Executive Room</div>
           </div>
           <div class="room-body">
@@ -802,7 +803,7 @@ body.derycode-shifted{padding-top:50px;}
       </div>
       <div class="signature-grid">
         <article class="signature-card signature-featured">
-          <img src="assets/wp/3-min.jpg" alt="Romantic garden dining" />
+          <img src="assets/wp/3-min.webp" width="750" height="450" alt="Romantic garden dining" />
           <div>
             <span>Couples</span>
             <h3>Garden Escape</h3>
@@ -811,7 +812,7 @@ body.derycode-shifted{padding-top:50px;}
           </div>
         </article>
         <article class="signature-card">
-          <img src="assets/wp/gallery1.jpg" alt="Conference setup" />
+          <img src="assets/wp/gallery1.webp" width="750" height="450" alt="Conference setup" />
           <div>
             <span>Business</span>
             <h3>Conference Ready</h3>
@@ -820,7 +821,7 @@ body.derycode-shifted{padding-top:50px;}
           </div>
         </article>
         <article class="signature-card">
-          <img src="assets/wp/11.jpg" alt="Family suite" />
+          <img src="assets/wp/11.webp" width="750" height="450" alt="Family suite" />
           <div>
             <span>Families</span>
             <h3>Family Weekend</h3>
@@ -933,7 +934,7 @@ body.derycode-shifted{padding-top:50px;}
         <div class="gallery-item" data-category="restaurant" onclick="pubOpenLightbox(13)" style="cursor:pointer;"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/365c303ea_WhatsAppImage2026-06-16at121636.jpg" alt="Restaurant dining area" /></div>
         <div class="gallery-item" data-category="restaurant" onclick="pubOpenLightbox(14)" style="cursor:pointer;"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/9b9d02e7f_WhatsAppImage2026-06-16at1216371.jpg" alt="Restaurant interior" /></div>
         <div class="gallery-item" data-category="restaurant" onclick="pubOpenLightbox(15)" style="cursor:pointer;"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/bfc54f0bd_WhatsAppImage2026-06-16at1216351.jpg" alt="Restaurant seating" /></div>
-        <div class="gallery-item" data-category="restaurant" onclick="pubOpenLightbox(16)" style="cursor:pointer;"><img loading="lazy" decoding="async" src="assets/slide1.jpg" alt="Restaurant hall" /></div>
+        <div class="gallery-item" data-category="restaurant" onclick="pubOpenLightbox(16)" style="cursor:pointer;"><img loading="lazy" decoding="async" src="assets/slide1.webp" width="1920" height="1080" alt="Restaurant hall" /></div>
         <div class="gallery-item" data-category="restaurant" onclick="pubOpenLightbox(17)" style="cursor:pointer;"><img loading="lazy" decoding="async" src="https://media.base44.com/images/public/6a314ab6377f233148a338ef/13c95232a_WhatsAppImage2026-06-16at121635.jpg" alt="Restaurant outdoor terrace" /></div>
       </div>
       </div>
@@ -1339,7 +1340,7 @@ body.derycode-shifted{padding-top:50px;}
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="assets/wp/logo-1.jpg" alt="Tropical Gardens Hotel" class="footer-logo-img" />
+          <img src="assets/wp/logo-1.webp" width="200" height="112" alt="Tropical Gardens Hotel" class="footer-logo-img" />
           <p>At Tropical Gardens Hotel, we pride ourselves on being a serene oasis nestled in the heart of Kyenjojo. Warm hospitality, exceptional service, unforgettable experiences.</p>
           <div class="footer-social">
             <a href="https://www.facebook.com/groups/2969681966601864" target="_blank" rel="noopener" aria-label="Facebook">f</a>
@@ -1480,11 +1481,11 @@ body.derycode-shifted{padding-top:50px;}
   <div class="toast" id="toast"></div>
 
   
-  <script src="app-config.js"></script>
-  <script src="supabase-config.js"></script>
-  <script src="script.js"></script>
+  <script defer src="app-config.js"></script>
+  <script defer src="supabase-config.js"></script>
+  <script defer src="script.js"></script>
   <script>
-    window.loadHotelAnalytics(window.TGH_GA_MEASUREMENT_ID);
+    document.addEventListener('DOMContentLoaded', function(){ window.loadHotelAnalytics(window.TGH_GA_MEASUREMENT_ID); });
   </script>
 
   <script>
