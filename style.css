@@ -85,6 +85,19 @@ body a,body button,body input,body label,body li,body p,body select,body span,bo
 .btn-outline-dark{border-color:rgba(20,52,42,.28);color:var(--green);border-radius:10px}
 .btn-outline-dark:hover{background:var(--green);border-color:var(--green);color:var(--ivory)}
 
+/* hero text must stay light on the photo (heading rule above is dark) */
+.hero h1,.hero .hero-heading,.hero h2,.hero h2 span,.hero-slide h1,.hero-slide h2{
+  color:var(--ivory)!important
+}
+.hero h1 span,.hero .hero-heading span{color:var(--gold-light)!important;font-style:italic}
+.hero-content p,.hero-content .hero-sub{color:rgba(255,253,248,.9)!important}
+
+/* dark sections keep light headings */
+.reservation h2,.reservation h3,.reservation .section-title,
+.footer h2,.footer h3,.footer h4,.footer-brand h3,
+.stats-bar h2,.stats-bar h3{color:var(--ivory)!important}
+.reservation p,.footer p{color:rgba(255,253,248,.75)!important}
+
 /* hero */
 .hero-overlay{background:linear-gradient(105deg,rgba(9,28,22,.82) 0%,rgba(9,28,22,.55) 48%,rgba(9,28,22,.28) 100%)}
 .hero h1,.hero-heading{font-family:var(--font-serif);font-weight:400;letter-spacing:-.02em;line-height:1.12}
