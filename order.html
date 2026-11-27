@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Order Food — Tropical Gardens Hotel Kyenjojo</title>
+<meta name="description" content="Order food from Tropical Gardens Hotel Kyenjojo. Choose your meal, how many, where you are sitting or staying, and send the order straight to our kitchen on WhatsApp." />
+<link rel="canonical" href="https://tropicalgardenshotelkyenjojo.com/order.html" />
+<meta name="theme-color" content="#0a0a0a" />
+<meta property="og:title" content="Order Food — Tropical Gardens Hotel Kyenjojo" />
+<meta property="og:description" content="Breakfast, lunch, dinner and drinks from the Tropical Gardens kitchen. Send your order on WhatsApp." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://tropicalgardenshotelkyenjojo.com/order.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0a0a0a; --panel:#12120f; --panel2:#171712; --line:#2a2a22;
+    --gold:#d4a017; --gold-soft:#ffca28; --text:#f8f6f1; --muted:#a9a595;
+    --green:#00ff9d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.55;padding-bottom:120px}
+  a{color:inherit}
+  header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .bar{max-width:920px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px}
+  .brand{font-family:'Playfair Display',serif;font-size:17px;letter-spacing:.4px}
+  .brand span{color:var(--gold)}
+  .bar nav{margin-left:auto;display:flex;gap:16px;font-size:13px;color:var(--muted)}
+  .bar nav a{text-decoration:none}
+  .bar nav a:hover{color:var(--gold)}
+  main{max-width:920px;margin:0 auto;padding:26px 18px 0}
+  h1{font-family:'Playfair Display',serif;font-size:30px;line-height:1.15;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:15px;margin-top:8px;max-width:620px}
+  .note{margin-top:14px;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--muted)}
+  .note b{color:var(--gold)}
+  h2.section{font-family:'Playfair Display',serif;font-size:19px;margin:26px 0 10px;color:var(--gold-soft)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chip{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer}
+  .chip.on{border-color:var(--gold);color:var(--ink);background:var(--gold);font-weight:600}
+  .grid{display:grid;gap:10px;margin-top:12px}
+  .item{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px 14px}
+  .item .t{flex:1}
+  .item .t b{display:block;font-size:15px;font-weight:600}
+  .item .t small{color:var(--muted);font-size:12.5px}
+  .qty{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .qty button{width:34px;height:34px;background:var(--panel2);color:var(--text);border:0;font-size:18px;cursor:pointer}
+  .qty button:hover{color:var(--gold)}
+  .qty span{min-width:30px;text-align:center;font-size:14px;font-variant-numeric:tabular-nums}
+  .fields{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:12px}
+  .fields label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+  .fields input,.fields select,.fields textarea{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px 12px;font-size:14px;font-family:inherit}
+  .fields textarea{min-height:76px;resize:vertical}
+  .full{grid-column:1/-1}
+  footer.basket{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(10,10,10,.97);border-top:1px solid var(--line);padding:12px 18px}
+  .basket-in{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .basket-in .count{font-size:13px;color:var(--muted)}
+  .basket-in .count b{color:var(--text)}
+  .btn{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#0a0a0a;border:0;border-radius:10px;padding:13px 20px;font-size:14.5px;font-weight:700;cursor:pointer;text-decoration:none}
+  .btn:hover{background:var(--gold-soft)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text);font-weight:500}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  @media (max-width:640px){
+    h1{font-size:24px}
+    .fields{grid-template-columns:1fr}
+    .bar nav{display:none}
+    .btn{width:100%;justify-content:center;margin-left:0}
+    .basket-in{flex-direction:column;align-items:stretch}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand">Tropical Gardens <span>Hotel</span></div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="restaurant.html">Restaurant</a>
+      <a href="rooms.html">Rooms</a>
+      <a href="locations.html">Find us</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>Order food from our kitchen</h1>
+  <p class="sub">Pick what you would like, tell us where you are sitting or staying, and send the order to reception on WhatsApp. The kitchen confirms the price and the waiting time before cooking, so you are never charged for something you did not ask for.</p>
+
+  <div class="note">
+    <b>How it works:</b> choose your dishes below, then tap <b>Send order on WhatsApp</b>. Your message opens already written, ready to send. In-house guests can charge to their room. Takeaway is packed at reception.
+  </div>
+
+  <h2 class="section">1. Choose your dishes</h2>
+  <div class="chips" id="cats"></div>
+  <div class="grid" id="items"></div>
+
+  <h2 class="section">2. Where should we serve you?</h2>
+  <div class="fields">
+    <div>
+      <label for="guest">Your name</label>
+      <input id="guest" type="text" placeholder="e.g. Derick Asiimwe" autocomplete="name" />
+    </div>
+    <div>
+      <label for="where">Where</label>
+      <select id="where">
+        <option>Restaurant table</option>
+        <option>Garden dining</option>
+        <option>Bar</option>
+        <option>My room</option>
+        <option>Takeaway at reception</option>
+        <option>Event / group order</option>
+      </select>
+    </div>
+    <div>
+      <label for="spot">Table number or room number</label>
+      <input id="spot" type="text" placeholder="e.g. Room 4 or Table 2" />
+    </div>
+    <div>
+      <label for="when">When</label>
+      <select id="when">
+        <option>As soon as possible</option>
+        <option>In 30 minutes</option>
+        <option>In 1 hour</option>
+        <option>At a set time (say below)</option>
+      </select>
+    </div>
+    <div class="full">
+      <label for="notes">Anything else</label>
+      <textarea id="notes" placeholder="e.g. no onions, extra matooke, 2 plates for sharing, birthday cake at 8pm"></textarea>
+    </div>
+  </div>
+
+  <h2 class="section">3. Send it</h2>
+  <p class="hint">The button at the bottom of the screen opens WhatsApp with your order written out. You can still change anything before you send.</p>
+</main>
+
+<footer class="basket">
+  <div class="basket-in">
+    <div class="count"><b id="count">No dishes yet</b><div class="hint" id="lines">Add something from the list above</div></div>
+    <a class="btn ghost" href="tel:+256782460683">Call reception</a>
+    <button class="btn" id="send">Send order on WhatsApp</button>
+  </div>
+</footer>
+
+<script>
+  // The kitchen's dishes, grouped the way the restaurant page presents them.
+  // Prices are confirmed on WhatsApp because they change with the season and the portion.
+  const MENU = [
+    { cat: "Breakfast", name: "Full English breakfast", note: "Eggs, sausage, toast, tomato, tea or coffee" },
+    { cat: "Breakfast", name: "Ugandan breakfast", note: "Katogo, chapati, tea or porridge" },
+    { cat: "Breakfast", name: "Omelette and toast", note: "Two or three eggs, onion, tomato" },
+    { cat: "Breakfast", name: "Fresh fruit plate", note: "Pineapple, passion fruit, banana, watermelon" },
+
+    { cat: "Lunch & dinner", name: "Matooke with beef stew", note: "Served with greens and groundnut sauce" },
+    { cat: "Lunch & dinner", name: "Rice with chicken", note: "Fried or stewed chicken, salad on request" },
+    { cat: "Lunch & dinner", name: "Posho and beans", note: "Classic, with cassava or sweet potato" },
+    { cat: "Lunch & dinner", name: "Tilapia fish", note: "Whole fish, grilled or fried, with chips or matooke" },
+    { cat: "Lunch & dinner", name: "Goat stew", note: "Slow cooked, served with matooke or rice" },
+    { cat: "Lunch & dinner", name: "Irish potatoes and vegetables", note: "Chips or boiled, with seasonal greens" },
+    { cat: "Lunch & dinner", name: "Beef pilau", note: "Spiced rice with beef and salad" },
+    { cat: "Lunch & dinner", name: "Rolex", note: "Chapati rolled with eggs and vegetables" },
+
+    { cat: "Snacks & sides", name: "Chips (French fries)", note: "Plain or with chicken" },
+    { cat: "Snacks & sides", name: "Chapati", note: "One or two pieces" },
+    { cat: "Snacks & sides", name: "Samosa", note: "Beef or vegetable" },
+    { cat: "Snacks & sides", name: "Garden salad", note: "Tomato, onion, cabbage, avocado when in season" },
+
+    { cat: "Drinks", name: "Soda (300ml)", note: "Coke, Fanta, Sprite, Mirinda" },
+    { cat: "Drinks", name: "Bottled water", note: "500ml or 1.5L" },
+    { cat: "Drinks", name: "Fresh juice", note: "Passion, pineapple or mango" },
+    { cat: "Drinks", name: "Tea or coffee", note: "With milk, black, or African tea" },
+    { cat: "Drinks", name: "Beer", note: "Chilled, ask what is in stock" }
+  ];
+
+  const PHONE = "256782460683";
+  const cats = ["All", ...new Set(MENU.map(m => m.cat))];
+  let activeCat = "All";
+  const basket = new Map();   // name -> qty
+
+  const catsEl = document.getElementById("cats");
+  const itemsEl = document.getElementById("items");
+  const countEl = document.getElementById("count");
+  const linesEl = document.getElementById("lines");
+
+  function renderCats() {
+    catsEl.innerHTML = "";
+    cats.forEach(c => {
+      const b = document.createElement("button");
+      b.className = "chip" + (c === activeCat ? " on" : "");
+      b.textContent = c;
+      b.onclick = () => { activeCat = c; renderCats(); renderItems(); };
+      catsEl.appendChild(b);
+    });
+  }
+
+  function renderItems() {
+    itemsEl.innerHTML = "";
+    MENU.filter(m => activeCat === "All" || m.cat === activeCat).forEach(m => {
+      const row = document.createElement("div");
+      row.className = "item";
+      row.innerHTML = `<div class="t"><b></b><small></small></div>
+        <div class="qty"><button aria-label="less">−</button><span></span><button aria-label="more">+</button></div>`;
+      row.querySelector("b").textContent = m.name;
+      row.querySelector("small").textContent = m.note;
+      const qtyEl = row.querySelector("span");
+      const [less, more] = row.querySelectorAll("button");
+      const paint = () => { qtyEl.textContent = basket.get(m.name) || 0; };
+      more.onclick = () => { basket.set(m.name, (basket.get(m.name) || 0) + 1); paint(); updateBasket(); };
+      less.onclick = () => {
+        const n = (basket.get(m.name) || 0) - 1;
+        if (n <= 0) basket.delete(m.name); else basket.set(m.name, n);
+        paint(); updateBasket();
+      };
+      paint();
+      itemsEl.appendChild(row);
+    });
+  }
+
+  function orderLines() {
+    const out = [];
+    MENU.forEach(m => { if (basket.get(m.name)) out.push(`${basket.get(m.name)} × ${m.name}`); });
+    return out;
+  }
+
+  function updateBasket() {
+    const items = orderLines();
+    const total = items.reduce((n, _) => n + 1, 0);
+    const dishes = [...basket.values()].reduce((a, b) => a + b, 0);
+    countEl.textContent = dishes === 0 ? "No dishes yet" : `${dishes} item${dishes === 1 ? "" : "s"} chosen`;
+    linesEl.textContent = items.length ? items.join(" · ") : "Add something from the list above";
+  }
+
+  function buildMessage() {
+    const items = orderLines();
+    const name = document.getElementById("guest").value.trim();
+    const where = document.getElementById("where").value;
+    const spot = document.getElementById("spot").value.trim();
+    const when = document.getElementById("when").value;
+    const notes = document.getElementById("notes").value.trim();
+
+    const L = [];
+    L.push("Hello Tropical Gardens Hotel, I would like to order food.");
+    L.push("");
+    if (items.length) { L.push("Order:"); items.forEach(i => L.push("• " + i)); }
+    else L.push("Order: (please tell me today's dishes)");
+    L.push("");
+    if (name) L.push("Name: " + name);
+    L.push("Where: " + where + (spot ? " — " + spot : ""));
+    L.push("When: " + when);
+    if (notes) L.push("Notes: " + notes);
+    L.push("");
+    L.push("Please confirm the price and how long it will take.");
+    return L.join("\n");
+  }
+
+  document.getElementById("send").onclick = () => {
+    const url = "https://wa.me/" + PHONE + "?text=" + encodeURIComponent(buildMessage());
+    window.open(url, "_blank", "noopener");
+  };
+
+  renderCats();
+  renderItems();
+  updateBasket();
+</script>
+</body>
+</html>
