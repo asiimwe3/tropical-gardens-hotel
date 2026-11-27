@@ -256,7 +256,8 @@
 
   document.getElementById("send").onclick = () => {
     const url = "https://wa.me/" + PHONE + "?text=" + encodeURIComponent(buildMessage());
-    window.open(url, "_blank", "noopener");
+    // a plain location change is never blocked by a pop-up blocker, on phone or desktop
+    window.location.href = url;
   };
 
   renderCats();
